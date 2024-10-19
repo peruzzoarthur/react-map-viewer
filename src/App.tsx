@@ -3,6 +3,7 @@ import shpjs from "shpjs";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { ScrollArea, ScrollBar } from "./components/ui/scroll-area";
+import { ModeToggle } from "./components/mode-toggle";
 function App() {
   const [geoJson, setGeoJson] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -38,7 +39,6 @@ function App() {
         )}
       </div>
 
-      <h1>Hello map</h1>
       <MapContainer
         className="h-[50vh]"
         center={[51.505, -0.09]}
@@ -55,6 +55,7 @@ function App() {
           </Popup>
         </Marker>
       </MapContainer>
+      <ModeToggle />
     </>
   );
 }
