@@ -71,7 +71,7 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full h-full">
       <NavBar />
 
       <ResizablePanelGroup
@@ -118,9 +118,9 @@ function App() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={75}>
-          <div className="flex h-[80vh] w-full items-center justify-center p-6">
+          <div className="flex h-full w-full items-center justify-center p-6">
             <MapContainer
-              className="h-[80vh] w-full z-80"
+              className="h-[90vh] w-full z-80"
               center={[-31.75955334256868, -52.34488136477589]}
               zoom={9}
               scrollWheelZoom={true}
