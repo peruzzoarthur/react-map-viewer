@@ -1,20 +1,15 @@
 import { useState } from "react";
 import shpjs, { FeatureCollectionWithFilename } from "shpjs";
-import {
-  MapContainer,
-  GeoJSON,
-  TileLayer,
-  LayerGroup,
-  Popup,
-} from "react-leaflet";
+import { MapContainer, GeoJSON, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { ScrollArea, ScrollBar } from "./components/ui/scroll-area";
-import { ModeToggle } from "./components/mode-toggle";
 import { Input } from "./components/ui/input";
-import { Card } from "./components/ui/card";
-import { useWorkspace } from "./hooks/useWorkspace";
+import {
+  FeatureCollectionWithFilenameAndState,
+  useWorkspace,
+} from "./hooks/useWorkspace";
 import { Button } from "./components/ui/button";
-import { Layers, X } from "lucide-react";
+import { Layers } from "lucide-react";
 import { ItemToggleView } from "./components/item-toggle-view";
 import L from "leaflet";
 import {
@@ -23,16 +18,41 @@ import {
   ResizablePanelGroup,
 } from "./components/ui/resizable";
 import { NavBar } from "./components/navbar";
+import { getRandomColor } from "./lib/utils";
+import { CoordsFinderDummy } from "./components/coordinates-getter";
+import { Card } from "./components/ui/card";
+import { MapController } from "./components/map-controller";
 
 function App() {
+  const [selectedFile, setSelectedFile] =
+    useState<FeatureCollectionWithFilenameAndState | null>(null);
+  const [workspace, setWorkspace] = useState<
+    FeatureCollectionWithFilenameAndState[]
+  >([]);
   const [geoJson, setGeoJson] = useState<FeatureCollectionWithFilename | null>(
     null
   );
   const [loading, setLoading] = useState<boolean>(false);
+  const [onHoverCoord, setOnHoverCoord] = useState<{
+    lat: number;
+    lng: number;
+  } | null>();
 
-  const { workspace, addFileToWorkspace, toggleVisibility } = useWorkspace();
+  const {
+    addFileToWorkspace,
+    toggleVisibility,
+    changeStyle,
+    removeFileFromWorkspace,
+  } = useWorkspace({
+    workspace,
+    setWorkspace,
+  });
   const [isTileLayer, setIsTileLayer] = useState<boolean>(true);
   const [isOpenPreview, setIsOpenPreview] = useState<boolean>(false);
+
+  // const mapFunc = useMapEvent("click", () => {
+  //   map.setView([50.5, 30.5], map.getZoom());
+  // });
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -67,7 +87,8 @@ function App() {
           {geoJson && (
             <Button
               onClick={() => {
-                addFileToWorkspace(geoJson);
+                const color = getRandomColor();
+                addFileToWorkspace(geoJson, color);
                 setIsOpenPreview(false);
               }}
             >
@@ -99,16 +120,21 @@ function App() {
               state={isTileLayer}
               setState={setIsTileLayer}
               filename="OpenStreetMap TileLayer"
+              removeFileFromWorkspace={removeFileFromWorkspace}
+              changeStyle={changeStyle}
+              setSelectedFile={setSelectedFile}
             />
 
-            {workspace &&
+            {workspace.length > 0 &&
               workspace.map((file, index) => (
                 <ItemToggleView
                   key={index}
                   state={file.visible} // Bind to the file's visibility state
                   setState={() => toggleVisibility(file.fileName)} // Toggle visibility
-                  filename={file.fileName ?? "random-uuid"}
-                  geometryType={file.features[0].geometry.type}
+                  featureCollection={file}
+                  removeFileFromWorkspace={removeFileFromWorkspace}
+                  changeStyle={changeStyle}
+                  setSelectedFile={setSelectedFile}
                 />
               ))}
           </div>
@@ -122,6 +148,8 @@ function App() {
               zoom={9}
               scrollWheelZoom={true}
             >
+              <CoordsFinderDummy setOnHoverCoord={setOnHoverCoord} />
+              <MapController selectedFile={selectedFile} />
               {isTileLayer && (
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -133,74 +161,31 @@ function App() {
                 workspace
                   .filter((file) => file.visible) // Only show visible layers
                   .map((geoJson, index) => (
-                    <>
-                      <GeoJSON
-                        key={`${geoJson.fileName}_${index}`}
-                        style={{
-                          color: "#ff7800",
-                          weight: 2,
-                          opacity: 2,
-                          stroke: true,
-                        }}
-                        data={geoJson}
-                        eventHandlers={{
-                          click: () => {
-                            console.log(geoJson.features[0].properties);
-                          },
-                        }}
-                        attribution="a polygon"
-                        pathOptions={{ color: "orange" }}
-                        pointToLayer={function (geoJsonPoint, latlng) {
-                          console.log(geoJsonPoint.properties);
-                          return L.circleMarker(latlng);
-                        }}
-                      >
-                        <Popup className="flex">
-                          <ScrollArea className="h-[200px] w-[420px]">
-                            {/* {geoJson.features.length > 0 &&
-                          geoJson.features[0].properties ? (
-                            <div className="flex">
-                              {Object.keys(geoJson.features[0].properties).map(
-                                (key) => (
-                                  <p key={key} className="font-bold">
-                                    {key}{" "}
-                                  </p>
-                                )
-                              )}
-                            </div>
-                          ) : (
-                            <p>No properties available</p>
-                          )} */}
-
-                            {geoJson.features.map((feature, index) => (
-                              <div key={index}>
-                                {feature.properties ? (
-                                  <div className="flex">
-                                    {Object.entries(feature.properties).map(
-                                      ([key, value]) => (
-                                        <p key={key}>
-                                          <strong>{key}:</strong>
-                                          {"    "}
-                                          {value?.toString() || "N/A"}
-                                        </p>
-                                      )
-                                    )}
-                                  </div>
-                                ) : (
-                                  <p>No properties available</p>
-                                )}
-                              </div>
-                            ))}
-                          </ScrollArea>
-                        </Popup>
-                      </GeoJSON>
-                    </>
+                    <GeoJSON
+                      key={`${geoJson.fileName}_${index}`}
+                      style={geoJson.style}
+                      data={geoJson}
+                      eventHandlers={{
+                        click: () => {
+                          console.log(geoJson.features[0].properties);
+                        },
+                      }}
+                      attribution="a polygon"
+                      pointToLayer={function (_geoJsonPoint, latlng) {
+                        // console.log(geoJsonPoint.properties);
+                        return L.circleMarker(latlng);
+                      }}
+                    ></GeoJSON>
                   ))}
+
               {/* </LayerGroup> */}
             </MapContainer>
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
+      <Card>
+        <p>{`lat: ${onHoverCoord?.lat} lng: ${onHoverCoord?.lng}`}</p>
+      </Card>
     </div>
   );
 }

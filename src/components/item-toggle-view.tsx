@@ -1,4 +1,4 @@
-import { Dot, Eye, EyeClosed, Spline, Square } from "lucide-react";
+import { Circle, Eye, EyeClosed, Spline, Square } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   ContextMenu,
@@ -7,35 +7,38 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  FeatureCollectionWithFilenameAndState,
+  StyleOptions,
+} from "@/hooks/useWorkspace";
+import { TableOfContent } from "./table-of-content";
 
-type GeometryType =
-  | "Point"
-  | "MultiPoint"
-  | "LineString"
-  | "MultiLineString"
-  | "Polygon"
-  | "MultiPolygon"
-  | "GeometryCollection";
 type ItemToggleViewProps = {
   state: boolean;
   setState: React.Dispatch<boolean>;
-  filename: string;
-  geometryType?: GeometryType;
+  featureCollection?: FeatureCollectionWithFilenameAndState;
+  filename?: string;
+  removeFileFromWorkspace: (filename: string | undefined) => void;
+  changeStyle: (filename: string | undefined, style: StyleOptions) => void;
+  setSelectedFile: React.Dispatch<
+    React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
+  >;
 };
 
 export const ItemToggleView = ({
   setState,
   state,
+  featureCollection,
   filename,
-  geometryType,
+  removeFileFromWorkspace,
+  changeStyle,
+  setSelectedFile,
 }: ItemToggleViewProps) => {
+  if (!filename) {
+    filename = featureCollection?.fileName;
+  }
+  const features = featureCollection?.features;
+  const geometryType = features ? features[0].geometry.type : null;
+
   return (
     <div className="flex items-center space-x-1 cursor-pointer">
       {state ? (
@@ -47,40 +50,41 @@ export const ItemToggleView = ({
           <EyeClosed />
         </Button>
       )}
+
       <ContextMenu>
         <ContextMenuTrigger>
-          <p className="flex ">
-            {filename}
+          <div className="flex space-x-1">
+            <p>{filename}</p>
             {geometryType === "Polygon" && <Square />}
             {geometryType === "LineString" && <Spline />}
-            {geometryType === "Point" && <Dot />}
-          </p>
+            {geometryType === "Point" && <Circle />}
+          </div>
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem
+            onClick={() => setSelectedFile(featureCollection ?? null)}
+          >
+            Zoom to layer
+          </ContextMenuItem>
+          <ContextMenuItem
             onClick={() => {
-              console.log("orange is the color");
+              const newStyle = {
+                color: "#800000",
+                weight: 2,
+                opacity: 2,
+                stroke: true,
+              };
+              changeStyle(featureCollection?.fileName, newStyle);
             }}
           >
             Style
           </ContextMenuItem>
-
-          <Dialog>
-            <DialogTrigger className="relative w-full flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
-              Table of content
-            </DialogTrigger>
-            <DialogContent className="z-[1000]">
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-
-          <ContextMenuItem>Remove from workspace</ContextMenuItem>
+          {featureCollection && (
+            <TableOfContent featureCollection={featureCollection} />
+          )}
+          <ContextMenuItem onClick={() => removeFileFromWorkspace(filename)}>
+            Remove from workspace
+          </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
     </div>
