@@ -2,13 +2,10 @@ import { useState } from "react";
 import shpjs, { FeatureCollectionWithFilename } from "shpjs";
 import { MapContainer, GeoJSON, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { ScrollArea, ScrollBar } from "./components/ui/scroll-area";
-import { Input } from "./components/ui/input";
 import {
   FeatureCollectionWithFilenameAndState,
   useWorkspace,
 } from "./hooks/useWorkspace";
-import { Button } from "./components/ui/button";
 import { Layers } from "lucide-react";
 import { ItemToggleView } from "./components/item-toggle-view";
 import L from "leaflet";
@@ -18,10 +15,10 @@ import {
   ResizablePanelGroup,
 } from "./components/ui/resizable";
 import { NavBar } from "./components/navbar";
-import { getRandomColor } from "./lib/utils";
-import { CoordsFinderDummy } from "./components/coordinates-getter";
-import { Card } from "./components/ui/card";
+// import { CoordsFinderDummy } from "./components/coordinates-getter";
+// import { Card } from "./components/ui/card";
 import { MapController } from "./components/map-controller";
+import { AddLayer } from "./components/add-layer";
 
 function App() {
   const [selectedFile, setSelectedFile] =
@@ -33,10 +30,10 @@ function App() {
     null
   );
   const [loading, setLoading] = useState<boolean>(false);
-  const [onHoverCoord, setOnHoverCoord] = useState<{
-    lat: number;
-    lng: number;
-  } | null>();
+  // const [onHoverCoord, setOnHoverCoord] = useState<{
+  //   lat: number;
+  //   lng: number;
+  // } | null>();
 
   const {
     addFileToWorkspace,
@@ -76,34 +73,6 @@ function App() {
   return (
     <div className="flex flex-col w-full">
       <NavBar />
-      <div className="flex justify-center">
-        <div className="flex p-4 space-y-4 flex-col justify-center items-center mt-4">
-          <Input
-            className="w-full"
-            type="file"
-            onChange={handleFileUpload}
-            accept=".zip"
-          />
-          {geoJson && (
-            <Button
-              onClick={() => {
-                const color = getRandomColor();
-                addFileToWorkspace(geoJson, color);
-                setIsOpenPreview(false);
-              }}
-            >
-              Add to workspace
-            </Button>
-          )}
-          {loading && <p>Loading...</p>}
-        </div>
-        {isOpenPreview && (
-          <ScrollArea className="h-[300px] w-1/2 rounded-md border p-4">
-            <pre>{JSON.stringify(geoJson, null, 2)}</pre>
-            <ScrollBar className="bg-black" orientation="vertical" />
-          </ScrollArea>
-        )}
-      </div>
 
       <ResizablePanelGroup
         direction="horizontal"
@@ -114,6 +83,14 @@ function App() {
             <div className=" mx-4 space-x-2 flex items-center">
               <Layers />
               <h2 className="text-2xl font-bold ">Layers</h2>
+              <AddLayer
+                addFileToWorkspace={addFileToWorkspace}
+                geoJson={geoJson}
+                handleFileUpload={handleFileUpload}
+                isOpenPreview={isOpenPreview}
+                loading={loading}
+                setIsOpenPreview={setIsOpenPreview}
+              />
             </div>
 
             <ItemToggleView
@@ -148,7 +125,7 @@ function App() {
               zoom={9}
               scrollWheelZoom={true}
             >
-              <CoordsFinderDummy setOnHoverCoord={setOnHoverCoord} />
+              {/* <CoordsFinderDummy setOnHoverCoord={setOnHoverCoord} /> */}
               <MapController selectedFile={selectedFile} />
               {isTileLayer && (
                 <TileLayer
@@ -183,9 +160,9 @@ function App() {
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
-      <Card>
+      {/* <Card>
         <p>{`lat: ${onHoverCoord?.lat} lng: ${onHoverCoord?.lng}`}</p>
-      </Card>
+      </Card> */}
     </div>
   );
 }

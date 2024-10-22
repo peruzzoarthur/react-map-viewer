@@ -55,12 +55,18 @@ export const ItemToggleView = ({
         <ContextMenuTrigger>
           <div className="flex space-x-1">
             <p>{filename}</p>
-            {geometryType === "Polygon" && <Square />}
-            {geometryType === "LineString" && <Spline />}
-            {geometryType === "Point" && <Circle />}
+            {geometryType === "Polygon" && (
+              <Square style={{ stroke: featureCollection?.style.color }} />
+            )}
+            {geometryType === "LineString" && (
+              <Spline style={{ stroke: featureCollection?.style.color }} />
+            )}
+            {geometryType === "Point" && (
+              <Circle style={{ stroke: featureCollection?.style.color }} />
+            )}
           </div>
         </ContextMenuTrigger>
-        <ContextMenuContent>
+        <ContextMenuContent className="z-[1000]">
           <ContextMenuItem
             onClick={() => setSelectedFile(featureCollection ?? null)}
           >
