@@ -17,12 +17,12 @@ export const MapController: FC<{
     });
   };
 
-  const flyToCenter = () => {
-    map.flyTo([59.914, 10.734], 13, {
-      animate: true,
-      duration: flyToDuration,
-    });
-  };
+  //   const flyToCenter = () => {
+  //     map.flyTo([59.914, 10.734], 13, {
+  //       animate: true,
+  //       duration: flyToDuration,
+  //     });
+  //   };
 
   useEffect(() => {
     if (selectedFile) {

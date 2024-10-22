@@ -13,8 +13,6 @@ export const getRandomColor = (): string => {
   return colors[randomIndex];
 };
 
-type BoundingBox = [number, number, number, number]; // [minLng, minLat, maxLng, maxLat]
-
 export const getBoundingBoxCenter = (
   bbox: BBox | undefined
 ): LatLngTuple | undefined => {
