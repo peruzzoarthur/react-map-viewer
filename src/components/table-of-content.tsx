@@ -28,12 +28,12 @@ export const TableOfContent = ({ featureCollection }: TableOfContentProps) => {
       <DialogTrigger className="relative w-full flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
         Table of content
       </DialogTrigger>
-      <DialogContent className="z-[1000] w-full">
+      <DialogContent className="z-[1000] w-11/12">
         <DialogHeader>
           <DialogTitle>Table of content</DialogTitle>
-          <DialogDescription className="w-full h-full">
+          <DialogDescription className="w-full h-[80vh]">
             {featureCollection && (
-              <ScrollArea className="h-full w-full">
+              <ScrollArea className="h-[80vh] w-full">
                 <Table>
                   <TableCaption>Table of content</TableCaption>
                   <TableHeader>
