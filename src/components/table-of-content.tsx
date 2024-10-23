@@ -25,7 +25,7 @@ type TableOfContentProps = {
 export const TableOfContent = ({ featureCollection }: TableOfContentProps) => {
   return (
     <Dialog>
-      <DialogTrigger className="relative w-full flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+      <DialogTrigger className="w-full text-left">
         Table of content
       </DialogTrigger>
       <DialogContent className="z-[1000] w-11/12">

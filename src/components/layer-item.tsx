@@ -1,11 +1,12 @@
 import { Circle, Eye, EyeClosed, Spline, Square } from "lucide-react";
 import { Button } from "./ui/button";
+
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { FeatureCollectionWithFilenameAndState } from "@/hooks/useWorkspace";
 import { TableOfContent } from "./table-of-content";
 import { StyleDialog } from "./style-dialog";
@@ -50,9 +51,12 @@ export const LayerItem = ({
         </Button>
       )}
 
-      <ContextMenu>
-        <ContextMenuTrigger>
-          <div className="flex space-x-1">
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button
+            variant="ghost"
+            className="flex space-x-1 hover:bg-white hover:bg-opacity-0"
+          >
             <p>{filename}</p>
             {geometryType === "Polygon" && (
               <Square style={{ stroke: featureCollection?.style.color }} />
@@ -63,42 +67,32 @@ export const LayerItem = ({
             {geometryType === "Point" && (
               <Circle style={{ stroke: featureCollection?.style.color }} />
             )}
-          </div>
-        </ContextMenuTrigger>
-        <ContextMenuContent className="z-[1000]">
-          <ContextMenuItem
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="z-[1000]">
+          <DropdownMenuItem
             onClick={() => setSelectedFile(featureCollection ?? null)}
           >
             Zoom to layer
-          </ContextMenuItem>
-          {/* <ContextMenuItem
-            onClick={() => {
-              const newStyle = {
-                color: "#800000",
-                weight: 2,
-                opacity: 2,
-                stroke: true,
-              };
-              changeStyle(featureCollection?.fileName, newStyle);
-            }}
-          >
-            Style
-          </ContextMenuItem> */}
-
-          {featureCollection && (
-            <>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            {featureCollection && (
               <StyleDialog
                 featureCollection={featureCollection}
                 changeStyle={changeStyle}
               />
+            )}
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            {featureCollection && (
               <TableOfContent featureCollection={featureCollection} />
-            </>
-          )}
-          <ContextMenuItem onClick={() => removeFileFromWorkspace(filename)}>
+            )}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => removeFileFromWorkspace(filename)}>
             Remove from workspace
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

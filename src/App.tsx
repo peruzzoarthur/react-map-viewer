@@ -18,7 +18,6 @@ import { NavBar } from "./components/navbar";
 // import { CoordsFinderDummy } from "./components/coordinates-getter";
 // import { Card } from "./components/ui/card";
 import { MapController } from "./components/map-controller";
-import { AddLayer } from "./components/add-layer";
 
 function App() {
   const [selectedFile, setSelectedFile] =
@@ -67,8 +66,16 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <NavBar />
+    <div className="p-2 flex flex-col h-screen w-screen">
+      <NavBar
+        addFileToWorkspace={addFileToWorkspace}
+        geoJson={geoJson}
+        setGeoJson={setGeoJson}
+        handleFileUpload={handleFileUpload}
+        isOpenPreview={isOpenPreview}
+        loading={loading}
+        setIsOpenPreview={setIsOpenPreview}
+      />
 
       <ResizablePanelGroup
         direction="horizontal"
@@ -79,14 +86,6 @@ function App() {
             <div className=" mx-4 space-x-2 flex items-center">
               <Layers />
               <h2 className="text-2xl font-bold ">Layers</h2>
-              <AddLayer
-                addFileToWorkspace={addFileToWorkspace}
-                geoJson={geoJson}
-                handleFileUpload={handleFileUpload}
-                isOpenPreview={isOpenPreview}
-                loading={loading}
-                setIsOpenPreview={setIsOpenPreview}
-              />
             </div>
 
             <LayerItem

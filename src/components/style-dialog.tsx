@@ -37,10 +37,8 @@ export const StyleDialog = ({
 
   return (
     <Dialog>
-      <DialogTrigger className="relative w-full flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
-        Style
-      </DialogTrigger>
-      <DialogContent className="flex flex-col w-auto justify-center z-[1000]">
+      <DialogTrigger className="w-full text-left">Style</DialogTrigger>
+      <DialogContent className="flex flex-col w-auto justify-center z-[1400]">
         <DialogHeader>
           <DialogTitle>Style</DialogTitle>
           <DialogDescription>
@@ -72,6 +70,9 @@ export const StyleDialog = ({
             <Input
               className="w-auto"
               type="number"
+              max={1}
+              min={0}
+              step={0.1}
               defaultValue={fillOpacity}
               onChange={(event) => setFillOpacity(Number(event.target.value))}
             />
