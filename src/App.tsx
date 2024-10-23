@@ -7,7 +7,7 @@ import {
   useWorkspace,
 } from "./hooks/useWorkspace";
 import { Layers } from "lucide-react";
-import { ItemToggleView } from "./components/item-toggle-view";
+import { LayerItem } from "./components/layer-item";
 import L from "leaflet";
 import {
   ResizableHandle,
@@ -46,10 +46,6 @@ function App() {
   });
   const [isTileLayer, setIsTileLayer] = useState<boolean>(true);
   const [isOpenPreview, setIsOpenPreview] = useState<boolean>(false);
-
-  // const mapFunc = useMapEvent("click", () => {
-  //   map.setView([50.5, 30.5], map.getZoom());
-  // });
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -93,7 +89,7 @@ function App() {
               />
             </div>
 
-            <ItemToggleView
+            <LayerItem
               state={isTileLayer}
               setState={setIsTileLayer}
               filename="OpenStreetMap TileLayer"
@@ -104,10 +100,10 @@ function App() {
 
             {workspace.length > 0 &&
               workspace.map((file, index) => (
-                <ItemToggleView
+                <LayerItem
                   key={index}
-                  state={file.visible} // Bind to the file's visibility state
-                  setState={() => toggleVisibility(file.fileName)} // Toggle visibility
+                  state={file.visible}
+                  setState={() => toggleVisibility(file.fileName)}
                   featureCollection={file}
                   removeFileFromWorkspace={removeFileFromWorkspace}
                   changeStyle={changeStyle}

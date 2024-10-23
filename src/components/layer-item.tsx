@@ -6,25 +6,24 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import {
-  FeatureCollectionWithFilenameAndState,
-  StyleOptions,
-} from "@/hooks/useWorkspace";
+import { FeatureCollectionWithFilenameAndState } from "@/hooks/useWorkspace";
 import { TableOfContent } from "./table-of-content";
+import { StyleDialog } from "./style-dialog";
+import { PathOptions } from "leaflet";
 
-type ItemToggleViewProps = {
+type LayerItemProps = {
   state: boolean;
   setState: React.Dispatch<boolean>;
   featureCollection?: FeatureCollectionWithFilenameAndState;
   filename?: string;
   removeFileFromWorkspace: (filename: string | undefined) => void;
-  changeStyle: (filename: string | undefined, style: StyleOptions) => void;
+  changeStyle: (filename: string | undefined, style: PathOptions) => void;
   setSelectedFile: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
 };
 
-export const ItemToggleView = ({
+export const LayerItem = ({
   setState,
   state,
   featureCollection,
@@ -32,7 +31,7 @@ export const ItemToggleView = ({
   removeFileFromWorkspace,
   changeStyle,
   setSelectedFile,
-}: ItemToggleViewProps) => {
+}: LayerItemProps) => {
   if (!filename) {
     filename = featureCollection?.fileName;
   }
@@ -72,7 +71,7 @@ export const ItemToggleView = ({
           >
             Zoom to layer
           </ContextMenuItem>
-          <ContextMenuItem
+          {/* <ContextMenuItem
             onClick={() => {
               const newStyle = {
                 color: "#800000",
@@ -84,9 +83,16 @@ export const ItemToggleView = ({
             }}
           >
             Style
-          </ContextMenuItem>
+          </ContextMenuItem> */}
+
           {featureCollection && (
-            <TableOfContent featureCollection={featureCollection} />
+            <>
+              <StyleDialog
+                featureCollection={featureCollection}
+                changeStyle={changeStyle}
+              />
+              <TableOfContent featureCollection={featureCollection} />
+            </>
           )}
           <ContextMenuItem onClick={() => removeFileFromWorkspace(filename)}>
             Remove from workspace

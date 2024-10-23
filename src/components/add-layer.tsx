@@ -45,39 +45,40 @@ export const AddLayer = ({
         <DialogHeader>
           <DialogTitle>Add file to layers</DialogTitle>
           <DialogDescription>
-            <div className="flex justify-center">
-              <div className="flex p-4 space-y-4 flex-col justify-center items-center mt-4">
-                <Input
-                  className="w-full"
-                  type="file"
-                  onChange={handleFileUpload}
-                  accept=".zip"
-                />
-                {geoJson && (
-                  <Button
-                    onClick={() => {
-                      const color = getRandomColor();
-                      addFileToWorkspace(geoJson, color);
-                      setIsOpenPreview(false);
-                    }}
-                  >
-                    Add to workspace
-                  </Button>
-                )}
-                {loading && <p>Loading...</p>}
-              </div>
-              {isOpenPreview && (
-                <ScrollArea className="h-[70vh] w-[60vh] rounded-md border p-4">
-                  <div className="h-full w-full overflow-auto">
-                    <pre className="h-full w-full overflow-auto whitespace-pre-wrap">
-                      {JSON.stringify(geoJson, null, 2)}
-                    </pre>
-                  </div>
-                  <ScrollBar className="bg-black" orientation="vertical" />
-                </ScrollArea>
-              )}
-            </div>
+            select a .zip of your shapefiles
           </DialogDescription>
+          <div className="flex justify-center">
+            <div className="flex p-4 space-y-4 flex-col justify-center items-center mt-4">
+              <Input
+                className="w-full"
+                type="file"
+                onChange={handleFileUpload}
+                accept=".zip"
+              />
+              {geoJson && (
+                <Button
+                  onClick={() => {
+                    const color = getRandomColor();
+                    addFileToWorkspace(geoJson, color);
+                    setIsOpenPreview(false);
+                  }}
+                >
+                  Add to workspace
+                </Button>
+              )}
+              {loading && <p>Loading...</p>}
+            </div>
+            {isOpenPreview && (
+              <ScrollArea className="h-[70vh] w-[60vh] rounded-md border p-4">
+                <div className="h-full w-full overflow-auto">
+                  <pre className="h-full w-full overflow-auto whitespace-pre-wrap">
+                    {JSON.stringify(geoJson, null, 2)}
+                  </pre>
+                </div>
+                <ScrollBar className="bg-black" orientation="vertical" />
+              </ScrollArea>
+            )}
+          </div>
         </DialogHeader>
       </DialogContent>
     </Dialog>

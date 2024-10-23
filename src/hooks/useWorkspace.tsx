@@ -1,16 +1,10 @@
+import { PathOptions } from "leaflet";
 import { FeatureCollectionWithFilename } from "shpjs";
-
-export type StyleOptions = {
-  color: string;
-  weight: number;
-  opacity: number;
-  stroke: boolean;
-};
 
 export type FeatureCollectionWithFilenameAndState =
   FeatureCollectionWithFilename & {
     visible: boolean;
-    style: StyleOptions;
+    style: PathOptions;
   };
 
 type UseWorkspaceProps = {
@@ -42,8 +36,10 @@ export const useWorkspace = ({
       style: {
         color: color,
         weight: 2,
-        opacity: 2,
+        opacity: 100,
         stroke: true,
+        fillOpacity: 1,
+        fill: true,
       },
     };
 
@@ -61,7 +57,7 @@ export const useWorkspace = ({
     );
   };
 
-  const changeStyle = (filename: string | undefined, style: StyleOptions) => {
+  const changeStyle = (filename: string | undefined, style: PathOptions) => {
     if (!filename) {
       return;
     }
