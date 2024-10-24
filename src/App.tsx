@@ -1,14 +1,8 @@
 import { useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
-import { MapContainer, GeoJSON, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import {
-  FeatureCollectionWithFilenameAndState,
-  useWorkspace,
-} from "./hooks/useWorkspace";
-import { Layers } from "lucide-react";
-import { LayerItem } from "./components/layer-item";
-import L from "leaflet";
+import { useWorkspace } from "./hooks/useWorkspace";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -18,6 +12,9 @@ import { NavBar } from "./components/navbar";
 // import { CoordsFinderDummy } from "./components/coordinates-getter";
 // import { Card } from "./components/ui/card";
 import { MapController } from "./components/map-controller";
+import { LayersContainer } from "./components/layers-container";
+import { FeatureCollectionWithFilenameAndState } from "./index.types";
+import { GeoJsonFeature } from "./components/geojson-feature";
 
 function App() {
   const [selectedFile, setSelectedFile] =
@@ -36,6 +33,7 @@ function App() {
   const {
     addFileToWorkspace,
     toggleVisibility,
+    toggleSelectedFile,
     changeStyle,
     removeFileFromWorkspace,
   } = useWorkspace({
@@ -49,10 +47,6 @@ function App() {
         addFileToWorkspace={addFileToWorkspace}
         geoJson={geoJson}
         setGeoJson={setGeoJson}
-        // handleFileUpload={handleFileUpload}
-        // isOpenPreview={isOpenPreview}
-        // loading={loading}
-        // setIsOpenPreview={setIsOpenPreview}
       />
 
       <ResizablePanelGroup
@@ -60,34 +54,16 @@ function App() {
         className="min-h-[200px] max-w-full rounded-lg border md:min-w-[450px]"
       >
         <ResizablePanel defaultSize={25}>
-          <div className="flex flex-col h-full items-center  p-6">
-            <div className=" mx-4 space-x-2 flex items-center">
-              <Layers />
-              <h2 className="text-2xl font-bold ">Layers</h2>
-            </div>
-
-            <LayerItem
-              state={isTileLayer}
-              setState={setIsTileLayer}
-              filename="OpenStreetMap TileLayer"
-              removeFileFromWorkspace={removeFileFromWorkspace}
-              changeStyle={changeStyle}
-              setSelectedFile={setSelectedFile}
-            />
-
-            {workspace.length > 0 &&
-              workspace.map((file, index) => (
-                <LayerItem
-                  key={index}
-                  state={file.visible}
-                  setState={() => toggleVisibility(file.fileName)}
-                  featureCollection={file}
-                  removeFileFromWorkspace={removeFileFromWorkspace}
-                  changeStyle={changeStyle}
-                  setSelectedFile={setSelectedFile}
-                />
-              ))}
-          </div>
+          <LayersContainer
+            isTileLayer={isTileLayer}
+            setIsTileLayer={setIsTileLayer}
+            setSelectedFile={setSelectedFile}
+            changeStyle={changeStyle}
+            removeFileFromWorkspace={removeFileFromWorkspace}
+            toggleVisibility={toggleVisibility}
+            workspace={workspace}
+            toggleSelected={toggleSelectedFile}
+          />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={75}>
@@ -107,26 +83,7 @@ function App() {
                 />
               )}
 
-              {workspace &&
-                workspace
-                  .filter((file) => file.visible) // Only show visible layers
-                  .map((geoJson, index) => (
-                    <GeoJSON
-                      key={`${geoJson.fileName}_${index}`}
-                      style={geoJson.style}
-                      data={geoJson}
-                      eventHandlers={{
-                        click: () => {
-                          console.log(geoJson.features[0].properties);
-                        },
-                      }}
-                      // attribution="a polygon"
-                      pointToLayer={function (_geoJsonPoint, latlng) {
-                        // console.log(geoJsonPoint.properties);
-                        return L.circleMarker(latlng);
-                      }}
-                    ></GeoJSON>
-                  ))}
+              {workspace && <GeoJsonFeature featureCollection={workspace} />}
 
               {/* </LayerGroup> */}
             </MapContainer>
@@ -134,8 +91,8 @@ function App() {
         </ResizablePanel>
       </ResizablePanelGroup>
       {/* <Card>
-        <p>{`lat: ${onHoverCoord?.lat} lng: ${onHoverCoord?.lng}`}</p>
-      </Card> */}
+      <p>{`lat: ${onHoverCoord?.lat} lng: ${onHoverCoord?.lng}`}</p>
+    </Card> */}
     </div>
   );
 }

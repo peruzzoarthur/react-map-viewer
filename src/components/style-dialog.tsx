@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FeatureCollectionWithFilenameAndState } from "@/hooks/useWorkspace";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -17,15 +16,20 @@ import { Separator } from "./ui/separator";
 import { Input } from "./ui/input";
 import { PathOptions } from "leaflet";
 import { getRandomColor } from "@/lib/utils";
+import { FeatureCollectionWithFilenameAndState } from "@/index.types";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
   changeStyle: (filename: string | undefined, style: PathOptions) => void;
+  isStyleDialogOpen: boolean;
+  setIsStyleDialogOpen: React.Dispatch<boolean>;
 };
 
 export const StyleDialog = ({
   featureCollection,
   changeStyle,
+  isStyleDialogOpen,
+  setIsStyleDialogOpen,
 }: StyleDialogProps) => {
   const style = featureCollection.style;
 
@@ -36,7 +40,7 @@ export const StyleDialog = ({
   );
 
   return (
-    <Dialog>
+    <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
       <DialogTrigger className="w-full text-left">Style</DialogTrigger>
       <DialogContent className="flex flex-col w-auto justify-center z-[1400]">
         <DialogHeader>
@@ -81,14 +85,15 @@ export const StyleDialog = ({
         </main>
         <DialogFooter>
           <Button
-            onClick={() =>
+            onClick={() => {
               changeStyle(featureCollection.fileName, {
                 color: color,
                 stroke: style.stroke ?? true,
                 fillOpacity: fillOpacity ?? 1,
                 weight: style.weight ?? 2,
-              })
-            }
+              });
+              // setIsStyleDialogOpen(false);
+            }}
           >
             Apply
           </Button>

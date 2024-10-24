@@ -1,20 +1,19 @@
 import { Circle, Eye, EyeClosed, Spline, Square } from "lucide-react";
 import { Button } from "./ui/button";
-
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { FeatureCollectionWithFilenameAndState } from "@/hooks/useWorkspace";
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { TableOfContent } from "./table-of-content";
 import { StyleDialog } from "./style-dialog";
 import { PathOptions } from "leaflet";
+import { FeatureCollectionWithFilenameAndState } from "@/index.types";
 
 type LayerItemProps = {
-  state: boolean;
-  setState: React.Dispatch<boolean>;
+  isVisible: boolean;
+  setIsVisible: React.Dispatch<boolean>;
   featureCollection?: FeatureCollectionWithFilenameAndState;
   filename?: string;
   removeFileFromWorkspace: (filename: string | undefined) => void;
@@ -22,16 +21,26 @@ type LayerItemProps = {
   setSelectedFile: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
+  isStyleDialogOpen: boolean;
+  setIsStyleDialogOpen: React.Dispatch<boolean>;
+  isTableOfContentOpen: boolean;
+  setIsTableOfContentOpen: React.Dispatch<boolean>;
+  toggleSelected: (filename: string | undefined) => void;
 };
 
 export const LayerItem = ({
-  setState,
-  state,
+  isVisible,
+  setIsVisible,
   featureCollection,
   filename,
   removeFileFromWorkspace,
   changeStyle,
   setSelectedFile,
+  isStyleDialogOpen,
+  setIsStyleDialogOpen,
+  isTableOfContentOpen,
+  setIsTableOfContentOpen,
+  toggleSelected,
 }: LayerItemProps) => {
   if (!filename) {
     filename = featureCollection?.fileName;
@@ -41,22 +50,19 @@ export const LayerItem = ({
 
   return (
     <div className="flex items-center space-x-1 cursor-pointer">
-      {state ? (
-        <Button variant="ghost" onClick={() => setState(false)}>
+      {isVisible ? (
+        <Button variant="ghost" onClick={() => setIsVisible(false)}>
           <Eye />
         </Button>
       ) : (
-        <Button variant="ghost" onClick={() => setState(true)}>
+        <Button variant="ghost" onClick={() => setIsVisible(true)}>
           <EyeClosed />
         </Button>
       )}
 
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button
-            variant="ghost"
-            className="flex space-x-1 hover:bg-white hover:bg-opacity-0"
-          >
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <div className="flex space-x-1 hover:bg-white hover:bg-opacity-0">
             <p>{filename}</p>
             {geometryType === "Polygon" && (
               <Square style={{ stroke: featureCollection?.style.color }} />
@@ -67,32 +73,41 @@ export const LayerItem = ({
             {geometryType === "Point" && (
               <Circle style={{ stroke: featureCollection?.style.color }} />
             )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="z-[1000]">
-          <DropdownMenuItem
+          </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="z-[1000]">
+          <ContextMenuItem
             onClick={() => setSelectedFile(featureCollection ?? null)}
           >
             Zoom to layer
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            {featureCollection && (
-              <StyleDialog
-                featureCollection={featureCollection}
-                changeStyle={changeStyle}
-              />
-            )}
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            {featureCollection && (
-              <TableOfContent featureCollection={featureCollection} />
-            )}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => removeFileFromWorkspace(filename)}>
+          </ContextMenuItem>
+          <ContextMenuItem onSelect={() => setIsStyleDialogOpen(true)}>
+            Style
+          </ContextMenuItem>
+          <ContextMenuItem onSelect={() => setIsTableOfContentOpen(true)}>
+            Table of Content
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => removeFileFromWorkspace(filename)}>
             Remove from workspace
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      {isStyleDialogOpen && featureCollection && (
+        <StyleDialog
+          featureCollection={featureCollection}
+          changeStyle={changeStyle}
+          isStyleDialogOpen={isStyleDialogOpen}
+          setIsStyleDialogOpen={setIsStyleDialogOpen}
+        />
+      )}
+      {isTableOfContentOpen && featureCollection && (
+        <TableOfContent
+          featureCollection={featureCollection}
+          isTableOfContentOpen={isTableOfContentOpen}
+          setIsTableOfContentOpen={setIsTableOfContentOpen}
+          toggleSelected={toggleSelected}
+        />
+      )}
     </div>
   );
 };

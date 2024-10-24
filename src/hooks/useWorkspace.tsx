@@ -1,11 +1,6 @@
+import { FeatureCollectionWithFilenameAndState } from "@/index.types";
 import { PathOptions } from "leaflet";
 import { FeatureCollectionWithFilename } from "shpjs";
-
-export type FeatureCollectionWithFilenameAndState =
-  FeatureCollectionWithFilename & {
-    visible: boolean;
-    style: PathOptions;
-  };
 
 type UseWorkspaceProps = {
   workspace: FeatureCollectionWithFilenameAndState[];
@@ -30,9 +25,32 @@ export const useWorkspace = ({
       throw new Error(`File with filename "${file.fileName}" already exists.`);
     }
 
+    // Ensure the fileName is defined (either provide a default or validate its presence)
+    if (!file.fileName) {
+      throw new Error("The file must have a fileName.");
+    }
+
+    // Map over the features to add `style` and `selected` to each feature
+    const newFeatures = file.features.map((feature) => ({
+      ...feature,
+      style: {
+        color: color,
+        weight: 2,
+        opacity: 100,
+        stroke: true,
+        fillOpacity: 1,
+        fill: true,
+      },
+      selected: false,
+    }));
+
+    // Create the new file with updated features and required fields
     const newFile: FeatureCollectionWithFilenameAndState = {
       ...file,
+      fileName: file.fileName, // Ensure fileName is present and not undefined
+      features: newFeatures,
       visible: true,
+      selected: false,
       style: {
         color: color,
         weight: 2,
@@ -56,7 +74,16 @@ export const useWorkspace = ({
       )
     );
   };
-
+  const toggleSelectedFile = (filename: string | undefined) => {
+    if (!filename) {
+      return;
+    }
+    setWorkspace((prevWorkspace) =>
+      prevWorkspace.map((file) =>
+        file.fileName === filename ? { ...file, selected: !file.visible } : file
+      )
+    );
+  };
   const changeStyle = (filename: string | undefined, style: PathOptions) => {
     if (!filename) {
       return;
@@ -84,6 +111,7 @@ export const useWorkspace = ({
     workspace,
     addFileToWorkspace,
     toggleVisibility,
+    toggleSelectedFile,
     changeStyle,
     removeFileFromWorkspace,
   };

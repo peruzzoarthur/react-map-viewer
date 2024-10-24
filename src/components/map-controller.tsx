@@ -1,4 +1,4 @@
-import { FeatureCollectionWithFilenameAndState } from "@/hooks/useWorkspace";
+import { FeatureCollectionWithFilenameAndState } from "@/index.types";
 import { getBoundingBoxCenter } from "@/lib/utils";
 import { LatLngTuple } from "leaflet";
 import { FC, useEffect } from "react";
