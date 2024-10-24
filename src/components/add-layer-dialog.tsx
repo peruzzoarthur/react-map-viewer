@@ -12,36 +12,53 @@ import { Button } from "./ui/button";
 import { getRandomColor } from "@/lib/utils";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ScrollBar } from "./ui/scroll-area";
-import { FeatureCollectionWithFilename } from "shpjs";
+import shpjs, { FeatureCollectionWithFilename } from "shpjs";
+import { useState } from "react";
 
 type AddLayerProps = {
   geoJson: FeatureCollectionWithFilename | null;
-  handleFileUpload: (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => Promise<void>;
+
   addFileToWorkspace: (
     file: FeatureCollectionWithFilename,
     color: string
   ) => void;
-  setIsOpenPreview: React.Dispatch<React.SetStateAction<boolean>>;
-  loading: boolean;
-  isOpenPreview: boolean;
   setGeoJson: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilename | null>
   >;
+  isDialogOpen: boolean;
+  setIsDialogOpen: React.Dispatch<boolean>;
 };
 
-export const AddLayer = ({
+export const AddLayerDialog = ({
   geoJson,
   setGeoJson,
-  handleFileUpload,
   addFileToWorkspace,
-  setIsOpenPreview,
-  isOpenPreview,
-  loading,
+  isDialogOpen,
+  setIsDialogOpen,
 }: AddLayerProps) => {
+  const [isOpenPreview, setIsOpenPreview] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLoading(true);
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const geoJsonData = await shpjs(arrayBuffer);
+        setGeoJson(geoJsonData as FeatureCollectionWithFilename);
+        setIsOpenPreview(true);
+      } catch (error) {
+        console.error("Error parsing shapefile:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger className="flex w-full">
         Add file to workspace
       </DialogTrigger>

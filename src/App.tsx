@@ -1,5 +1,5 @@
 import { useState } from "react";
-import shpjs, { FeatureCollectionWithFilename } from "shpjs";
+import { FeatureCollectionWithFilename } from "shpjs";
 import { MapContainer, GeoJSON, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -28,7 +28,6 @@ function App() {
   const [geoJson, setGeoJson] = useState<FeatureCollectionWithFilename | null>(
     null
   );
-  const [loading, setLoading] = useState<boolean>(false);
   // const [onHoverCoord, setOnHoverCoord] = useState<{
   //   lat: number;
   //   lng: number;
@@ -44,37 +43,16 @@ function App() {
     setWorkspace,
   });
   const [isTileLayer, setIsTileLayer] = useState<boolean>(true);
-  const [isOpenPreview, setIsOpenPreview] = useState<boolean>(false);
-
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setLoading(true);
-      try {
-        const arrayBuffer = await file.arrayBuffer();
-        const geoJsonData = await shpjs(arrayBuffer);
-        setGeoJson(geoJsonData as FeatureCollectionWithFilename);
-        setIsOpenPreview(true);
-      } catch (error) {
-        console.error("Error parsing shapefile:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
   return (
     <div className="p-2 flex flex-col h-screen w-screen">
       <NavBar
         addFileToWorkspace={addFileToWorkspace}
         geoJson={geoJson}
         setGeoJson={setGeoJson}
-        handleFileUpload={handleFileUpload}
-        isOpenPreview={isOpenPreview}
-        loading={loading}
-        setIsOpenPreview={setIsOpenPreview}
+        // handleFileUpload={handleFileUpload}
+        // isOpenPreview={isOpenPreview}
+        // loading={loading}
+        // setIsOpenPreview={setIsOpenPreview}
       />
 
       <ResizablePanelGroup
@@ -142,7 +120,7 @@ function App() {
                           console.log(geoJson.features[0].properties);
                         },
                       }}
-                      attribution="a polygon"
+                      // attribution="a polygon"
                       pointToLayer={function (_geoJsonPoint, latlng) {
                         // console.log(geoJsonPoint.properties);
                         return L.circleMarker(latlng);
