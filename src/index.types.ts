@@ -14,6 +14,11 @@ export type FeatureCollectionWithFilenameAndState = {
   features: FeatureWithState[]; // Use the extended Feature type
   bbox?: BBox | undefined;
   visible: boolean;
-  style: PathOptions;
+  // style: PathOptions;
   selected: boolean;
+};
+
+export type Workspace = {
+  featureCollections: FeatureCollectionWithFilenameAndState[] | [];
+  updatedAt: number;
 };

@@ -20,7 +20,12 @@ import { FeatureCollectionWithFilenameAndState } from "@/index.types";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
-  changeStyle: (filename: string | undefined, style: PathOptions) => void;
+  // changeStyle: (filename: string | undefined, style: PathOptions) => void;
+  changeStyle: (
+    file: FeatureCollectionWithFilenameAndState,
+    style: PathOptions
+  ) => void;
+
   isStyleDialogOpen: boolean;
   setIsStyleDialogOpen: React.Dispatch<boolean>;
 };
@@ -31,7 +36,7 @@ export const StyleDialog = ({
   isStyleDialogOpen,
   setIsStyleDialogOpen,
 }: StyleDialogProps) => {
-  const style = featureCollection.style;
+  const style = featureCollection.features[0].style;
 
   const [isColorPicker, setIsColorPicker] = useState<boolean>(false);
   const [color, setColor] = useState<string>(style.color ?? getRandomColor());
@@ -86,7 +91,7 @@ export const StyleDialog = ({
         <DialogFooter>
           <Button
             onClick={() => {
-              changeStyle(featureCollection.fileName, {
+              changeStyle(featureCollection, {
                 color: color,
                 stroke: style.stroke ?? true,
                 fillOpacity: fillOpacity ?? 1,

@@ -2,6 +2,7 @@ import { FeatureCollectionWithFilenameAndState } from "@/index.types";
 import { LayerItem } from "./layer-item";
 import { Layers } from "lucide-react";
 import { useState } from "react";
+import { PathOptions } from "leaflet";
 
 type LayersContainerProps = {
   isTileLayer: boolean;
@@ -11,7 +12,11 @@ type LayersContainerProps = {
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
 
-  changeStyle: (filename: string | undefined, style: L.PathOptions) => void;
+  changeStyle: (
+    file: FeatureCollectionWithFilenameAndState,
+    style: PathOptions
+  ) => void;
+
   toggleVisibility: (filename: string | undefined) => void;
   removeFileFromWorkspace: (filename: string | undefined) => void;
   workspace: FeatureCollectionWithFilenameAndState[];

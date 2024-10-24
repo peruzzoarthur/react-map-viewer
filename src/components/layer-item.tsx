@@ -17,7 +17,12 @@ type LayerItemProps = {
   featureCollection?: FeatureCollectionWithFilenameAndState;
   filename?: string;
   removeFileFromWorkspace: (filename: string | undefined) => void;
-  changeStyle: (filename: string | undefined, style: PathOptions) => void;
+  // changeStyle: (filename: string | undefined, style: PathOptions) => void;
+  changeStyle: (
+    file: FeatureCollectionWithFilenameAndState,
+    style: PathOptions
+  ) => void;
+
   selectedFile: FeatureCollectionWithFilenameAndState | null;
   setSelectedFile: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
@@ -71,13 +76,19 @@ export const LayerItem = ({
               {filename}
             </p>
             {geometryType === "Polygon" && (
-              <Square style={{ stroke: featureCollection?.style.color }} />
+              <Square
+                style={{ stroke: featureCollection?.features[0].style.color }}
+              />
             )}
             {geometryType === "LineString" && (
-              <Spline style={{ stroke: featureCollection?.style.color }} />
+              <Spline
+                style={{ stroke: featureCollection?.features[0].style.color }}
+              />
             )}
             {geometryType === "Point" && (
-              <Circle style={{ stroke: featureCollection?.style.color }} />
+              <Circle
+                style={{ stroke: featureCollection?.features[0].style.color }}
+              />
             )}
           </div>
         </ContextMenuTrigger>

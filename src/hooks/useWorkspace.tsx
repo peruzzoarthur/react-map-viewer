@@ -31,35 +31,24 @@ export const useWorkspace = ({
       throw new Error("The file must have a fileName.");
     }
 
-    // Map over the features to add `style` and `selected` to each feature
     const newFeatures = file.features.map((feature) => ({
       ...feature,
-      style: {
-        color: getRandomColor(),
-        weight: 2,
-        opacity: 100,
-        stroke: true,
-        fillOpacity: 1,
-        // fill: true,
-      },
-      selected: false,
-    }));
-
-    // Create the new file with updated features and required fields
-    const newFile: FeatureCollectionWithFilenameAndState = {
-      ...file,
-      fileName: file.fileName, // Ensure fileName is present and not undefined
-      features: newFeatures,
-      visible: true,
-      selected: false,
       style: {
         color: color,
         weight: 2,
         opacity: 100,
         stroke: true,
         fillOpacity: 1,
-        fill: true,
       },
+      selected: false,
+    }));
+
+    const newFile: FeatureCollectionWithFilenameAndState = {
+      ...file,
+      fileName: file.fileName, // Ensure fileName is present and not undefined
+      features: newFeatures,
+      visible: true,
+      selected: false,
     };
 
     setWorkspace((prevWorkspace) => [...prevWorkspace, newFile]);
@@ -85,16 +74,35 @@ export const useWorkspace = ({
       )
     );
   };
-  const changeStyle = (filename: string | undefined, style: PathOptions) => {
-    if (!filename) {
+
+  const changeStyle = (
+    fileCollection: FeatureCollectionWithFilenameAndState,
+    style: PathOptions
+  ) => {
+    if (!fileCollection) {
       return;
     }
+
+    // Map over features and apply the new style
+    const newFeatures = fileCollection.features.map((feature) => ({
+      ...feature,
+      style: style,
+    }));
+
+    const updatedFile: FeatureCollectionWithFilenameAndState = {
+      ...fileCollection,
+      features: newFeatures,
+    };
+
     setWorkspace((prevWorkspace) =>
-      prevWorkspace.map((file) =>
-        file.fileName === filename ? { ...file, style: style } : file
+      prevWorkspace.map((workspaceFile) =>
+        workspaceFile.fileName === fileCollection.fileName
+          ? updatedFile
+          : workspaceFile
       )
     );
   };
+
   const removeFileFromWorkspace = (filename: string | undefined) => {
     if (!filename) {
       return;

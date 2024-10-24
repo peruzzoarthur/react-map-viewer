@@ -9,15 +9,18 @@ type GeoJsonFeatureProps = {
 };
 
 export const GeoJsonFeature = ({ featureCollection }: GeoJsonFeatureProps) => {
+  console.log("Rendering GeoJsonFeature with collection: ", featureCollection);
+
   return (
     <>
       {featureCollection
         .filter((file) => file.visible) // Only show visible layers
         .map((geoJson, index) => (
           <GeoJSON
-            key={`${geoJson.fileName}_${index}`}
+            key={`${geoJson.fileName}_${index}`} // Use updatedAt to force re-render
             style={function (geoJsonFeature) {
               const feature = geoJsonFeature as unknown as FeatureWithState;
+              console.log(feature.style);
               return feature.style;
             }}
             data={geoJson}
@@ -26,9 +29,7 @@ export const GeoJsonFeature = ({ featureCollection }: GeoJsonFeatureProps) => {
                 console.log(geoJson.features);
               },
             }}
-            // attribution="a polygon"
             pointToLayer={function (_geoJsonPoint, latlng) {
-              // console.log(geoJsonPoint.properties);
               return L.circleMarker(latlng);
             }}
           ></GeoJSON>
