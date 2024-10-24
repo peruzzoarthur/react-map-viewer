@@ -1,4 +1,7 @@
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import {
+  FeatureCollectionWithFilenameAndState,
+  FeatureWithState,
+} from "@/index.types";
 import { GeoJSON } from "react-leaflet";
 import L from "leaflet";
 type GeoJsonFeatureProps = {
@@ -13,11 +16,14 @@ export const GeoJsonFeature = ({ featureCollection }: GeoJsonFeatureProps) => {
         .map((geoJson, index) => (
           <GeoJSON
             key={`${geoJson.fileName}_${index}`}
-            style={geoJson.style}
+            style={function (geoJsonFeature) {
+              const feature = geoJsonFeature as unknown as FeatureWithState;
+              return feature.style;
+            }}
             data={geoJson}
             eventHandlers={{
               click: () => {
-                console.log(geoJson.features[0].properties);
+                console.log(geoJson.features);
               },
             }}
             // attribution="a polygon"

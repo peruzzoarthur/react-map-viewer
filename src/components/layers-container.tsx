@@ -6,6 +6,7 @@ import { useState } from "react";
 type LayersContainerProps = {
   isTileLayer: boolean;
   setIsTileLayer: React.Dispatch<boolean>;
+  selectedFile: FeatureCollectionWithFilenameAndState | null;
   setSelectedFile: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
@@ -20,6 +21,7 @@ type LayersContainerProps = {
 export const LayersContainer = ({
   isTileLayer,
   setIsTileLayer,
+  selectedFile,
   setSelectedFile,
   changeStyle,
   toggleVisibility,
@@ -50,6 +52,7 @@ export const LayersContainer = ({
           isTableOfContentOpen={isTableOfContentOpen}
           setIsTableOfContentOpen={setIsTableOfContentOpen}
           toggleSelected={toggleSelected}
+          selectedFile={selectedFile}
         />
 
         {workspace.length > 0 &&
@@ -67,6 +70,7 @@ export const LayersContainer = ({
               isTableOfContentOpen={isTableOfContentOpen}
               setIsTableOfContentOpen={setIsTableOfContentOpen}
               toggleSelected={toggleSelected}
+              selectedFile={selectedFile}
             />
           ))}
       </div>

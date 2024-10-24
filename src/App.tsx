@@ -11,7 +11,7 @@ import {
 import { NavBar } from "./components/navbar";
 // import { CoordsFinderDummy } from "./components/coordinates-getter";
 // import { Card } from "./components/ui/card";
-import { MapController } from "./components/map-controller";
+// import { MapController } from "./components/map-controller";
 import { LayersContainer } from "./components/layers-container";
 import { FeatureCollectionWithFilenameAndState } from "./index.types";
 import { GeoJsonFeature } from "./components/geojson-feature";
@@ -63,6 +63,7 @@ function App() {
             toggleVisibility={toggleVisibility}
             workspace={workspace}
             toggleSelected={toggleSelectedFile}
+            selectedFile={selectedFile}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
@@ -75,7 +76,7 @@ function App() {
               scrollWheelZoom={true}
             >
               {/* <CoordsFinderDummy setOnHoverCoord={setOnHoverCoord} /> */}
-              <MapController selectedFile={selectedFile} />
+              {/* <MapController selectedFile={selectedFile} /> */}
               {isTileLayer && (
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

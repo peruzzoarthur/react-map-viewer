@@ -1,4 +1,5 @@
 import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import { getRandomColor } from "@/lib/utils";
 import { PathOptions } from "leaflet";
 import { FeatureCollectionWithFilename } from "shpjs";
 
@@ -34,12 +35,12 @@ export const useWorkspace = ({
     const newFeatures = file.features.map((feature) => ({
       ...feature,
       style: {
-        color: color,
+        color: getRandomColor(),
         weight: 2,
         opacity: 100,
         stroke: true,
         fillOpacity: 1,
-        fill: true,
+        // fill: true,
       },
       selected: false,
     }));

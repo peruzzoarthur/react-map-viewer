@@ -18,6 +18,7 @@ type LayerItemProps = {
   filename?: string;
   removeFileFromWorkspace: (filename: string | undefined) => void;
   changeStyle: (filename: string | undefined, style: PathOptions) => void;
+  selectedFile: FeatureCollectionWithFilenameAndState | null;
   setSelectedFile: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
@@ -35,6 +36,7 @@ export const LayerItem = ({
   filename,
   removeFileFromWorkspace,
   changeStyle,
+  selectedFile,
   setSelectedFile,
   isStyleDialogOpen,
   setIsStyleDialogOpen,
@@ -63,7 +65,11 @@ export const LayerItem = ({
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="flex space-x-1 hover:bg-white hover:bg-opacity-0">
-            <p>{filename}</p>
+            <p
+              className={filename === selectedFile?.fileName ? "font-bold" : ""}
+            >
+              {filename}
+            </p>
             {geometryType === "Polygon" && (
               <Square style={{ stroke: featureCollection?.style.color }} />
             )}
@@ -76,15 +82,25 @@ export const LayerItem = ({
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="z-[1000]">
-          <ContextMenuItem
+          {/* <ContextMenuItem
             onClick={() => setSelectedFile(featureCollection ?? null)}
           >
             Zoom to layer
-          </ContextMenuItem>
-          <ContextMenuItem onSelect={() => setIsStyleDialogOpen(true)}>
+          </ContextMenuItem> */}
+          <ContextMenuItem
+            onSelect={() => {
+              setIsStyleDialogOpen(true);
+              setSelectedFile(featureCollection ?? null);
+            }}
+          >
             Style
           </ContextMenuItem>
-          <ContextMenuItem onSelect={() => setIsTableOfContentOpen(true)}>
+          <ContextMenuItem
+            onSelect={() => {
+              setIsTableOfContentOpen(true);
+              setSelectedFile(featureCollection ?? null);
+            }}
+          >
             Table of Content
           </ContextMenuItem>
           <ContextMenuItem onClick={() => removeFileFromWorkspace(filename)}>
