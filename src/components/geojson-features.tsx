@@ -9,8 +9,6 @@ type GeoJsonFeatureProps = {
 };
 
 export const GeoJsonFeatures = ({ featureCollection }: GeoJsonFeatureProps) => {
-  console.log("Rendering GeoJsonFeature with collection: ", featureCollection);
-
   return (
     <GeoJSON
       style={function (geoJsonFeature) {
@@ -25,7 +23,9 @@ export const GeoJsonFeatures = ({ featureCollection }: GeoJsonFeatureProps) => {
       //   },
       // }}
       pointToLayer={function (_geoJsonPoint, latlng) {
-        return L.circleMarker(latlng);
+        const marker = L.circleMarker(latlng);
+        // marker.setStyle({ fillColor: "green" });
+        return marker;
       }}
     ></GeoJSON>
   );

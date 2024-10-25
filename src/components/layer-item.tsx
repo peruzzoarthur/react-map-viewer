@@ -119,17 +119,17 @@ export const LayerItem = ({
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
-      {isStyleDialogOpen && featureCollection && (
+      {isStyleDialogOpen && selectedFile && (
         <StyleDialog
-          featureCollection={featureCollection}
+          featureCollection={selectedFile}
           changeStyle={changeStyle}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}
         />
       )}
-      {isTableOfContentOpen && featureCollection && (
+      {isTableOfContentOpen && selectedFile && (
         <TableOfContent
-          featureCollection={featureCollection}
+          featureCollection={selectedFile}
           isTableOfContentOpen={isTableOfContentOpen}
           setIsTableOfContentOpen={setIsTableOfContentOpen}
           toggleSelected={toggleSelected}
