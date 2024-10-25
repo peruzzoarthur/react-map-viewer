@@ -19,11 +19,11 @@ export const GeoJsonFeatures = ({ featureCollection }: GeoJsonFeatureProps) => {
         return feature.style;
       }}
       data={featureCollection}
-      eventHandlers={{
-        click: () => {
-          console.log(featureCollection.features);
-        },
-      }}
+      // eventHandlers={{
+      //   click: () => {
+      //     console.log(featureCollection.features);
+      //   },
+      // }}
       pointToLayer={function (_geoJsonPoint, latlng) {
         return L.circleMarker(latlng);
       }}

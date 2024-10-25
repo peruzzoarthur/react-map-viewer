@@ -1,5 +1,6 @@
 import { FeatureCollectionWithFilenameAndState } from "@/index.types";
 import { PathOptions } from "leaflet";
+import { useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 
 type UseWorkspaceProps = {
@@ -13,6 +14,9 @@ export const useWorkspace = ({
   workspace,
   setWorkspace,
 }: UseWorkspaceProps) => {
+  const [error, setError] = useState<string | null>(null);
+  const [isError, setIsError] = useState<boolean>(false);
+
   const addFileToWorkspace = (
     file: FeatureCollectionWithFilename,
     color: string
@@ -22,12 +26,18 @@ export const useWorkspace = ({
     );
 
     if (fileExists) {
-      throw new Error(`File with filename "${file.fileName}" already exists.`);
+      const errorMsg = `File with filename "${file.fileName}" already exists.`;
+      setError(errorMsg);
+      setIsError(true);
+      throw new Error(errorMsg);
     }
 
     // Ensure the fileName is defined (either provide a default or validate its presence)
     if (!file.fileName) {
-      throw new Error("The file must have a fileName.");
+      const errorMsg = "The file must have a fileName.";
+      setError(errorMsg);
+      setIsError(true);
+      throw new Error(errorMsg);
     }
 
     const newFeatures = file.features.map((feature) => ({
@@ -124,5 +134,9 @@ export const useWorkspace = ({
     toggleSelectedFile,
     changeStyle,
     removeFileFromWorkspace,
+    error,
+    setError,
+    isError,
+    setIsError,
   };
 };

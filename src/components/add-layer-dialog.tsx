@@ -14,6 +14,8 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ScrollBar } from "./ui/scroll-area";
 import shpjs, { FeatureCollectionWithFilename } from "shpjs";
 import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { XCircle } from "lucide-react";
 
 type AddLayerProps = {
   geoJson: FeatureCollectionWithFilename | null;
@@ -27,6 +29,10 @@ type AddLayerProps = {
   >;
   isDialogOpen: boolean;
   setIsDialogOpen: React.Dispatch<boolean>;
+  workspaceError: string | null;
+  setWorkspaceError: React.Dispatch<string | null>;
+  isWorkspaceError: boolean;
+  setIsWorkspaceError: React.Dispatch<boolean>;
 };
 
 export const AddLayerDialog = ({
@@ -35,6 +41,10 @@ export const AddLayerDialog = ({
   addFileToWorkspace,
   isDialogOpen,
   setIsDialogOpen,
+  workspaceError,
+  setWorkspaceError,
+  isWorkspaceError,
+  setIsWorkspaceError,
 }: AddLayerProps) => {
   const [isOpenPreview, setIsOpenPreview] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -62,7 +72,7 @@ export const AddLayerDialog = ({
       <DialogTrigger className="flex w-full">
         Add file to workspace
       </DialogTrigger>
-      <DialogContent className="z-[1400] w-[100vh] h-[80vh]">
+      <DialogContent className="z-[1400] w-[100vh] h-[80vh] p-4">
         <DialogHeader>
           <DialogTitle>Add file to layers</DialogTitle>
           <DialogDescription>
@@ -77,6 +87,24 @@ export const AddLayerDialog = ({
                 accept=".zip"
               />
             </div>
+            {isWorkspaceError && workspaceError && (
+              // <Badge className="w-full h-full" variant="destructive">
+              //   {workspaceError}
+              // </Badge>
+              <Alert
+                onClick={() => {
+                  setIsWorkspaceError(false);
+                  setWorkspaceError(null);
+                }}
+                variant="destructive"
+              >
+                <XCircle className="h-4 w-4" />
+                <AlertTitle className="font-bold">
+                  Error from workspace
+                </AlertTitle>
+                <AlertDescription>{workspaceError}</AlertDescription>
+              </Alert>
+            )}
           </div>
         </DialogHeader>
         <DialogFooter>

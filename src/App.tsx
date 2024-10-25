@@ -36,6 +36,10 @@ function App() {
     toggleSelectedFile,
     changeStyle,
     removeFileFromWorkspace,
+    error: workspaceError,
+    setError: setWorkspaceError,
+    isError: isWorkspaceError,
+    setIsError: setIsWorkspaceError,
   } = useWorkspace({
     workspace,
     setWorkspace,
@@ -47,6 +51,10 @@ function App() {
         addFileToWorkspace={addFileToWorkspace}
         geoJson={geoJson}
         setGeoJson={setGeoJson}
+        workspaceError={workspaceError}
+        setWorkspaceError={setWorkspaceError}
+        isWorkspaceError={isWorkspaceError}
+        setIsWorkspaceError={setIsWorkspaceError}
       />
 
       <ResizablePanelGroup
