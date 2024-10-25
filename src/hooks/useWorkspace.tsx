@@ -1,5 +1,4 @@
 import { FeatureCollectionWithFilenameAndState } from "@/index.types";
-import { getRandomColor } from "@/lib/utils";
 import { PathOptions } from "leaflet";
 import { FeatureCollectionWithFilename } from "shpjs";
 
@@ -49,6 +48,7 @@ export const useWorkspace = ({
       features: newFeatures,
       visible: true,
       selected: false,
+      updatedAt: Date.now(),
     };
 
     setWorkspace((prevWorkspace) => [...prevWorkspace, newFile]);
@@ -92,6 +92,7 @@ export const useWorkspace = ({
     const updatedFile: FeatureCollectionWithFilenameAndState = {
       ...fileCollection,
       features: newFeatures,
+      updatedAt: Date.now(),
     };
 
     setWorkspace((prevWorkspace) =>

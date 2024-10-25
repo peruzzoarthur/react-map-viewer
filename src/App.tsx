@@ -14,7 +14,7 @@ import { NavBar } from "./components/navbar";
 // import { MapController } from "./components/map-controller";
 import { LayersContainer } from "./components/layers-container";
 import { FeatureCollectionWithFilenameAndState } from "./index.types";
-import { GeoJsonFeature } from "./components/geojson-feature";
+import { GeoJsonWorkspace } from "./components/geojson-workspace";
 
 function App() {
   const [selectedFile, setSelectedFile] =
@@ -84,7 +84,7 @@ function App() {
                 />
               )}
 
-              {workspace && <GeoJsonFeature featureCollection={workspace} />}
+              {workspace && <GeoJsonWorkspace workspace={workspace} />}
 
               {/* </LayerGroup> */}
             </MapContainer>
