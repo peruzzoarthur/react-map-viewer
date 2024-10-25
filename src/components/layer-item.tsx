@@ -17,7 +17,6 @@ type LayerItemProps = {
   featureCollection?: FeatureCollectionWithFilenameAndState;
   filename?: string;
   removeFileFromWorkspace: (filename: string | undefined) => void;
-  // changeStyle: (filename: string | undefined, style: PathOptions) => void;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
     style: PathOptions

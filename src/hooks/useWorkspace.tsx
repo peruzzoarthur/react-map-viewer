@@ -59,6 +59,7 @@ export const useWorkspace = ({
       visible: true,
       selected: false,
       updatedAt: Date.now(),
+      position: workspace.length,
     };
 
     setWorkspace((prevWorkspace) => [...prevWorkspace, newFile]);

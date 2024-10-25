@@ -15,6 +15,7 @@ export type FeatureCollectionWithFilenameAndState = {
   // style: PathOptions;
   selected: boolean;
   updatedAt: number;
+  position: number;
 };
 
 export type Workspace = {
