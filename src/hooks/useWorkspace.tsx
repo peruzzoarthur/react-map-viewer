@@ -1,13 +1,14 @@
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import {
+  FeatureCollectionWithFilenameAndState,
+  Workspace,
+} from "@/index.types";
 import { PathOptions } from "leaflet";
 import { useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 
 type UseWorkspaceProps = {
-  workspace: FeatureCollectionWithFilenameAndState[];
-  setWorkspace: React.Dispatch<
-    React.SetStateAction<FeatureCollectionWithFilenameAndState[]>
-  >;
+  workspace: Workspace;
+  setWorkspace: React.Dispatch<React.SetStateAction<Workspace>>;
 };
 
 export const useWorkspace = ({
@@ -21,7 +22,7 @@ export const useWorkspace = ({
     file: FeatureCollectionWithFilename,
     color: string
   ) => {
-    const fileExists = workspace.some(
+    const fileExists = workspace.featureCollections.some(
       (workspaceFile) => workspaceFile.fileName === file.fileName
     );
 
@@ -59,31 +60,44 @@ export const useWorkspace = ({
       visible: true,
       selected: false,
       updatedAt: Date.now(),
-      position: workspace.length,
+      position: workspace.featureCollections.length,
     };
 
-    setWorkspace((prevWorkspace) => [...prevWorkspace, newFile]);
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: [...prevWorkspace.featureCollections, newFile],
+      updatedAt: Date.now(), // Update the timestamp if needed
+    }));
   };
 
   const toggleVisibility = (filename: string | undefined) => {
     if (!filename) {
       return;
     }
-    setWorkspace((prevWorkspace) =>
-      prevWorkspace.map((file) =>
+
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: prevWorkspace.featureCollections.map((file) =>
         file.fileName === filename ? { ...file, visible: !file.visible } : file
-      )
-    );
+      ),
+      updatedAt: Date.now(), // Optionally update the timestamp
+    }));
   };
+
   const toggleSelectedFile = (filename: string | undefined) => {
     if (!filename) {
       return;
     }
-    setWorkspace((prevWorkspace) =>
-      prevWorkspace.map((file) =>
-        file.fileName === filename ? { ...file, selected: !file.visible } : file
-      )
-    );
+
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: prevWorkspace.featureCollections.map((file) =>
+        file.fileName === filename
+          ? { ...file, selected: !file.selected }
+          : file
+      ),
+      updatedAt: Date.now(), // Optionally update the timestamp
+    }));
   };
 
   const changeStyle = (
@@ -106,13 +120,16 @@ export const useWorkspace = ({
       updatedAt: Date.now(),
     };
 
-    setWorkspace((prevWorkspace) =>
-      prevWorkspace.map((workspaceFile) =>
-        workspaceFile.fileName === fileCollection.fileName
-          ? updatedFile
-          : workspaceFile
-      )
-    );
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: prevWorkspace.featureCollections.map(
+        (workspaceFile) =>
+          workspaceFile.fileName === fileCollection.fileName
+            ? updatedFile
+            : workspaceFile
+      ),
+      updatedAt: Date.now(), // Update the timestamp for the entire workspace if necessary
+    }));
   };
 
   const removeFileFromWorkspace = (filename: string | undefined) => {
@@ -120,12 +137,12 @@ export const useWorkspace = ({
       return;
     }
 
-    setWorkspace((prevWorkspace) => {
-      const filteredWorkspace = prevWorkspace.filter(
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: prevWorkspace.featureCollections.filter(
         (f) => f.fileName !== filename
-      );
-      return [...filteredWorkspace];
-    });
+      ),
+    }));
   };
 
   return {

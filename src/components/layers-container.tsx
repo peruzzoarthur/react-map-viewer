@@ -1,4 +1,7 @@
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import {
+  FeatureCollectionWithFilenameAndState,
+  Workspace,
+} from "@/index.types";
 import { LayerItem } from "./layer-item";
 import { Layers } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +22,7 @@ type LayersContainerProps = {
 
   toggleVisibility: (filename: string | undefined) => void;
   removeFileFromWorkspace: (filename: string | undefined) => void;
-  workspace: FeatureCollectionWithFilenameAndState[];
+  workspace: Workspace;
   toggleSelected: (filename: string | undefined) => void;
 };
 
@@ -60,13 +63,13 @@ export const LayersContainer = ({
           selectedFile={selectedFile}
         />
 
-        {workspace.length > 0 &&
-          workspace.map((file, index) => (
+        {workspace.featureCollections.length > 0 &&
+          workspace.featureCollections.map((featureCollection, index) => (
             <LayerItem
               key={index}
-              isVisible={file.visible}
-              setIsVisible={() => toggleVisibility(file.fileName)}
-              featureCollection={file}
+              isVisible={featureCollection.visible}
+              setIsVisible={() => toggleVisibility(featureCollection.fileName)}
+              featureCollection={featureCollection}
               removeFileFromWorkspace={removeFileFromWorkspace}
               changeStyle={changeStyle}
               setSelectedFile={setSelectedFile}

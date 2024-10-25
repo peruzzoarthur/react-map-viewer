@@ -13,15 +13,19 @@ import { NavBar } from "./components/navbar";
 // import { Card } from "./components/ui/card";
 // import { MapController } from "./components/map-controller";
 import { LayersContainer } from "./components/layers-container";
-import { FeatureCollectionWithFilenameAndState } from "./index.types";
+import {
+  FeatureCollectionWithFilenameAndState,
+  Workspace,
+} from "./index.types";
 import { GeoJsonWorkspace } from "./components/geojson-workspace";
 
 function App() {
   const [selectedFile, setSelectedFile] =
     useState<FeatureCollectionWithFilenameAndState | null>(null);
-  const [workspace, setWorkspace] = useState<
-    FeatureCollectionWithFilenameAndState[]
-  >([]);
+  const [workspace, setWorkspace] = useState<Workspace>({
+    featureCollections: [],
+    updatedAt: Date.now(),
+  });
   const [geoJson, setGeoJson] = useState<FeatureCollectionWithFilename | null>(
     null
   );
@@ -92,7 +96,9 @@ function App() {
                 />
               )}
 
-              {workspace && <GeoJsonWorkspace workspace={workspace} />}
+              {workspace && workspace.featureCollections.length !== 0 && (
+                <GeoJsonWorkspace workspace={workspace} />
+              )}
 
               {/* </LayerGroup> */}
             </MapContainer>

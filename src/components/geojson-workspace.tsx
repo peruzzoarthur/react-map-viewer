@@ -1,12 +1,12 @@
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import { Workspace } from "@/index.types";
 import { GeoJsonFeatures } from "./geojson-features";
 
 type GeoJsonWorkspaceProps = {
-  workspace: FeatureCollectionWithFilenameAndState[];
+  workspace: Workspace;
 };
 
 export const GeoJsonWorkspace = ({ workspace }: GeoJsonWorkspaceProps) => {
-  return workspace
+  return workspace.featureCollections
     .filter((file) => file.visible) // Only show visible layers
     .map((featureCollection) => (
       <GeoJsonFeatures
