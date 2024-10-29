@@ -95,7 +95,6 @@ function App() {
                   url=" https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                 />
               )}
-
               {workspace && workspace.featureCollections.length !== 0 && (
                 <GeoJsonWorkspace workspace={workspace} />
               )}
