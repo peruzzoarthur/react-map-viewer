@@ -65,7 +65,7 @@ export const LayersContainer = ({
  
   return (
     <>
-    <div className="flex flex-col w-full h-full items-center  p-6">
+    <div className="flex flex-col w-full h-full items-center">
     <div className=" mx-4 space-x-2 flex items-center">
     <Layers />
     <h2 className="text-2xl font-bold ">Layers</h2>
@@ -88,7 +88,8 @@ export const LayersContainer = ({
 
     {layersList && layersList.length > 0 &&
           layersList.sort((a, b) => b.position - a.position).map((featureCollection, index) => (
-            <div 
+            <div
+              className="w-full"
               key={index}
               draggable
               onDragStart={() => (dragFeature.current = featureCollection.position)}
