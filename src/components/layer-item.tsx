@@ -15,13 +15,11 @@ type LayerItemProps = {
   isVisible: boolean;
   setIsVisible: React.Dispatch<boolean>;
   featureCollection?: FeatureCollectionWithFilenameAndState;
-  filename?: string;
   removeFileFromWorkspace: (filename: string | undefined) => void;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
     style: PathOptions,
   ) => void;
-
   selectedFile: FeatureCollectionWithFilenameAndState | null;
   setSelectedFile: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
@@ -37,7 +35,6 @@ export const LayerItem = ({
   isVisible,
   setIsVisible,
   featureCollection,
-  filename,
   removeFileFromWorkspace,
   changeStyle,
   selectedFile,
@@ -48,14 +45,12 @@ export const LayerItem = ({
   setIsTableOfContentOpen,
   toggleSelected,
 }: LayerItemProps) => {
-  if (!filename) {
-    filename = featureCollection?.fileName;
-  }
+  const filename = featureCollection?.fileName;
   const features = featureCollection?.features;
   const geometryType = features ? features[0].geometry.type : null;
 
   return (
-    <div className="flex items-center space-x-1 cursor-pointer">
+    <div className="flex w-full items-center space-x-1 cursor-pointer">
       {isVisible ? (
         <Button variant="ghost" onClick={() => setIsVisible(false)}>
           <Eye />
