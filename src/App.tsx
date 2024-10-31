@@ -67,7 +67,6 @@ function App() {
         className="min-h-[200px] max-w-full rounded-lg border md:min-w-[450px]"
       >
         <ResizablePanel defaultSize={25}>
-          {workspace && 
           <LayersContainer
             isTileLayer={isTileLayer}
             setIsTileLayer={setIsTileLayer}
@@ -80,7 +79,6 @@ function App() {
             selectedFile={selectedFile}
             setPosition={setPosition}
           />
-          }
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={75}>

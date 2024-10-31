@@ -14,7 +14,7 @@ type NavBarProps = {
 
   addFileToWorkspace: (
     file: FeatureCollectionWithFilename,
-    color: string
+    color: string,
   ) => void;
   workspaceError: string | null;
   setWorkspaceError: React.Dispatch<string | null>;
@@ -38,17 +38,15 @@ export const NavBar = ({
       <nav className="flex items-center justify-start w-full py-1">
         <Card className="flex w-full justify-between p-1 bg-opacity-10 bg-white ">
           <div>
-          <FileDropdown
-           
-          />
-          <VectorDropdown  setWorkspaceError={setWorkspaceError}
-            setIsWorkspaceError={setIsWorkspaceError}
-            setIsAddLayerDialogOpen={setIsAddLayerDialogOpen}
-            setGeoJson={setGeoJson}
+            <FileDropdown />
+            <VectorDropdown
+              setWorkspaceError={setWorkspaceError}
+              setIsWorkspaceError={setIsWorkspaceError}
+              setIsAddLayerDialogOpen={setIsAddLayerDialogOpen}
+              setGeoJson={setGeoJson}
             />
           </div>
           <ModeToggle />
-          
         </Card>
       </nav>
       {isAddLayerDialogOpen && (

@@ -3,10 +3,6 @@ import { BBox } from "geojson";
 import { LatLngTuple } from "leaflet";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
 enum Color {
   Purple = "#370665",
   Blue = "#35589A",
@@ -18,6 +14,11 @@ enum Color {
   Cyan = "#77CDFF",
   Emerald = "#41B3A2",
 }
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 export const getRandomColor = (): string => {
   const colors = Object.values(Color);
   const randomIndex = Math.floor(Math.random() * colors.length);

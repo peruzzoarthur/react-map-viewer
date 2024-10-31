@@ -97,7 +97,6 @@ export const StyleDialog = ({
                 fillOpacity: fillOpacity ?? 1,
                 weight: style.weight ?? 2,
               });
-              // setIsStyleDialogOpen(false);
             }}
           >
             Apply

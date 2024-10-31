@@ -69,8 +69,8 @@ export const LayersContainer = ({
   return (
     <>
       <div className="flex flex-col w-full h-full items-start">
-        <div className=" space-x-2 flex items-center p-4 bg-opacity-10 bg-white w-full">
-          <h2 className="text-lg font-bold ">Layers</h2>
+        <div className="justify-center space-x-2 flex items-center p-4 bg-opacity-10 bg-white w-full">
+          <h2 className="text-lg">Layers</h2>
           <Layers />
         </div>
         <Separator />
