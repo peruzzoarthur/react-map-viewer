@@ -27,7 +27,7 @@ function App() {
     updatedAt: Date.now(),
   });
   const [geoJson, setGeoJson] = useState<FeatureCollectionWithFilename | null>(
-    null
+    null,
   );
   // const [onHoverCoord, setOnHoverCoord] = useState<{
   //   lat: number;
@@ -40,6 +40,7 @@ function App() {
     toggleSelectedFile,
     changeStyle,
     removeFileFromWorkspace,
+    setPosition,
     error: workspaceError,
     setError: setWorkspaceError,
     isError: isWorkspaceError,
@@ -66,6 +67,7 @@ function App() {
         className="min-h-[200px] max-w-full rounded-lg border md:min-w-[450px]"
       >
         <ResizablePanel defaultSize={25}>
+          {workspace && 
           <LayersContainer
             isTileLayer={isTileLayer}
             setIsTileLayer={setIsTileLayer}
@@ -76,7 +78,9 @@ function App() {
             workspace={workspace}
             toggleSelected={toggleSelectedFile}
             selectedFile={selectedFile}
+            setPosition={setPosition}
           />
+          }
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={75}>

@@ -145,6 +145,35 @@ export const useWorkspace = ({
     }));
   };
 
+  
+  const setPosition = (fromIndex: number, toIndex: number) => {
+    if (
+      fromIndex < 0 ||
+      toIndex < 0 ||
+      fromIndex >= workspace.featureCollections.length ||
+      toIndex >= workspace.featureCollections.length
+    ) {
+      return;
+    }
+
+    const updatedFeatureCollections = [...workspace.featureCollections];
+    const [movedItem] = updatedFeatureCollections.splice(fromIndex, 1);
+    updatedFeatureCollections.splice(toIndex, 0, movedItem);
+
+    // Update positions after reordering
+    const reorderedFeatureCollections = updatedFeatureCollections.map(
+      (item, index) => ({
+        ...item,
+        position: index,
+      })
+    );
+
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: reorderedFeatureCollections,
+      updatedAt: Date.now(),
+    }));
+  };
   return {
     workspace,
     addFileToWorkspace,
@@ -152,6 +181,7 @@ export const useWorkspace = ({
     toggleSelectedFile,
     changeStyle,
     removeFileFromWorkspace,
+    setPosition,
     error,
     setError,
     isError,
