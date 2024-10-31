@@ -1,4 +1,4 @@
-import {  Eye, EyeClosed, Map } from "lucide-react";
+import { Eye, EyeClosed, Map } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   ContextMenu,
@@ -6,7 +6,6 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { TableOfContent } from "./table-of-content";
 import { StyleDialog } from "./style-dialog";
 import { PathOptions } from "leaflet";
 import { FeatureCollectionWithFilenameAndState } from "@/index.types";
@@ -16,7 +15,6 @@ type TileLayerProps = {
   setIsVisible: React.Dispatch<boolean>;
   featureCollection?: FeatureCollectionWithFilenameAndState;
   filename?: string;
-  removeFileFromWorkspace: (filename: string | undefined) => void;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
     style: PathOptions,
@@ -28,9 +26,6 @@ type TileLayerProps = {
   >;
   isStyleDialogOpen: boolean;
   setIsStyleDialogOpen: React.Dispatch<boolean>;
-  isTableOfContentOpen: boolean;
-  setIsTableOfContentOpen: React.Dispatch<boolean>;
-  toggleSelected: (filename: string | undefined) => void;
 };
 
 export const TileLayer = ({
@@ -38,21 +33,15 @@ export const TileLayer = ({
   setIsVisible,
   featureCollection,
   filename,
-  removeFileFromWorkspace,
   changeStyle,
   selectedFile,
   setSelectedFile,
   isStyleDialogOpen,
   setIsStyleDialogOpen,
-  isTableOfContentOpen,
-  setIsTableOfContentOpen,
-  toggleSelected,
 }: TileLayerProps) => {
   if (!filename) {
     filename = featureCollection?.fileName;
   }
-  const features = featureCollection?.features;
-  const geometryType = features ? features[0].geometry.type : null;
 
   return (
     <div className="flex w-full items-center space-x-1 cursor-pointer">
@@ -74,15 +63,10 @@ export const TileLayer = ({
             >
               {filename}
             </p>
-          <Map />  
+            <Map />
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="z-[1000]">
-          {/* <ContextMenuItem
-            onClick={() => setSelectedFile(featureCollection ?? null)}
-          >
-            Zoom to layer
-          </ContextMenuItem> */}
           <ContextMenuItem
             onSelect={() => {
               setIsStyleDialogOpen(true);
@@ -90,17 +74,6 @@ export const TileLayer = ({
             }}
           >
             Style
-          </ContextMenuItem>
-          <ContextMenuItem
-            onSelect={() => {
-              setIsTableOfContentOpen(true);
-              setSelectedFile(featureCollection ?? null);
-            }}
-          >
-            Table of Content
-          </ContextMenuItem>
-          <ContextMenuItem onClick={() => removeFileFromWorkspace(filename)}>
-            Remove from workspace
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
@@ -112,14 +85,6 @@ export const TileLayer = ({
           setIsStyleDialogOpen={setIsStyleDialogOpen}
         />
       )}
-      {isTableOfContentOpen && selectedFile && (
-        <TableOfContent
-          featureCollection={selectedFile}
-          isTableOfContentOpen={isTableOfContentOpen}
-          setIsTableOfContentOpen={setIsTableOfContentOpen}
-          toggleSelected={toggleSelected}
-        />
-      )}
     </div>
   );
-}
+};

@@ -115,14 +115,10 @@ export const LayersContainer = ({
           isVisible={isTileLayer}
           setIsVisible={setIsTileLayer}
           filename="OpenStreetMap TileLayer"
-          removeFileFromWorkspace={removeFileFromWorkspace}
           changeStyle={changeStyle}
           setSelectedFile={setSelectedFile}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}
-          isTableOfContentOpen={isTableOfContentOpen}
-          setIsTableOfContentOpen={setIsTableOfContentOpen}
-          toggleSelected={toggleSelected}
           selectedFile={selectedFile}
         />
       </div>
