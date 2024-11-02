@@ -60,6 +60,7 @@ function App() {
         setWorkspaceError={setWorkspaceError}
         isWorkspaceError={isWorkspaceError}
         setIsWorkspaceError={setIsWorkspaceError}
+        workspace={workspace}
       />
 
       <ResizablePanelGroup

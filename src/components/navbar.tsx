@@ -5,8 +5,10 @@ import { Card } from "./ui/card";
 import { useState } from "react";
 import { AddLayerDialog } from "./add-layer-dialog";
 import { VectorDropdown } from "./vector-dropdown";
+import { Workspace } from "@/index.types";
 
 type NavBarProps = {
+  workspace: Workspace
   geoJson: FeatureCollectionWithFilename | null;
   setGeoJson: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilename | null>
@@ -23,6 +25,7 @@ type NavBarProps = {
 };
 
 export const NavBar = ({
+  workspace,
   addFileToWorkspace,
   geoJson,
   setGeoJson,
@@ -38,7 +41,7 @@ export const NavBar = ({
       <nav className="flex items-center justify-start w-full py-1">
         <Card className="flex w-full justify-between p-1 bg-opacity-10 bg-white ">
           <div>
-            <FileDropdown />
+            <FileDropdown workspace={workspace} />
             <VectorDropdown
               setWorkspaceError={setWorkspaceError}
               setIsWorkspaceError={setIsWorkspaceError}
