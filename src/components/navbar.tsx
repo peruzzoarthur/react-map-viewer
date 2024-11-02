@@ -6,9 +6,11 @@ import { useState } from "react";
 import { AddLayerDialog } from "./add-layer-dialog";
 import { VectorDropdown } from "./vector-dropdown";
 import { Workspace } from "@/index.types";
+import { LoadWorkspaceDialog } from "./load-worspace-dialog";
 
 type NavBarProps = {
-  workspace: Workspace
+  workspace: Workspace;
+  setWorkspace: React.Dispatch<Workspace>;
   geoJson: FeatureCollectionWithFilename | null;
   setGeoJson: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilename | null>
@@ -26,6 +28,7 @@ type NavBarProps = {
 
 export const NavBar = ({
   workspace,
+  setWorkspace,
   addFileToWorkspace,
   geoJson,
   setGeoJson,
@@ -36,12 +39,20 @@ export const NavBar = ({
 }: NavBarProps) => {
   const [isAddLayerDialogOpen, setIsAddLayerDialogOpen] =
     useState<boolean>(false);
+  const [isLoadWorkspaceDialogOpen, setIsLoadWorkspaceDialogOpen] =
+    useState<boolean>(false);
   return (
     <>
       <nav className="flex items-center justify-start w-full py-1">
         <Card className="flex w-full justify-between p-1 bg-opacity-10 bg-white ">
           <div>
-            <FileDropdown workspace={workspace} />
+            <FileDropdown
+              workspace={workspace}
+              setIsWorkspaceError={setIsWorkspaceError}
+              setWorkspaceError={setWorkspaceError}
+              setIsLoadWorkspaceDialogOpen={setIsLoadWorkspaceDialogOpen}
+              setWorkspace={setWorkspace}
+            />
             <VectorDropdown
               setWorkspaceError={setWorkspaceError}
               setIsWorkspaceError={setIsWorkspaceError}
@@ -63,6 +74,17 @@ export const NavBar = ({
           setWorkspaceError={setWorkspaceError}
           isWorkspaceError={isWorkspaceError}
           setIsWorkspaceError={setIsWorkspaceError}
+        />
+      )}
+      {isLoadWorkspaceDialogOpen && (
+        <LoadWorkspaceDialog
+          setWorkspace={setWorkspace}
+          setWorkspaceError={setWorkspaceError}
+          setIsWorkspaceError={setIsWorkspaceError}
+          isWorkspaceError={isWorkspaceError}
+         isDialogOpen={isLoadWorkspaceDialogOpen} 
+          workspaceError={workspaceError}
+          setIsDialogOpen={setIsLoadWorkspaceDialogOpen}
         />
       )}
     </>

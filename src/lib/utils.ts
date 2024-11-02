@@ -45,7 +45,7 @@ export const saveWorkspace = async (workspace: Workspace) => {
   try {
     const json = JSON.stringify(workspace, null, 2);
     const blob = new Blob([json], { type: "application/json" });
-    saveAs(blob, "workspace.json");
+    saveAs(blob, `${workspace.name}.json`);
   } catch (error) {
     console.error("Failed to save workspace:", error);
   }

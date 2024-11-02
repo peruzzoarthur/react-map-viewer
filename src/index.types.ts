@@ -21,4 +21,5 @@ export type FeatureCollectionWithFilenameAndState = {
 export type Workspace = {
   featureCollections: FeatureCollectionWithFilenameAndState[] | [];
   updatedAt: number;
+  name: string
 };

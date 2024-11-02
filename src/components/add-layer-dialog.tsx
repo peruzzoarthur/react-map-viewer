@@ -19,7 +19,6 @@ import { XCircle } from "lucide-react";
 
 type AddLayerProps = {
   geoJson: FeatureCollectionWithFilename | null;
-
   addFileToWorkspace: (
     file: FeatureCollectionWithFilename,
     color: string

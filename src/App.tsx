@@ -18,13 +18,17 @@ import {
   Workspace,
 } from "./index.types";
 import { GeoJsonWorkspace } from "./components/geojson-workspace";
+import { faker } from '@faker-js/faker';
 
 function App() {
+  const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`
+  console.log(randomProjectName)
   const [selectedFile, setSelectedFile] =
     useState<FeatureCollectionWithFilenameAndState | null>(null);
   const [workspace, setWorkspace] = useState<Workspace>({
     featureCollections: [],
     updatedAt: Date.now(),
+    name: randomProjectName ?? "my-project"
   });
   const [geoJson, setGeoJson] = useState<FeatureCollectionWithFilename | null>(
     null,
@@ -61,6 +65,7 @@ function App() {
         isWorkspaceError={isWorkspaceError}
         setIsWorkspaceError={setIsWorkspaceError}
         workspace={workspace}
+        setWorkspace={setWorkspace}
       />
 
       <ResizablePanelGroup
