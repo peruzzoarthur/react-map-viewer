@@ -22,7 +22,6 @@ import { faker } from '@faker-js/faker';
 
 function App() {
   const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`
-  console.log(randomProjectName)
   const [selectedFile, setSelectedFile] =
     useState<FeatureCollectionWithFilenameAndState | null>(null);
   const [workspace, setWorkspace] = useState<Workspace>({

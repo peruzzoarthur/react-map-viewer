@@ -82,7 +82,7 @@ export const NavBar = ({
           setWorkspaceError={setWorkspaceError}
           setIsWorkspaceError={setIsWorkspaceError}
           isWorkspaceError={isWorkspaceError}
-         isDialogOpen={isLoadWorkspaceDialogOpen} 
+          isDialogOpen={isLoadWorkspaceDialogOpen}
           workspaceError={workspaceError}
           setIsDialogOpen={setIsLoadWorkspaceDialogOpen}
         />

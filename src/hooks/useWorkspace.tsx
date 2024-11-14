@@ -20,10 +20,10 @@ export const useWorkspace = ({
 
   const addFileToWorkspace = (
     file: FeatureCollectionWithFilename,
-    color: string
+    color: string,
   ) => {
     const fileExists = workspace.featureCollections.some(
-      (workspaceFile) => workspaceFile.fileName === file.fileName
+      (workspaceFile) => workspaceFile.fileName === file.fileName,
     );
 
     if (fileExists) {
@@ -41,17 +41,24 @@ export const useWorkspace = ({
       throw new Error(errorMsg);
     }
 
-    const newFeatures = file.features.map((feature) => ({
-      ...feature,
-      style: {
-        color: color,
-        weight: 2,
-        opacity: 100,
-        stroke: true,
-        fillOpacity: 1,
-      },
-      selected: false,
-    }));
+    const newFeatures = file.features.map((feature) => {
+      const fill =
+        feature.geometry.type === "LineString" ||
+        feature.geometry.type === "MultiLineString" ? false : true
+      return {
+        ...feature,
+        style: {
+          fill: fill,
+          color: color,
+          fillColor: color,
+          weight: 2,
+          opacity: 100,
+          stroke: true,
+          fillOpacity: 1,
+        },
+        selected: false,
+      };
+    });
 
     const newFile: FeatureCollectionWithFilenameAndState = {
       ...file,
@@ -78,7 +85,7 @@ export const useWorkspace = ({
     setWorkspace((prevWorkspace) => ({
       ...prevWorkspace,
       featureCollections: prevWorkspace.featureCollections.map((file) =>
-        file.fileName === filename ? { ...file, visible: !file.visible } : file
+        file.fileName === filename ? { ...file, visible: !file.visible } : file,
       ),
       updatedAt: Date.now(), // Optionally update the timestamp
     }));
@@ -94,7 +101,7 @@ export const useWorkspace = ({
       featureCollections: prevWorkspace.featureCollections.map((file) =>
         file.fileName === filename
           ? { ...file, selected: !file.selected }
-          : file
+          : file,
       ),
       updatedAt: Date.now(), // Optionally update the timestamp
     }));
@@ -102,7 +109,7 @@ export const useWorkspace = ({
 
   const changeStyle = (
     fileCollection: FeatureCollectionWithFilenameAndState,
-    style: PathOptions
+    style: PathOptions,
   ) => {
     if (!fileCollection) {
       return;
@@ -126,7 +133,7 @@ export const useWorkspace = ({
         (workspaceFile) =>
           workspaceFile.fileName === fileCollection.fileName
             ? updatedFile
-            : workspaceFile
+            : workspaceFile,
       ),
       updatedAt: Date.now(), // Update the timestamp for the entire workspace if necessary
     }));
@@ -140,12 +147,11 @@ export const useWorkspace = ({
     setWorkspace((prevWorkspace) => ({
       ...prevWorkspace,
       featureCollections: prevWorkspace.featureCollections.filter(
-        (f) => f.fileName !== filename
+        (f) => f.fileName !== filename,
       ),
     }));
   };
 
-  
   const setPosition = (fromIndex: number, toIndex: number) => {
     if (
       fromIndex < 0 ||
@@ -165,7 +171,7 @@ export const useWorkspace = ({
       (item, index) => ({
         ...item,
         position: index,
-      })
+      }),
     );
 
     setWorkspace((prevWorkspace) => ({
