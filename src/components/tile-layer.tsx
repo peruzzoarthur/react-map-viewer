@@ -7,8 +7,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { StyleDialog } from "./style-dialog";
-import { PathOptions } from "leaflet";
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import { FeatureCollectionWithFilenameAndState, PathOptionsWithPointAttributes } from "@/index.types";
 
 type TileLayerProps = {
   isVisible: boolean;
@@ -17,7 +16,7 @@ type TileLayerProps = {
   filename?: string;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
-    style: PathOptions,
+    style: PathOptionsWithPointAttributes,
   ) => void;
 
   selectedFile: FeatureCollectionWithFilenameAndState | null;

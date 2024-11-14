@@ -13,9 +13,11 @@ import { Button } from "./ui/button";
 import { ColorPicker } from "./color-picker";
 import { Separator } from "./ui/separator";
 import { Input } from "./ui/input";
-import { PathOptions } from "leaflet";
 import { getRandomColor } from "@/lib/utils";
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import {
+  FeatureCollectionWithFilenameAndState,
+  PathOptionsWithPointAttributes,
+} from "@/index.types";
 import { Switch } from "./ui/switch";
 
 type StyleDialogProps = {
@@ -23,7 +25,7 @@ type StyleDialogProps = {
   // changeStyle: (filename: string | undefined, style: PathOptions) => void;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
-    style: PathOptions,
+    style: PathOptionsWithPointAttributes,
   ) => void;
 
   isStyleDialogOpen: boolean;
@@ -36,6 +38,7 @@ export const StyleDialog = ({
   isStyleDialogOpen,
   setIsStyleDialogOpen,
 }: StyleDialogProps) => {
+  // later loop over features to have multiple styling (pallete for example)
   const style = featureCollection.features[0].style;
 
   const [isFill, setIsFill] = useState<boolean>(style.fill ?? true);
@@ -55,7 +58,11 @@ export const StyleDialog = ({
   );
   const [strokeWeight, setStrokeWeight] = useState<number>(style.weight ?? 2);
 
-  console.log(style)
+  const [pointSize, setPointSize] = useState<number | undefined>(
+    style.pointSize,
+  );
+
+  console.log(style);
   return (
     <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
       <DialogTrigger className="w-full text-left">Style</DialogTrigger>
@@ -129,7 +136,9 @@ export const StyleDialog = ({
             </h3>
             {/* Is Stroke? */}
             <div className="grid grid-cols-2 items-center p-2">
-              <label className="text-sm" htmlFor="is-stroke">Stroke</label>
+              <label className="text-sm" htmlFor="is-stroke">
+                Stroke
+              </label>
               <Switch checked={isStroke} onCheckedChange={setIsStroke} />
             </div>
 
@@ -155,7 +164,9 @@ export const StyleDialog = ({
             </div>
 
             <div className="grid grid-cols-2 items-center p-2">
-              <label className="text-sm" htmlFor="stroke-weight">Weight:</label>
+              <label className="text-sm" htmlFor="stroke-weight">
+                Weight:
+              </label>
               <Input
                 id="stroke-weight"
                 className="w-auto"
@@ -169,6 +180,35 @@ export const StyleDialog = ({
               />
             </div>
           </section>
+
+          {featureCollection.features[0].geometry.type === "Point" && (
+            <>
+              <Separator />
+
+              <section aria-labelledby="stroke-section" className="mb-2 mt-2">
+                <h3 id="stroke-section" className="text-sm font-semibold">
+                  Point Style
+                </h3>
+
+                <div className="grid grid-cols-2 items-center p-2">
+                  <label className="text-sm" htmlFor="stroke-weight">
+                    Radius
+                  </label>
+                  <Input
+                    id="stroke-weight"
+                    className="w-auto"
+                    step={1}
+                    type="number"
+                    min={0}
+                    defaultValue={pointSize}
+                    onChange={(event) =>
+                      setPointSize(Number(event.target.value))
+                    }
+                  />
+                </div>
+              </section>
+            </>
+          )}
         </main>
 
         <DialogFooter>
@@ -181,6 +221,7 @@ export const StyleDialog = ({
                 fillColor: fillColor,
                 fill: isFill,
                 fillOpacity: fillOpacity ?? 1,
+                pointSize: pointSize,
               });
             }}
           >
@@ -191,3 +232,4 @@ export const StyleDialog = ({
     </Dialog>
   );
 };
+

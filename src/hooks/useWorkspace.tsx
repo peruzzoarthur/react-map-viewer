@@ -1,8 +1,8 @@
 import {
   FeatureCollectionWithFilenameAndState,
+  PathOptionsWithPointAttributes,
   Workspace,
 } from "@/index.types";
-import { PathOptions } from "leaflet";
 import { useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 
@@ -55,6 +55,7 @@ export const useWorkspace = ({
           opacity: 100,
           stroke: true,
           fillOpacity: 1,
+          pointSize: 5
         },
         selected: false,
       };
@@ -109,7 +110,7 @@ export const useWorkspace = ({
 
   const changeStyle = (
     fileCollection: FeatureCollectionWithFilenameAndState,
-    style: PathOptions,
+    style: PathOptionsWithPointAttributes,
   ) => {
     if (!fileCollection) {
       return;

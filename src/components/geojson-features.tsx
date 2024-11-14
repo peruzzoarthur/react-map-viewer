@@ -35,8 +35,12 @@ export const GeoJsonFeatures = ({ featureCollection }: GeoJsonFeatureProps) => {
           return feature.style;
         }}
         data={featureCollection}
-        pointToLayer={(_geoJsonPoint, latlng) => {
-          const marker = L.circleMarker(latlng, { radius: 5, pane: paneName });
+        pointToLayer={(geoJsonPoint, latlng) => {
+          const featureWithState = geoJsonPoint as FeatureWithState;
+          const marker = L.circleMarker(latlng, {
+            radius: featureWithState.style.pointSize ?? 5,
+            pane: paneName,
+          });
           return marker;
         }}
       />

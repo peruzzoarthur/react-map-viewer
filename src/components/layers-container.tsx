@@ -1,11 +1,11 @@
 import {
   FeatureCollectionWithFilenameAndState,
+  PathOptionsWithPointAttributes,
   Workspace,
 } from "@/index.types";
 import { LayerItem } from "./layer-item";
 import { Layers } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { PathOptions } from "leaflet";
 import { TileLayer } from "./tile-layer";
 import { Separator } from "./ui/separator";
 type LayersContainerProps = {
@@ -18,7 +18,7 @@ type LayersContainerProps = {
 
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
-    style: PathOptions,
+    style: PathOptionsWithPointAttributes,
   ) => void;
 
   toggleVisibility: (filename: string | undefined) => void;

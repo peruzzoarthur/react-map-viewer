@@ -8,8 +8,7 @@ import {
 } from "@/components/ui/context-menu";
 import { TableOfContent } from "./table-of-content";
 import { StyleDialog } from "./style-dialog";
-import { PathOptions } from "leaflet";
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import { FeatureCollectionWithFilenameAndState, PathOptionsWithPointAttributes } from "@/index.types";
 
 type LayerItemProps = {
   isVisible: boolean;
@@ -18,7 +17,7 @@ type LayerItemProps = {
   removeFileFromWorkspace: (filename: string | undefined) => void;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
-    style: PathOptions,
+    style: PathOptionsWithPointAttributes,
   ) => void;
   selectedFile: FeatureCollectionWithFilenameAndState | null;
   setSelectedFile: React.Dispatch<

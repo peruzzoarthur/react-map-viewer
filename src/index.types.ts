@@ -1,8 +1,11 @@
 import { Feature, Geometry, GeoJsonProperties, BBox } from "geojson";
 import { PathOptions } from "leaflet";
 
+export type PathOptionsWithPointAttributes = PathOptions & {
+  pointSize: number | undefined
+}
 export type FeatureWithState = Feature<Geometry, GeoJsonProperties> & {
-  style: PathOptions;
+  style: PathOptionsWithPointAttributes;
   selected: boolean;
 };
 
