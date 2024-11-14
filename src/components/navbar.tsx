@@ -6,7 +6,7 @@ import { useState } from "react";
 import { AddLayerDialog } from "./add-layer-dialog";
 import { VectorDropdown } from "./vector-dropdown";
 import { Workspace } from "@/index.types";
-import { LoadWorkspaceDialog } from "./load-worspace-dialog";
+import { LoadWorkspaceDialog } from "./load-worskpace-dialog";
 
 type NavBarProps = {
   workspace: Workspace;

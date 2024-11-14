@@ -64,11 +64,11 @@ export const StyleDialog = ({
 
   console.log(style);
   return (
-    <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
+    <Dialog  open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
       <DialogTrigger className="w-full text-left">Style</DialogTrigger>
-      <DialogContent className="flex flex-col w-auto justify-center z-[1400]">
+      <DialogContent className="flex flex-col w-2/5 h-2/3 justify-center z-[1400]">
         <DialogHeader>
-          <DialogTitle>Style</DialogTitle>
+          <DialogTitle>Style layer</DialogTitle>
           <DialogDescription>
             {`change the style of '${featureCollection.fileName}' here`}
           </DialogDescription>
@@ -88,43 +88,49 @@ export const StyleDialog = ({
               <Switch checked={isFill} onCheckedChange={setIsFill} />
             </div>
 
-            {/* Color Property */}
-            <div className="grid grid-cols-2 p-2 items-center">
-              <label htmlFor="fill-color" className="text-sm">
-                Color
-              </label>
-              {isFillColorPicker ? (
-                <ColorPicker
-                  color={fillColor}
-                  setColor={setFillColor}
-                  setIsColorPicker={setIsFillColorPicker}
-                />
-              ) : (
-                <Button
-                  onClick={() => setIsFillColorPicker(true)}
-                  className="rounded-none w-auto h-6"
-                  id="fill-color"
-                  style={{ backgroundColor: fillColor }}
-                />
-              )}
-            </div>
+            {isFill && (
+              <>
+                {/* Color Property */}
+                <div className="grid grid-cols-2 p-2 items-center">
+                  <label htmlFor="fill-color" className="text-sm">
+                    Color
+                  </label>
+                  {isFillColorPicker ? (
+                    <ColorPicker
+                      color={fillColor}
+                      setColor={setFillColor}
+                      setIsColorPicker={setIsFillColorPicker}
+                    />
+                  ) : (
+                    <Button
+                      onClick={() => setIsFillColorPicker(true)}
+                      className="rounded-none w-auto h-6"
+                      id="fill-color"
+                      style={{ backgroundColor: fillColor }}
+                    />
+                  )}
+                </div>
 
-            {/* Opacity Property */}
-            <div className="grid grid-cols-2 items-center p-2">
-              <label className="text-sm" htmlFor="fill-opacity">
-                Opacity:
-              </label>
-              <Input
-                id="fill-opacity"
-                className="w-auto"
-                type="number"
-                max={1}
-                min={0}
-                step={0.1}
-                defaultValue={fillOpacity}
-                onChange={(event) => setFillOpacity(Number(event.target.value))}
-              />
-            </div>
+                {/* Opacity Property */}
+                <div className="grid grid-cols-2 items-center p-2">
+                  <label className="text-sm" htmlFor="fill-opacity">
+                    Opacity:
+                  </label>
+                  <Input
+                    id="fill-opacity"
+                    className="w-auto"
+                    type="number"
+                    max={1}
+                    min={0}
+                    step={0.1}
+                    defaultValue={fillOpacity}
+                    onChange={(event) =>
+                      setFillOpacity(Number(event.target.value))
+                    }
+                  />
+                </div>
+              </>
+            )}
           </section>
 
           {/* Separator */}
@@ -142,43 +148,47 @@ export const StyleDialog = ({
               <Switch checked={isStroke} onCheckedChange={setIsStroke} />
             </div>
 
-            {/* Color Property */}
-            <div className="grid grid-cols-2 p-2 items-center">
-              <label htmlFor="fill-color" className="text-sm">
-                Color
-              </label>
-              {isStrokeColorPicker ? (
-                <ColorPicker
-                  color={strokeColor}
-                  setColor={setStrokeColor}
-                  setIsColorPicker={setIsStrokeColorPicker}
-                />
-              ) : (
-                <Button
-                  onClick={() => setIsStrokeColorPicker(true)}
-                  className="rounded-none w-auto h-6"
-                  id="stroke-color"
-                  style={{ backgroundColor: strokeColor }}
-                />
-              )}
-            </div>
+            {isStroke && (
+              <>
+                {/* Color Property */}
+                <div className="grid grid-cols-2 p-2 items-center">
+                  <label htmlFor="fill-color" className="text-sm">
+                    Color
+                  </label>
+                  {isStrokeColorPicker ? (
+                    <ColorPicker
+                      color={strokeColor}
+                      setColor={setStrokeColor}
+                      setIsColorPicker={setIsStrokeColorPicker}
+                    />
+                  ) : (
+                    <Button
+                      onClick={() => setIsStrokeColorPicker(true)}
+                      className="rounded-none w-auto h-6"
+                      id="stroke-color"
+                      style={{ backgroundColor: strokeColor }}
+                    />
+                  )}
+                </div>
 
-            <div className="grid grid-cols-2 items-center p-2">
-              <label className="text-sm" htmlFor="stroke-weight">
-                Weight:
-              </label>
-              <Input
-                id="stroke-weight"
-                className="w-auto"
-                step={0.5}
-                type="number"
-                min={0}
-                defaultValue={strokeWeight}
-                onChange={(event) =>
-                  setStrokeWeight(Number(event.target.value))
-                }
-              />
-            </div>
+                <div className="grid grid-cols-2 items-center p-2">
+                  <label className="text-sm" htmlFor="stroke-weight">
+                    Weight:
+                  </label>
+                  <Input
+                    id="stroke-weight"
+                    className="w-auto"
+                    step={0.5}
+                    type="number"
+                    min={0}
+                    defaultValue={strokeWeight}
+                    onChange={(event) =>
+                      setStrokeWeight(Number(event.target.value))
+                    }
+                  />
+                </div>
+              </>
+            )}
           </section>
 
           {featureCollection.features[0].geometry.type === "Point" && (
@@ -232,4 +242,3 @@ export const StyleDialog = ({
     </Dialog>
   );
 };
-
