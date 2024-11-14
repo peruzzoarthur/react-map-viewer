@@ -105,7 +105,6 @@ function App() {
               {workspace && workspace.featureCollections.length !== 0 && (
                 <GeoJsonWorkspace workspace={workspace} />
               )}
-
               {/* </LayerGroup> */}
             </MapContainer>
           </div>
