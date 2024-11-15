@@ -14,17 +14,17 @@ export const ColorPicker = ({
   setIsColorPicker,
 }: ColorPickerProps) => {
   return (
-    <div className="flex flex-col">
+      <div className="flex flex-col justify-end items-end">
       {setIsColorPicker && (
         <Button
           onClick={() => setIsColorPicker(false)}
           variant="ghost"
-          className="hover:bg-opacity-0 hover:bg-white justify-end"
+          className="hover:bg-opacity-0 hover:bg-white"
         >
           <X />
         </Button>
       )}
-      <HexColorPicker color={color} onChange={setColor} />
+        <HexColorPicker color={color} onChange={setColor} />
       <HexColorInput
         className="text-white"
         style={{ backgroundColor: "#020817" }}
