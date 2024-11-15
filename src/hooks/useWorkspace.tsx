@@ -181,6 +181,9 @@ export const useWorkspace = ({
       updatedAt: Date.now(),
     }));
   };
+  const changeWorkspaceName = (name: string) => {
+    setWorkspace((prevWorkspace) => ({...prevWorkspace, name: name})) 
+  }
   return {
     workspace,
     addFileToWorkspace,
@@ -193,5 +196,6 @@ export const useWorkspace = ({
     setError,
     isError,
     setIsError,
+    changeWorkspaceName
   };
 };

@@ -19,6 +19,7 @@ import {
 } from "./index.types";
 import { GeoJsonWorkspace } from "./components/geojson-workspace";
 import { faker } from '@faker-js/faker';
+import { ProjectBar } from "./components/project-bar";
 
 function App() {
   const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`
@@ -48,6 +49,7 @@ function App() {
     setError: setWorkspaceError,
     isError: isWorkspaceError,
     setIsError: setIsWorkspaceError,
+    changeWorkspaceName
   } = useWorkspace({
     workspace,
     setWorkspace,
@@ -66,7 +68,7 @@ function App() {
         workspace={workspace}
         setWorkspace={setWorkspace}
       />
-
+      <ProjectBar workspace={workspace} changeWorkspaceName={changeWorkspaceName}/>
       <ResizablePanelGroup
         direction="horizontal"
         className="min-h-[200px] max-w-full rounded-lg border md:min-w-[450px]"
