@@ -22,6 +22,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import { GeoJSON } from "react-leaflet";
+import FitLayer from "./fit-layer";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
@@ -67,16 +68,16 @@ export const StyleDialog = ({
   return (
     <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
       <DialogTrigger className="w-full text-left">Style</DialogTrigger>
-      <DialogContent className="flex flex-col w-auto h-2/3 stify-center z-[1400]">
-        <ScrollArea className="h-full w-full p-2 rounded-md">
+      <DialogContent className="flex flex-col w-[60vw] h-[80vh] stify-center z-[1400]">
+        <ScrollArea className="h-full w-full justify-center items-center p-2 rounded-md">
           <DialogHeader>
             <DialogTitle>Style layer</DialogTitle>
             <DialogDescription>
               <p>{`change the style of ${filename}`}</p>
             </DialogDescription>
           </DialogHeader>
-          <div className="flex space-x-4">
-            <main className="flex flex-col">
+          <div className="flex justify-center items-center space-x-4">
+            <main className="flex flex-col w-3/5">
               {/* Fill Section */}
               <section aria-labelledby="fill-section" className="mt-2 mb-2">
                 <h3 id="fill-section" className="text-sm font-semibold">
@@ -88,7 +89,7 @@ export const StyleDialog = ({
                   <label className="text-sm" htmlFor="is-fill">
                     Fill
                   </label>
-                  <Switch checked={isFill} onCheckedChange={setIsFill} />
+                  <Switch className="justify-self-end" checked={isFill} onCheckedChange={setIsFill} />
                 </div>
 
                 {isFill && (
@@ -148,7 +149,7 @@ export const StyleDialog = ({
                   <label className="text-sm" htmlFor="is-stroke">
                     Stroke
                   </label>
-                  <Switch checked={isStroke} onCheckedChange={setIsStroke} />
+                  <Switch className="justify-self-end" checked={isStroke} onCheckedChange={setIsStroke} />
                 </div>
 
                 {isStroke && (
@@ -237,6 +238,7 @@ export const StyleDialog = ({
                       fillOpacity: fillOpacity ?? 1,
                       pointSize: pointSize,
                     });
+                    setIsStyleDialogOpen(false)
                   }}
                 >
                   Apply
@@ -245,18 +247,17 @@ export const StyleDialog = ({
             </main>
 
             <Separator orientation="vertical" />
+
+            {/* Preview layer */}
             <MapContainer
-              className="h-[60vh] w-[60vh] z-80"
-              center={[-31.75955334256868, -52.34488136477589]}
-              zoom={11}
-              scrollWheelZoom={true}
+              className="h-[60vh] w-full z-80"
+              scrollWheelZoom={false}
             >
-              {/* <CoordsFinderDummy setOnHoverCoord={setOnHoverCoord} /> */}
-              {/* <MapController selectedFile={selectedFile} /> */}
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url=" https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               />
+              <FitLayer layerData={featureCollection} />
               <GeoJSON
                 style={{
                   stroke: isStroke,
@@ -274,8 +275,6 @@ export const StyleDialog = ({
                   return marker;
                 }}
               />
-
-              {/* </LayerGroup> */}
             </MapContainer>
           </div>
         </ScrollArea>

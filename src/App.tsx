@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -18,17 +18,17 @@ import {
   Workspace,
 } from "./index.types";
 import { GeoJsonWorkspace } from "./components/geojson-workspace";
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 import { ProjectBar } from "./components/project-bar";
 
 function App() {
-  const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`
+  const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`;
   const [selectedFile, setSelectedFile] =
     useState<FeatureCollectionWithFilenameAndState | null>(null);
   const [workspace, setWorkspace] = useState<Workspace>({
     featureCollections: [],
     updatedAt: Date.now(),
-    name: randomProjectName ?? "my-project"
+    name: randomProjectName ?? "my-project",
   });
   const [geoJson, setGeoJson] = useState<FeatureCollectionWithFilename | null>(
     null,
@@ -49,7 +49,7 @@ function App() {
     setError: setWorkspaceError,
     isError: isWorkspaceError,
     setIsError: setIsWorkspaceError,
-    changeWorkspaceName
+    changeWorkspaceName,
   } = useWorkspace({
     workspace,
     setWorkspace,
@@ -68,12 +68,15 @@ function App() {
         workspace={workspace}
         setWorkspace={setWorkspace}
       />
-      <ProjectBar workspace={workspace} changeWorkspaceName={changeWorkspaceName}/>
+      <ProjectBar
+        workspace={workspace}
+        changeWorkspaceName={changeWorkspaceName}
+      />
       <ResizablePanelGroup
         direction="horizontal"
         className="min-h-[200px] max-w-full rounded-lg border md:min-w-[450px]"
       >
-        <ResizablePanel defaultSize={25}>
+        <ResizablePanel defaultSize={30}>
           <LayersContainer
             isTileLayer={isTileLayer}
             setIsTileLayer={setIsTileLayer}
@@ -88,7 +91,7 @@ function App() {
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={75}>
+        <ResizablePanel defaultSize={70}>
           <div className="flex h-full w-full items-center justify-center p-6">
             <MapContainer
               className="h-[90vh] w-full z-80"

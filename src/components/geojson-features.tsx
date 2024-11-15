@@ -20,10 +20,8 @@ export const GeoJsonFeatures = ({ featureCollection }: GeoJsonFeatureProps) => {
 
   useEffect(() => {
     setPaneName(featureCollection.fileName ?? uuid4());
-
     setShowLayer(false);
     const timeout = setTimeout(() => setShowLayer(true), 0);
-
     return () => clearTimeout(timeout);
   }, [zIndex, featureCollection.fileName]);
 

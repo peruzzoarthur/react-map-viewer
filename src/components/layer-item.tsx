@@ -8,7 +8,10 @@ import {
 } from "@/components/ui/context-menu";
 import { TableOfContent } from "./table-of-content";
 import { StyleDialog } from "./style-dialog";
-import { FeatureCollectionWithFilenameAndState, PathOptionsWithPointAttributes } from "@/index.types";
+import {
+  FeatureCollectionWithFilenameAndState,
+  PathOptionsWithPointAttributes,
+} from "@/index.types";
 
 type LayerItemProps = {
   isVisible: boolean;
@@ -47,13 +50,11 @@ export const LayerItem = ({
   const filename = featureCollection?.fileName;
   const features = featureCollection?.features;
   const geometryType = features ? features[0].geometry.type : null;
-  const color = featureCollection?.features[0].style.color
-  const fillColor = featureCollection?.features[0].style.fillColor
-  const fillOpacity = featureCollection?.features[0].style.fillOpacity
-  const isFill =   featureCollection?.features[0].style.fill
+  const color = featureCollection?.features[0].style.color;
+  const fillColor = featureCollection?.features[0].style.fillColor;
+  const fillOpacity = featureCollection?.features[0].style.fillOpacity;
+  const isFill = featureCollection?.features[0].style.fill;
 
-
-  console.log(isFill)
   return (
     <div className="flex w-full items-center space-x-1 cursor-pointer">
       {isVisible ? (
@@ -76,28 +77,37 @@ export const LayerItem = ({
             </p>
             {geometryType === "Polygon" && (
               <Square
-                style={{ stroke: color, strokeOpacity: 1,fill: isFill ? fillColor : undefined, fillOpacity: fillOpacity}}
+                style={{
+                  stroke: color,
+                  strokeOpacity: 1,
+                  fill: isFill ? fillColor : undefined,
+                  fillOpacity: fillOpacity,
+                }}
               />
             )}
             {geometryType === "LineString" && (
               <Spline
-                style={{ stroke: color, strokeOpacity: 1,fill: isFill ? fillColor : undefined, fillOpacity: fillOpacity}}
+                style={{
+                  stroke: color,
+                  strokeOpacity: 1,
+                  fill: isFill ? fillColor : undefined,
+                  fillOpacity: fillOpacity,
+                }}
               />
             )}
             {geometryType === "Point" && (
               <Circle
-                style={{ stroke: color, strokeOpacity: 1, fill: isFill ? fillColor : undefined, fillOpacity: fillOpacity}}
-
+                style={{
+                  stroke: color,
+                  strokeOpacity: 1,
+                  fill: isFill ? fillColor : undefined,
+                  fillOpacity: fillOpacity,
+                }}
               />
             )}
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="z-[1000]">
-          {/* <ContextMenuItem
-            onClick={() => setSelectedFile(featureCollection ?? null)}
-          >
-            Zoom to layer
-          </ContextMenuItem> */}
           <ContextMenuItem
             onSelect={() => {
               setIsStyleDialogOpen(true);
