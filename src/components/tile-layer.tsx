@@ -19,8 +19,8 @@ type TileLayerProps = {
     style: PathOptionsWithPointAttributes,
   ) => void;
 
-  selectedFile: FeatureCollectionWithFilenameAndState | null;
-  setSelectedFile: React.Dispatch<
+  selectedLayer: FeatureCollectionWithFilenameAndState | null;
+  setSelectedLayer: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
   isStyleDialogOpen: boolean;
@@ -33,8 +33,8 @@ export const TileLayer = ({
   featureCollection,
   filename,
   changeStyle,
-  selectedFile,
-  setSelectedFile,
+  selectedLayer,
+  setSelectedLayer,
   isStyleDialogOpen,
   setIsStyleDialogOpen,
 }: TileLayerProps) => {
@@ -58,7 +58,7 @@ export const TileLayer = ({
         <ContextMenuTrigger>
           <div className="flex space-x-1 hover:bg-white hover:bg-opacity-0">
             <p
-              className={filename === selectedFile?.fileName ? "font-bold" : ""}
+              className={filename === selectedLayer?.fileName ? "font-bold" : ""}
             >
               {filename}
             </p>
@@ -69,16 +69,16 @@ export const TileLayer = ({
           <ContextMenuItem
             onSelect={() => {
               setIsStyleDialogOpen(true);
-              setSelectedFile(featureCollection ?? null);
+              setSelectedLayer(featureCollection ?? null);
             }}
           >
             Style
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
-      {isStyleDialogOpen && selectedFile && (
+      {isStyleDialogOpen && selectedLayer && (
         <StyleDialog
-          featureCollection={selectedFile}
+          featureCollection={selectedLayer}
           changeStyle={changeStyle}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}

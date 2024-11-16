@@ -12,6 +12,7 @@ import {
   FeatureCollectionWithFilenameAndState,
   PathOptionsWithPointAttributes,
 } from "@/index.types";
+import { ZoomToLayerRef } from "./zoom-to-layer";
 
 type LayerItemProps = {
   isVisible: boolean;
@@ -22,8 +23,8 @@ type LayerItemProps = {
     file: FeatureCollectionWithFilenameAndState,
     style: PathOptionsWithPointAttributes,
   ) => void;
-  selectedFile: FeatureCollectionWithFilenameAndState | null;
-  setSelectedFile: React.Dispatch<
+  selectedLayer: FeatureCollectionWithFilenameAndState | null;
+  setSelectedLayer: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
   isStyleDialogOpen: boolean;
@@ -31,6 +32,7 @@ type LayerItemProps = {
   isTableOfContentOpen: boolean;
   setIsTableOfContentOpen: React.Dispatch<boolean>;
   toggleSelected: (filename: string | undefined) => void;
+  zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null>;
 };
 
 export const LayerItem = ({
@@ -39,24 +41,27 @@ export const LayerItem = ({
   featureCollection,
   removeFileFromWorkspace,
   changeStyle,
-  selectedFile,
-  setSelectedFile,
+  selectedLayer,
+  setSelectedLayer,
   isStyleDialogOpen,
   setIsStyleDialogOpen,
   isTableOfContentOpen,
   setIsTableOfContentOpen,
   toggleSelected,
+  zoomToLayerRef,
 }: LayerItemProps) => {
   const filename = featureCollection?.fileName;
   const features = featureCollection?.features;
   const geometryType = features ? features[0].geometry.type : null;
   const color = featureCollection?.features[0].style.color;
+  const strokeOpacity = featureCollection?.features[0].style.opacity
+  const width = featureCollection?.features[0].style.weight;
   const fillColor = featureCollection?.features[0].style.fillColor;
   const fillOpacity = featureCollection?.features[0].style.fillOpacity;
   const isFill = featureCollection?.features[0].style.fill;
 
   return (
-    <div className="flex w-full items-center space-x-1 cursor-pointer">
+    <>
       {isVisible ? (
         <Button variant="ghost" onClick={() => setIsVisible(false)}>
           <Eye />
@@ -68,10 +73,12 @@ export const LayerItem = ({
       )}
 
       <ContextMenu>
-        <ContextMenuTrigger>
-          <div className="flex space-x-1 hover:bg-white hover:bg-opacity-0">
-            <p
-              className={filename === selectedFile?.fileName ? "font-bold" : ""}
+        <ContextMenuTrigger className="flex w-full justify-start space-x-1">
+          <>
+          <p
+              className={
+                filename === selectedLayer?.fileName ? "font-bold" : ""
+              }
             >
               {filename}
             </p>
@@ -79,7 +86,8 @@ export const LayerItem = ({
               <Square
                 style={{
                   stroke: color,
-                  strokeOpacity: 1,
+                  strokeOpacity: strokeOpacity,
+                  strokeWidth: width,
                   fill: isFill ? fillColor : undefined,
                   fillOpacity: fillOpacity,
                 }}
@@ -89,7 +97,8 @@ export const LayerItem = ({
               <Spline
                 style={{
                   stroke: color,
-                  strokeOpacity: 1,
+                  strokeOpacity: strokeOpacity,
+                  strokeWidth: width,
                   fill: isFill ? fillColor : undefined,
                   fillOpacity: fillOpacity,
                 }}
@@ -99,19 +108,30 @@ export const LayerItem = ({
               <Circle
                 style={{
                   stroke: color,
-                  strokeOpacity: 1,
+                  strokeOpacity: strokeOpacity,
+                  strokeWidth: width,
                   fill: isFill ? fillColor : undefined,
                   fillOpacity: fillOpacity,
                 }}
               />
             )}
-          </div>
+          </>
         </ContextMenuTrigger>
         <ContextMenuContent className="z-[1000]">
           <ContextMenuItem
+            onClick={async () => {
+              if (zoomToLayerRef.current && featureCollection) {
+                zoomToLayerRef.current.fitLayerBounds(featureCollection);
+              }
+            }}
+          >
+            Zoom to layer
+          </ContextMenuItem>
+
+          <ContextMenuItem
             onSelect={() => {
               setIsStyleDialogOpen(true);
-              setSelectedFile(featureCollection ?? null);
+              setSelectedLayer(featureCollection ?? null);
             }}
           >
             Style
@@ -119,7 +139,7 @@ export const LayerItem = ({
           <ContextMenuItem
             onSelect={() => {
               setIsTableOfContentOpen(true);
-              setSelectedFile(featureCollection ?? null);
+              setSelectedLayer(featureCollection ?? null);
             }}
           >
             Table of Content
@@ -129,22 +149,22 @@ export const LayerItem = ({
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
-      {isStyleDialogOpen && selectedFile && (
+      {isStyleDialogOpen && selectedLayer && (
         <StyleDialog
-          featureCollection={selectedFile}
+          featureCollection={selectedLayer}
           changeStyle={changeStyle}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}
         />
       )}
-      {isTableOfContentOpen && selectedFile && (
+      {isTableOfContentOpen && selectedLayer && (
         <TableOfContent
-          featureCollection={selectedFile}
+          featureCollection={selectedLayer}
           isTableOfContentOpen={isTableOfContentOpen}
           setIsTableOfContentOpen={setIsTableOfContentOpen}
           toggleSelected={toggleSelected}
         />
       )}
-    </div>
+    </>
   );
 };

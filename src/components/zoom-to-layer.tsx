@@ -1,26 +1,26 @@
+import { useMap } from "react-leaflet";
 import * as L from "leaflet";
+import { forwardRef, useImperativeHandle } from "react";
 import { FeatureCollectionWithFilenameAndState } from "@/index.types";
-import { ContextMenuItem } from "@radix-ui/react-context-menu";
 
-type ZoomToLayerProps = {
-  featureCollection: FeatureCollectionWithFilenameAndState | undefined
-  mapInstance: L.Map
-}
-const ZoomToLayer = ({ featureCollection, mapInstance }: ZoomToLayerProps) => {
-  const handleZoomToLayer = () => {
-    if (featureCollection && mapInstance) {
-      const layer = L.geoJSON(featureCollection);
-      const bounds = layer.getBounds();
-      mapInstance.fitBounds(bounds);
-    }
-  };
-
-  return (
-    <ContextMenuItem onClick={handleZoomToLayer}>
-      Zoom to layer
-    </ContextMenuItem>
-  );
+export type ZoomToLayerRef = {
+  fitLayerBounds: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+  ) => void;
 };
 
-export default ZoomToLayer;
+export const ZoomToLayer = forwardRef(({ }, ref) => {
+  const map = useMap();
 
+  useImperativeHandle(ref, () => ({
+    fitLayerBounds: (
+      featureCollection: FeatureCollectionWithFilenameAndState,
+    ) => {
+      const layer = L.geoJSON(featureCollection);
+      const bounds = layer.getBounds();
+      map.fitBounds(bounds);
+    },
+  }));
+
+  return null;
+});

@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import {  useRef, useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -20,10 +20,13 @@ import {
 import { GeoJsonWorkspace } from "./components/geojson-workspace";
 import { faker } from "@faker-js/faker";
 import { ProjectBar } from "./components/project-bar";
+import { ZoomToLayer, ZoomToLayerRef } from "./components/zoom-to-layer";
+
+
 
 function App() {
   const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`;
-  const [selectedFile, setSelectedFile] =
+  const [selectedLayer, setSelectedLayer] =
     useState<FeatureCollectionWithFilenameAndState | null>(null);
   const [workspace, setWorkspace] = useState<Workspace>({
     featureCollections: [],
@@ -55,6 +58,7 @@ function App() {
     setWorkspace,
   });
   const [isTileLayer, setIsTileLayer] = useState<boolean>(true);
+  const zoomToLayerRef = useRef<ZoomToLayerRef | null>(null)
   return (
     <div className="p-2 flex flex-col h-screen w-screen">
       <NavBar
@@ -80,14 +84,15 @@ function App() {
           <LayersContainer
             isTileLayer={isTileLayer}
             setIsTileLayer={setIsTileLayer}
-            setSelectedFile={setSelectedFile}
+            setSelectedLayer={setSelectedLayer}
             changeStyle={changeStyle}
             removeFileFromWorkspace={removeFileFromWorkspace}
             toggleVisibility={toggleVisibility}
             workspace={workspace}
             toggleSelected={toggleSelectedFile}
-            selectedFile={selectedFile}
+            selectedLayer={selectedLayer}
             setPosition={setPosition}
+            zoomToLayerRef={zoomToLayerRef}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
@@ -100,13 +105,15 @@ function App() {
               scrollWheelZoom={true}
             >
               {/* <CoordsFinderDummy setOnHoverCoord={setOnHoverCoord} /> */}
-              {/* <MapController selectedFile={selectedFile} /> */}
+              {/* <MapController selectedLayer={selectedLayer} /> */}
               {isTileLayer && (
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url=" https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                 />
               )}
+
+              <ZoomToLayer ref={zoomToLayerRef}/>
               {workspace && workspace.featureCollections.length !== 0 && (
                 <GeoJsonWorkspace workspace={workspace} />
               )}

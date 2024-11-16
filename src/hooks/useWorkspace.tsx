@@ -44,7 +44,9 @@ export const useWorkspace = ({
     const newFeatures = file.features.map((feature) => {
       const fill =
         feature.geometry.type === "LineString" ||
-        feature.geometry.type === "MultiLineString" ? false : true
+          feature.geometry.type === "MultiLineString"
+          ? false
+          : true;
       return {
         ...feature,
         style: {
@@ -52,10 +54,10 @@ export const useWorkspace = ({
           color: color,
           fillColor: color,
           weight: 2,
-          opacity: 100,
+          opacity: 1,
           stroke: true,
           fillOpacity: 1,
-          pointSize: 5
+          pointSize: 5,
         },
         selected: false,
       };
@@ -63,7 +65,7 @@ export const useWorkspace = ({
 
     const newFile: FeatureCollectionWithFilenameAndState = {
       ...file,
-      fileName: file.fileName, // Ensure fileName is present and not undefined
+      fileName: file.fileName,
       features: newFeatures,
       visible: true,
       selected: false,
@@ -74,7 +76,7 @@ export const useWorkspace = ({
     setWorkspace((prevWorkspace) => ({
       ...prevWorkspace,
       featureCollections: [...prevWorkspace.featureCollections, newFile],
-      updatedAt: Date.now(), // Update the timestamp if needed
+      updatedAt: Date.now(),
     }));
   };
 
@@ -182,8 +184,8 @@ export const useWorkspace = ({
     }));
   };
   const changeWorkspaceName = (name: string) => {
-    setWorkspace((prevWorkspace) => ({...prevWorkspace, name: name})) 
-  }
+    setWorkspace((prevWorkspace) => ({ ...prevWorkspace, name: name }));
+  };
   return {
     workspace,
     addFileToWorkspace,
@@ -196,6 +198,6 @@ export const useWorkspace = ({
     setError,
     isError,
     setIsError,
-    changeWorkspaceName
+    changeWorkspaceName,
   };
 };

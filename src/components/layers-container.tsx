@@ -8,11 +8,12 @@ import { Layers } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TileLayer } from "./tile-layer";
 import { Separator } from "./ui/separator";
+import { ZoomToLayerRef } from "./zoom-to-layer";
 type LayersContainerProps = {
   isTileLayer: boolean;
   setIsTileLayer: React.Dispatch<boolean>;
-  selectedFile: FeatureCollectionWithFilenameAndState | null;
-  setSelectedFile: React.Dispatch<
+  selectedLayer: FeatureCollectionWithFilenameAndState | null;
+  setSelectedLayer: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
 
@@ -26,19 +27,21 @@ type LayersContainerProps = {
   workspace: Workspace;
   toggleSelected: (filename: string | undefined) => void;
   setPosition: (fromIndex: number, toIndex: number) => void;
+  zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null> 
 };
 
 export const LayersContainer = ({
   isTileLayer,
   setIsTileLayer,
-  selectedFile,
-  setSelectedFile,
+  selectedLayer,
+  setSelectedLayer,
   changeStyle,
   toggleVisibility,
   removeFileFromWorkspace,
   setPosition,
   workspace,
   toggleSelected,
+  zoomToLayerRef
 }: LayersContainerProps) => {
   const [isTableOfContentOpen, setIsTableOfContentOpen] =
     useState<boolean>(false);
@@ -69,8 +72,8 @@ export const LayersContainer = ({
   return (
     <>
       <div className="flex flex-col w-full h-full items-start">
-        <div className="justify-center space-x-2 flex items-center p-4 bg-opacity-10 bg-white w-full">
-          <h2 className="text-lg">Layers</h2>
+        <div className="justify-start space-x-2 flex items-center p-4 bg-opacity-10 bg-white w-full">
+          <h2 className="font-black">Layers</h2>
           <Layers />
         </div>
         <Separator />
@@ -81,7 +84,7 @@ export const LayersContainer = ({
             .sort((a, b) => b.position - a.position)
             .map((featureCollection, index) => (
               <div
-                className="w-full"
+                className="flex w-full items-center space-x-1 cursor-pointer"
                 key={index}
                 draggable
                 onDragStart={() =>
@@ -101,13 +104,14 @@ export const LayersContainer = ({
                   featureCollection={featureCollection}
                   removeFileFromWorkspace={removeFileFromWorkspace}
                   changeStyle={changeStyle}
-                  setSelectedFile={setSelectedFile}
+                  setSelectedLayer={setSelectedLayer}
                   isStyleDialogOpen={isStyleDialogOpen}
                   setIsStyleDialogOpen={setIsStyleDialogOpen}
                   isTableOfContentOpen={isTableOfContentOpen}
                   setIsTableOfContentOpen={setIsTableOfContentOpen}
                   toggleSelected={toggleSelected}
-                  selectedFile={selectedFile}
+                  selectedLayer={selectedLayer}
+                  zoomToLayerRef={zoomToLayerRef}
                 />
               </div>
             ))}
@@ -116,10 +120,10 @@ export const LayersContainer = ({
           setIsVisible={setIsTileLayer}
           filename="OpenStreetMap TileLayer"
           changeStyle={changeStyle}
-          setSelectedFile={setSelectedFile}
+          setSelectedLayer={setSelectedLayer}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}
-          selectedFile={selectedFile}
+          selectedLayer={selectedLayer}
         />
       </div>
     </>

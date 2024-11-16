@@ -26,7 +26,6 @@ import FitLayer from "./fit-layer";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
-  // changeStyle: (filename: string | undefined, style: PathOptions) => void;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
     style: PathOptionsWithPointAttributes,
@@ -61,6 +60,7 @@ export const StyleDialog = ({
     style.color ?? getRandomColor(),
   );
   const [strokeWeight, setStrokeWeight] = useState<number>(style.weight ?? 2);
+  const [strokeOpacity, setStrokeOpacity] = useState<number>(style.opacity ?? 1);
   const [pointSize, setPointSize] = useState<number | undefined>(
     style.pointSize,
   );
@@ -73,7 +73,7 @@ export const StyleDialog = ({
           <DialogHeader>
             <DialogTitle>Style layer</DialogTitle>
             <DialogDescription>
-              <p>{`change the style of ${filename}`}</p>
+              change the style of {filename}
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center items-center space-x-4">
@@ -89,7 +89,11 @@ export const StyleDialog = ({
                   <label className="text-sm" htmlFor="is-fill">
                     Fill
                   </label>
-                  <Switch className="justify-self-end" checked={isFill} onCheckedChange={setIsFill} />
+                  <Switch
+                    className="justify-self-end"
+                    checked={isFill}
+                    onCheckedChange={setIsFill}
+                  />
                 </div>
 
                 {isFill && (
@@ -149,7 +153,11 @@ export const StyleDialog = ({
                   <label className="text-sm" htmlFor="is-stroke">
                     Stroke
                   </label>
-                  <Switch className="justify-self-end" checked={isStroke} onCheckedChange={setIsStroke} />
+                  <Switch
+                    className="justify-self-end"
+                    checked={isStroke}
+                    onCheckedChange={setIsStroke}
+                  />
                 </div>
 
                 {isStroke && (
@@ -174,7 +182,24 @@ export const StyleDialog = ({
                         />
                       )}
                     </div>
-
+                    {/* Opacity Property */}
+                    <div className="grid grid-cols-2 items-center p-2">
+                      <label className="text-sm" htmlFor="stroke-opacity">
+                        Opacity:
+                      </label>
+                      <Input
+                        id="stroke-opacity"
+                        className="w-auto"
+                        type="number"
+                        max={1}
+                        min={0}
+                        step={0.1}
+                        defaultValue={strokeOpacity}
+                        onChange={(event) =>
+                          setStrokeOpacity(Number(event.target.value))
+                        }
+                      />
+                    </div>
                     <div className="grid grid-cols-2 items-center p-2">
                       <label className="text-sm" htmlFor="stroke-weight">
                         Weight:
@@ -200,7 +225,7 @@ export const StyleDialog = ({
                   <Separator />
 
                   <section
-                    aria-labelledby="stroke-section"
+                    aria-labelledby="point-section"
                     className="mb-2 mt-2"
                   >
                     <h3 id="stroke-section" className="text-sm font-semibold">
@@ -208,11 +233,11 @@ export const StyleDialog = ({
                     </h3>
 
                     <div className="grid grid-cols-2 items-center p-2">
-                      <label className="text-sm" htmlFor="stroke-weight">
+                      <label className="text-sm" htmlFor="point-radius">
                         Radius
                       </label>
                       <Input
-                        id="stroke-weight"
+                        id="point-radius"
                         className="w-auto"
                         step={1}
                         type="number"
@@ -232,13 +257,14 @@ export const StyleDialog = ({
                     changeStyle(featureCollection, {
                       stroke: isStroke,
                       color: strokeColor,
-                      weight: strokeWeight ?? 2,
+                      opacity: strokeOpacity,
+                      weight: strokeWeight,
                       fillColor: fillColor,
                       fill: isFill,
-                      fillOpacity: fillOpacity ?? 1,
+                      fillOpacity: fillOpacity,
                       pointSize: pointSize,
                     });
-                    setIsStyleDialogOpen(false)
+                    setIsStyleDialogOpen(false);
                   }}
                 >
                   Apply
@@ -246,7 +272,7 @@ export const StyleDialog = ({
               </DialogFooter>
             </main>
 
-            <Separator orientation="vertical" />
+            <Separator orientation="vertical" className="h-[60vh]" />
 
             {/* Preview layer */}
             <MapContainer
@@ -259,9 +285,15 @@ export const StyleDialog = ({
               />
               <FitLayer layerData={featureCollection} />
               <GeoJSON
+                key={
+                  featureCollection.features[0].geometry.type === "Point"
+                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}`
+                    : `${featureCollection.fileName}_${featureCollection.updatedAt}`
+                }
                 style={{
                   stroke: isStroke,
                   color: strokeColor,
+                  opacity: strokeOpacity,
                   weight: strokeWeight ?? 2,
                   fillColor: fillColor,
                   fill: isFill,
