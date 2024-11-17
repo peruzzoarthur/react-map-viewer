@@ -59,6 +59,7 @@ export const LayerItem = ({
   const fillColor = featureCollection?.features[0].style.fillColor;
   const fillOpacity = featureCollection?.features[0].style.fillOpacity;
   const isFill = featureCollection?.features[0].style.fill;
+  const isStroke = featureCollection?.features[0].style.stroke
 
   return (
     <>
@@ -85,10 +86,11 @@ export const LayerItem = ({
             {geometryType === "Polygon" && (
               <Square
                 style={{
-                  stroke: color,
+                  stroke: isStroke ? color : 'transparent' ,
+
                   strokeOpacity: strokeOpacity,
                   strokeWidth: width,
-                  fill: isFill ? fillColor : undefined,
+                  fill: isFill ? fillColor : 'transparent',
                   fillOpacity: fillOpacity,
                 }}
               />
@@ -96,10 +98,10 @@ export const LayerItem = ({
             {geometryType === "LineString" && (
               <Spline
                 style={{
-                  stroke: color,
+                  stroke: isStroke ? color : 'transparent',
                   strokeOpacity: strokeOpacity,
                   strokeWidth: width,
-                  fill: isFill ? fillColor : undefined,
+                  fill: isFill ? fillColor : 'transparent',
                   fillOpacity: fillOpacity,
                 }}
               />
@@ -107,10 +109,10 @@ export const LayerItem = ({
             {geometryType === "Point" && (
               <Circle
                 style={{
-                  stroke: color,
+                  stroke: isStroke ? color : 'transparent',
                   strokeOpacity: strokeOpacity,
                   strokeWidth: width,
-                  fill: isFill ? fillColor : undefined,
+                  fill: isFill ? fillColor : 'transparent', 
                   fillOpacity: fillOpacity,
                 }}
               />
