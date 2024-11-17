@@ -1,5 +1,5 @@
-import { Circle, Eye, EyeClosed, Spline, Square } from "lucide-react";
 import { Button } from "./ui/button";
+import { Circle, Eye, EyeClosed, Spline, Square } from "lucide-react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -17,7 +17,7 @@ import { ZoomToLayerRef } from "./zoom-to-layer";
 type LayerItemProps = {
   isVisible: boolean;
   setIsVisible: React.Dispatch<boolean>;
-  featureCollection?: FeatureCollectionWithFilenameAndState;
+  featureCollection: FeatureCollectionWithFilenameAndState;
   removeFileFromWorkspace: (filename: string | undefined) => void;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
@@ -33,6 +33,9 @@ type LayerItemProps = {
   setIsTableOfContentOpen: React.Dispatch<boolean>;
   toggleSelected: (filename: string | undefined) => void;
   zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null>;
+  dragFeature: React.MutableRefObject<number>;
+  draggedOverFeature: React.MutableRefObject<number>;
+  handleSort: () => void;
 };
 
 export const LayerItem = ({
@@ -49,18 +52,36 @@ export const LayerItem = ({
   setIsTableOfContentOpen,
   toggleSelected,
   zoomToLayerRef,
+  dragFeature,
+  draggedOverFeature,
+  handleSort,
 }: LayerItemProps) => {
   const filename = featureCollection?.fileName;
   const features = featureCollection?.features;
   const geometryType = features ? features[0].geometry.type : null;
   const color = featureCollection?.features[0].style.color;
-  const strokeOpacity = featureCollection?.features[0].style.opacity
+  const strokeOpacity = featureCollection?.features[0].style.opacity;
   const width = featureCollection?.features[0].style.weight;
   const fillColor = featureCollection?.features[0].style.fillColor;
   const fillOpacity = featureCollection?.features[0].style.fillOpacity;
   const isFill = featureCollection?.features[0].style.fill;
-  const isStroke = featureCollection?.features[0].style.stroke
+  const isStroke = featureCollection?.features[0].style.stroke;
 
+
+function handleContextMenuTrigger(event: React.KeyboardEvent) {
+if (event.key === "Enter") {
+      const targetElement = event.target as HTMLElement;
+
+      // Dispatch a `contextmenu` event to simulate right-click
+      const contextMenuEvent = new MouseEvent("contextmenu", {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      });
+
+      targetElement.dispatchEvent(contextMenuEvent);
+    } 
+}
   return (
     <>
       {isVisible ? (
@@ -74,23 +95,40 @@ export const LayerItem = ({
       )}
 
       <ContextMenu>
-        <ContextMenuTrigger className="flex w-full justify-start space-x-1">
+        <ContextMenuTrigger
+          className="flex w-full justify-start space-x-1"
+          tabIndex={0}
+          draggable
+          onKeyDown={handleContextMenuTrigger}
+          onDragStart={() => {
+            dragFeature.current = featureCollection.position;
+          }}
+          onDragEnter={() => {
+            draggedOverFeature.current = featureCollection?.position;
+          }}
+          onDragEnd={() => {
+            handleSort();
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+          }}
+        >
           <>
-          <p
+            <Button
+              variant="ghost"
               className={
-                filename === selectedLayer?.fileName ? "font-bold" : ""
+                filename === selectedLayer?.fileName ? "font-bold hover:bg-white hover:bg-opacity-0": "hover:bg-white hover:bg-opacity-0"
               }
             >
               {filename}
-            </p>
+            </Button>
             {geometryType === "Polygon" && (
               <Square
                 style={{
-                  stroke: isStroke ? color : 'transparent' ,
-
+                  stroke: isStroke ? color : "transparent",
                   strokeOpacity: strokeOpacity,
                   strokeWidth: width,
-                  fill: isFill ? fillColor : 'transparent',
+                  fill: isFill ? fillColor : "transparent",
                   fillOpacity: fillOpacity,
                 }}
               />
@@ -98,10 +136,10 @@ export const LayerItem = ({
             {geometryType === "LineString" && (
               <Spline
                 style={{
-                  stroke: isStroke ? color : 'transparent',
+                  stroke: isStroke ? color : "transparent",
                   strokeOpacity: strokeOpacity,
                   strokeWidth: width,
-                  fill: isFill ? fillColor : 'transparent',
+                  fill: isFill ? fillColor : "transparent",
                   fillOpacity: fillOpacity,
                 }}
               />
@@ -109,10 +147,10 @@ export const LayerItem = ({
             {geometryType === "Point" && (
               <Circle
                 style={{
-                  stroke: isStroke ? color : 'transparent',
+                  stroke: isStroke ? color : "transparent",
                   strokeOpacity: strokeOpacity,
                   strokeWidth: width,
-                  fill: isFill ? fillColor : 'transparent', 
+                  fill: isFill ? fillColor : "transparent",
                   fillOpacity: fillOpacity,
                 }}
               />

@@ -27,7 +27,7 @@ type LayersContainerProps = {
   workspace: Workspace;
   toggleSelected: (filename: string | undefined) => void;
   setPosition: (fromIndex: number, toIndex: number) => void;
-  zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null> 
+  zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null>;
 };
 
 export const LayersContainer = ({
@@ -41,7 +41,7 @@ export const LayersContainer = ({
   setPosition,
   workspace,
   toggleSelected,
-  zoomToLayerRef
+  zoomToLayerRef,
 }: LayersContainerProps) => {
   const [isTableOfContentOpen, setIsTableOfContentOpen] =
     useState<boolean>(false);
@@ -86,15 +86,29 @@ export const LayersContainer = ({
               <div
                 className="flex w-full items-center space-x-1 cursor-pointer"
                 key={index}
-                draggable
-                onDragStart={() =>
-                  (dragFeature.current = featureCollection.position)
-                }
-                onDragEnter={() =>
-                  (draggedOverFeature.current = featureCollection.position)
-                }
-                onDragEnd={handleSort}
-                onDragOver={(e) => e.preventDefault}
+                // draggable
+                // onDragStart={(e) => {
+                //   if (e.shiftKey) {
+                //     dragFeature.current = featureCollection.position;
+                //   } else {
+                //     e.preventDefault();
+                //   }
+                // }}
+                // onDragEnter={(e) => {
+                //   if (e.shiftKey) {
+                //     draggedOverFeature.current = featureCollection.position;
+                //   }
+                // }}
+                // onDragEnd={(e) => {
+                //   if (e.shiftKey) {
+                //     handleSort();
+                //   }
+                // }}
+                // onDragOver={(e) => {
+                //   if (e.shiftKey) {
+                //     e.preventDefault(); // Allow drag-over if Shift is pressed
+                //   }
+                // }}
               >
                 <LayerItem
                   isVisible={featureCollection.visible}
@@ -112,6 +126,9 @@ export const LayersContainer = ({
                   toggleSelected={toggleSelected}
                   selectedLayer={selectedLayer}
                   zoomToLayerRef={zoomToLayerRef}
+                  dragFeature={dragFeature}
+                  draggedOverFeature={draggedOverFeature}
+                  handleSort={handleSort}
                 />
               </div>
             ))}
