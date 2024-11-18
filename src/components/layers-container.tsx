@@ -83,34 +83,8 @@ export const LayersContainer = ({
           layersList
             .sort((a, b) => b.position - a.position)
             .map((featureCollection, index) => (
-              <div
-                className="flex w-full items-center space-x-1 cursor-pointer"
-                key={index}
-                // draggable
-                // onDragStart={(e) => {
-                //   if (e.shiftKey) {
-                //     dragFeature.current = featureCollection.position;
-                //   } else {
-                //     e.preventDefault();
-                //   }
-                // }}
-                // onDragEnter={(e) => {
-                //   if (e.shiftKey) {
-                //     draggedOverFeature.current = featureCollection.position;
-                //   }
-                // }}
-                // onDragEnd={(e) => {
-                //   if (e.shiftKey) {
-                //     handleSort();
-                //   }
-                // }}
-                // onDragOver={(e) => {
-                //   if (e.shiftKey) {
-                //     e.preventDefault(); // Allow drag-over if Shift is pressed
-                //   }
-                // }}
-              >
-                <LayerItem
+               <LayerItem
+                  key={index}
                   isVisible={featureCollection.visible}
                   setIsVisible={() =>
                     toggleVisibility(featureCollection.fileName)
@@ -130,7 +104,6 @@ export const LayersContainer = ({
                   draggedOverFeature={draggedOverFeature}
                   handleSort={handleSort}
                 />
-              </div>
             ))}
         <TileLayer
           isVisible={isTileLayer}

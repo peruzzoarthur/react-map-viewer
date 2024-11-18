@@ -58,7 +58,7 @@ export const TileLayer = ({
         <ContextMenuTrigger>
           <div className="flex space-x-1 hover:bg-white hover:bg-opacity-0">
             <p
-              className={filename === selectedLayer?.fileName ? "font-bold" : ""}
+              className={filename === selectedLayer?.fileName ? "text-sm font-bold" : "text-sm"}
             >
               {filename}
             </p>

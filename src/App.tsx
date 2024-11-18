@@ -99,7 +99,7 @@ function App() {
         <ResizablePanel defaultSize={70}>
           <div className="flex h-full w-full items-center justify-center p-6">
             <MapContainer
-              className="h-[90vh] w-full z-80"
+              className="h-[85vh] w-full z-80"
               center={[-31.75955334256868, -52.34488136477589]}
               zoom={9}
               scrollWheelZoom={true}

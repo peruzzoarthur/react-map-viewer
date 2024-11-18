@@ -13,6 +13,7 @@ import {
   PathOptionsWithPointAttributes,
 } from "@/index.types";
 import { ZoomToLayerRef } from "./zoom-to-layer";
+import { useRef, useState } from "react";
 
 type LayerItemProps = {
   isVisible: boolean;
@@ -67,23 +68,25 @@ export const LayerItem = ({
   const isFill = featureCollection?.features[0].style.fill;
   const isStroke = featureCollection?.features[0].style.stroke;
 
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const contextTriggerRef = useRef<HTMLDivElement | null>(null);
 
-function handleContextMenuTrigger(event: React.KeyboardEvent) {
-if (event.key === "Enter") {
-      const targetElement = event.target as HTMLElement;
-
-      // Dispatch a `contextmenu` event to simulate right-click
+  function handleContextMenuTrigger(event: React.KeyboardEvent) {
+    if (event.key === "Enter" && contextTriggerRef.current) {
+      const rect = contextTriggerRef.current.getBoundingClientRect();
+      setMenuPosition({ x: rect.left, y: rect.top });
       const contextMenuEvent = new MouseEvent("contextmenu", {
         bubbles: true,
         cancelable: true,
         view: window,
+        clientX: rect.left,
+        clientY: 0,
       });
-
-      targetElement.dispatchEvent(contextMenuEvent);
-    } 
-}
+      contextTriggerRef.current.dispatchEvent(contextMenuEvent);
+    }
+  }
   return (
-    <>
+    <div className="flex w-full">
       {isVisible ? (
         <Button variant="ghost" onClick={() => setIsVisible(false)}>
           <Eye />
@@ -96,8 +99,8 @@ if (event.key === "Enter") {
 
       <ContextMenu>
         <ContextMenuTrigger
-          className="flex w-full justify-start space-x-1"
-          tabIndex={0}
+          className="flex w-full space-x-1"
+          ref={contextTriggerRef}
           draggable
           onKeyDown={handleContextMenuTrigger}
           onDragStart={() => {
@@ -117,47 +120,56 @@ if (event.key === "Enter") {
             <Button
               variant="ghost"
               className={
-                filename === selectedLayer?.fileName ? "font-bold hover:bg-white hover:bg-opacity-0": "hover:bg-white hover:bg-opacity-0"
+                filename === selectedLayer?.fileName
+                  ? "font-bold text-base hover:bg-white hover:bg-opacity-0 justify-start w-full"
+                  : "hover:bg-white  text-base hover:bg-opacity-0 w-full justify-start"
               }
             >
               {filename}
+              {geometryType === "Polygon" && (
+                <Square
+                  style={{
+                    stroke: isStroke ? color : "transparent",
+                    strokeOpacity: strokeOpacity,
+                    strokeWidth: width,
+                    fill: isFill ? fillColor : "transparent",
+                    fillOpacity: fillOpacity,
+                  }}
+                />
+              )}
+              {geometryType === "LineString" && (
+                <Spline
+                  style={{
+                    stroke: isStroke ? color : "transparent",
+                    strokeOpacity: strokeOpacity,
+                    strokeWidth: width,
+                    fill: isFill ? fillColor : "transparent",
+                    fillOpacity: fillOpacity,
+                  }}
+                />
+              )}
+              {geometryType === "Point" && (
+                <Circle
+                  style={{
+                    stroke: isStroke ? color : "transparent",
+                    strokeOpacity: strokeOpacity,
+                    strokeWidth: width,
+                    fill: isFill ? fillColor : "transparent",
+                    fillOpacity: fillOpacity,
+                  }}
+                />
+              )}
             </Button>
-            {geometryType === "Polygon" && (
-              <Square
-                style={{
-                  stroke: isStroke ? color : "transparent",
-                  strokeOpacity: strokeOpacity,
-                  strokeWidth: width,
-                  fill: isFill ? fillColor : "transparent",
-                  fillOpacity: fillOpacity,
-                }}
-              />
-            )}
-            {geometryType === "LineString" && (
-              <Spline
-                style={{
-                  stroke: isStroke ? color : "transparent",
-                  strokeOpacity: strokeOpacity,
-                  strokeWidth: width,
-                  fill: isFill ? fillColor : "transparent",
-                  fillOpacity: fillOpacity,
-                }}
-              />
-            )}
-            {geometryType === "Point" && (
-              <Circle
-                style={{
-                  stroke: isStroke ? color : "transparent",
-                  strokeOpacity: strokeOpacity,
-                  strokeWidth: width,
-                  fill: isFill ? fillColor : "transparent",
-                  fillOpacity: fillOpacity,
-                }}
-              />
-            )}
           </>
         </ContextMenuTrigger>
-        <ContextMenuContent className="z-[1000]">
+        <ContextMenuContent
+          className="z-[1000]"
+          style={{
+            top: menuPosition.y,
+            left: menuPosition.x,
+            position: "absolute",
+          }}
+        >
           <ContextMenuItem
             onClick={async () => {
               if (zoomToLayerRef.current && featureCollection) {
@@ -205,6 +217,6 @@ if (event.key === "Enter") {
           toggleSelected={toggleSelected}
         />
       )}
-    </>
+    </div>
   );
 };
