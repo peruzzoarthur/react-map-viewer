@@ -58,25 +58,18 @@ export const AddLayerDialog = ({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
-    if (files && files.length > 5) {
-      setWorkspaceError("Your directory must have only the ESRI Shapefiles.")
-      setIsWorkspaceError(true)
-      return
-    }
+    
     if (files && files.length > 0) {
       checkESRIShapefiles(files, setWorkspaceError, setIsWorkspaceError)
       setLoading(true);
       try {
         const zip = new JSZip();
 
-        let prjContent: string | null = null;
-
         for (const file of files) {
           const filePath = file.webkitRelativePath || file.name;
 
-          // Get Coordinate Reference System from file
           if (filePath.endsWith(".prj")) {
-            prjContent = await file.text(); // Read .prj content
+           const prjContent = await file.text(); 
             try {
               const parsedCRS = parseWKT(prjContent);
               setWktParsed(parsedCRS);
@@ -85,15 +78,11 @@ export const AddLayerDialog = ({
             }
           }
 
-          // Add file to zip
           const arrayBuffer = await file.arrayBuffer();
           zip.file(file.name, arrayBuffer);
-          console.log(zip);
         }
 
-        // Zip all files and process as before
         const zippedBuffer = await zip.generateAsync({ type: "arraybuffer" });
-        console.log(zippedBuffer);
         const geoJsonData = await parseZip(zippedBuffer);
         setGeoJson(geoJsonData as FeatureCollectionWithFilename);
         setIsOpenPreview(true);
