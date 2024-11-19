@@ -75,7 +75,7 @@ export const StyleDialog = ({
     style.pointSize,
   );
   const [isLabel, setIsLabel] = useState<boolean>(style.label.isLabel);
-  const [labelAttribute, setLabelAttribute] = useState<string | null>(null);
+  const [labelName, setLabelName] = useState<string | undefined>(style.label.labelName);
 
   return (
     <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
@@ -287,10 +287,17 @@ export const StyleDialog = ({
                         Attribute
                       </label>
                       <Select
-                        onValueChange={(value) => setLabelAttribute(value)}
+                        defaultValue={labelName}
+                        onValueChange={(value) => setLabelName(value)}
                       >
                         <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder={labelAttribute ? labelAttribute : "Select attribute"} />
+                          <SelectValue
+                            placeholder={
+                              labelName
+                                ? labelName
+                                : "Select attribute"
+                            }
+                          />
                         </SelectTrigger>
                         <SelectContent className="z-[1500]">
                           {Object.keys(
@@ -322,10 +329,11 @@ export const StyleDialog = ({
                         pointSize: pointSize,
                         label: {
                           isLabel: isLabel,
+                          labelName: labelName,
                           attribute: null,
                         },
                       },
-                      labelAttribute,
+                      labelName ?? null,
                     );
                     setIsStyleDialogOpen(false);
                   }}

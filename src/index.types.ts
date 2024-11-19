@@ -3,6 +3,7 @@ import { PathOptions } from "leaflet";
 
 export type Label = {
   isLabel: boolean
+  labelName: string | undefined
   attribute: string | null
 }
 

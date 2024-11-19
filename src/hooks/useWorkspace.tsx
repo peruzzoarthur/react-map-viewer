@@ -61,6 +61,7 @@ export const useWorkspace = ({
           pointSize: 5,
           label: {
             isLabel: false,
+            labelName: undefined,
             attribute: null,
           },
         },
@@ -133,6 +134,7 @@ export const useWorkspace = ({
           ...style,
           label: {
             isLabel: propertyKey ? true : false,
+            labelName: propertyKey,
             attribute: propertyKey ? String(feature.properties?.[propertyKey]) : null, 
           },
         },
