@@ -119,28 +119,33 @@ export const useWorkspace = ({
   const changeStyle = (
     fileCollection: FeatureCollectionWithFilenameAndState,
     style: PathOptionsWithPointAttributes,
-    propertyKey?: string
+    propertyKey?: string,
   ) => {
     if (!fileCollection) {
       return;
     }
 
     const newFeatures: FeatureWithState[] = fileCollection.features.map(
-    (feature) => {
-      console.log(feature.properties);
-      return {
-        ...feature,
-        style: {
-          ...style,
-          label: {
-            isLabel: propertyKey ? true : false,
-            labelName: propertyKey,
-            attribute: propertyKey ? String(feature.properties?.[propertyKey]) : null, 
+      (feature) => {
+        return {
+          ...feature,
+          style: {
+            ...style,
+            label: {
+              isLabel: style.label.isLabel
+                ? propertyKey
+                  ? true
+                  : false
+                : false,
+              labelName: propertyKey,
+              attribute: propertyKey
+                ? String(feature.properties?.[propertyKey])
+                : null,
+            },
           },
-        },
-      };
-    },
-  );
+        };
+      },
+    );
 
     const updatedFile: FeatureCollectionWithFilenameAndState = {
       ...fileCollection,
@@ -156,7 +161,7 @@ export const useWorkspace = ({
             ? updatedFile
             : workspaceFile,
       ),
-      updatedAt: Date.now(), // Update the timestamp for the entire workspace if necessary
+      updatedAt: Date.now(),
     }));
   };
 
@@ -187,7 +192,6 @@ export const useWorkspace = ({
     const [movedItem] = updatedFeatureCollections.splice(fromIndex, 1);
     updatedFeatureCollections.splice(toIndex, 0, movedItem);
 
-    // Update positions after reordering
     const reorderedFeatureCollections = updatedFeatureCollections.map(
       (item, index) => ({
         ...item,

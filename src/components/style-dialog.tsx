@@ -290,7 +290,7 @@ export const StyleDialog = ({
                         defaultValue={labelName}
                         onValueChange={(value) => setLabelName(value)}
                       >
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-auto">
                           <SelectValue
                             placeholder={
                               labelName
