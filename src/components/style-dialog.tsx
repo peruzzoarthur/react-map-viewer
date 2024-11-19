@@ -23,12 +23,20 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import { GeoJSON } from "react-leaflet";
 import FitLayer from "./fit-layer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
   changeStyle: (
     file: FeatureCollectionWithFilenameAndState,
     style: PathOptionsWithPointAttributes,
+    propertyKey: string | null,
   ) => void;
 
   isStyleDialogOpen: boolean;
@@ -60,10 +68,14 @@ export const StyleDialog = ({
     style.color ?? getRandomColor(),
   );
   const [strokeWeight, setStrokeWeight] = useState<number>(style.weight ?? 2);
-  const [strokeOpacity, setStrokeOpacity] = useState<number>(style.opacity ?? 1);
+  const [strokeOpacity, setStrokeOpacity] = useState<number>(
+    style.opacity ?? 1,
+  );
   const [pointSize, setPointSize] = useState<number | undefined>(
     style.pointSize,
   );
+  const [isLabel, setIsLabel] = useState<boolean>(style.label.isLabel);
+  const [labelAttribute, setLabelAttribute] = useState<string | null>(null);
 
   return (
     <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
@@ -141,9 +153,7 @@ export const StyleDialog = ({
                 )}
               </section>
 
-              {/* Separator */}
               <Separator />
-
               <section aria-labelledby="stroke-section" className="mb-2 mt-2">
                 <h3 id="stroke-section" className="text-sm font-semibold">
                   Stroke Style
@@ -251,19 +261,72 @@ export const StyleDialog = ({
                   </section>
                 </>
               )}
+
+              <Separator />
+              <section aria-labelledby="label-section" className="mb-2 mt-2">
+                <h3 id="label-section" className="text-sm font-semibold">
+                  Label
+                </h3>
+                {/* Is Label? */}
+                <div className="grid grid-cols-2 items-center p-2">
+                  <label className="text-sm" htmlFor="is-label">
+                    Label
+                  </label>
+                  <Switch
+                    className="justify-self-end"
+                    checked={isLabel}
+                    onCheckedChange={setIsLabel}
+                  />
+                </div>
+
+                {isLabel && (
+                  <>
+                    {/* Label Attribute */}
+                    <div className="grid grid-cols-2 items-center p-2">
+                      <label className="text-sm" htmlFor="label-attribute">
+                        Attribute
+                      </label>
+                      <Select
+                        onValueChange={(value) => setLabelAttribute(value)}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder={labelAttribute ? labelAttribute : "Select attribute"} />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1500]">
+                          {Object.keys(
+                            featureCollection.features[0].properties || {},
+                          ).map((key) => (
+                            <SelectItem key={key} value={key}>
+                              {key}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+              </section>
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    changeStyle(featureCollection, {
-                      stroke: isStroke,
-                      color: strokeColor,
-                      opacity: strokeOpacity,
-                      weight: strokeWeight,
-                      fillColor: fillColor,
-                      fill: isFill,
-                      fillOpacity: fillOpacity,
-                      pointSize: pointSize,
-                    });
+                    changeStyle(
+                      featureCollection,
+                      {
+                        stroke: isStroke,
+                        color: strokeColor,
+                        opacity: strokeOpacity,
+                        weight: strokeWeight,
+                        fillColor: fillColor,
+                        fill: isFill,
+                        fillOpacity: fillOpacity,
+                        pointSize: pointSize,
+                        label: {
+                          isLabel: isLabel,
+                          attribute: null,
+                        },
+                      },
+                      labelAttribute,
+                    );
                     setIsStyleDialogOpen(false);
                   }}
                 >

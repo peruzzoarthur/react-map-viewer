@@ -1,5 +1,6 @@
 import {
   FeatureCollectionWithFilenameAndState,
+  FeatureWithState,
   PathOptionsWithPointAttributes,
   Workspace,
 } from "@/index.types";
@@ -41,7 +42,7 @@ export const useWorkspace = ({
       throw new Error(errorMsg);
     }
 
-    const newFeatures = file.features.map((feature) => {
+    const newFeatures: FeatureWithState[] = file.features.map((feature) => {
       const fill =
         feature.geometry.type === "LineString" ||
           feature.geometry.type === "MultiLineString"
@@ -58,6 +59,10 @@ export const useWorkspace = ({
           stroke: true,
           fillOpacity: 1,
           pointSize: 5,
+          label: {
+            isLabel: false,
+            attribute: null,
+          },
         },
         selected: false,
       };
@@ -113,16 +118,27 @@ export const useWorkspace = ({
   const changeStyle = (
     fileCollection: FeatureCollectionWithFilenameAndState,
     style: PathOptionsWithPointAttributes,
+    propertyKey?: string
   ) => {
     if (!fileCollection) {
       return;
     }
 
-    // Map over features and apply the new style
-    const newFeatures = fileCollection.features.map((feature) => ({
-      ...feature,
-      style: style,
-    }));
+    const newFeatures: FeatureWithState[] = fileCollection.features.map(
+    (feature) => {
+      console.log(feature.properties);
+      return {
+        ...feature,
+        style: {
+          ...style,
+          label: {
+            isLabel: propertyKey ? true : false,
+            attribute: propertyKey ? String(feature.properties?.[propertyKey]) : null, 
+          },
+        },
+      };
+    },
+  );
 
     const updatedFile: FeatureCollectionWithFilenameAndState = {
       ...fileCollection,

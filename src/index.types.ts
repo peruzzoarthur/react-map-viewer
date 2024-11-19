@@ -1,9 +1,16 @@
 import { Feature, Geometry, GeoJsonProperties, BBox } from "geojson";
 import { PathOptions } from "leaflet";
 
+export type Label = {
+  isLabel: boolean
+  attribute: string | null
+}
+
 export type PathOptionsWithPointAttributes = PathOptions & {
   pointSize: number | undefined
+  label: Label
 }
+
 export type FeatureWithState = Feature<Geometry, GeoJsonProperties> & {
   style: PathOptionsWithPointAttributes;
   selected: boolean;
@@ -15,7 +22,6 @@ export type FeatureCollectionWithFilenameAndState = {
   features: FeatureWithState[];
   bbox?: BBox | undefined;
   visible: boolean;
-  // style: PathOptions;
   selected: boolean;
   updatedAt: number;
   position: number;
