@@ -9,19 +9,21 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { getRandomColor } from "@/lib/utils";
+import { checkESRIShapefiles, getRandomColor } from "@/lib/utils";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ScrollBar } from "./ui/scroll-area";
-import shpjs, { FeatureCollectionWithFilename } from "shpjs";
+import { FeatureCollectionWithFilename, parseZip } from "shpjs";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { XCircle } from "lucide-react";
+import { Map, XCircle } from "lucide-react";
+import JSZip from "jszip";
+import parseWKT, { WktParsed } from "wkt-parser";
 
 type AddLayerProps = {
   geoJson: FeatureCollectionWithFilename | null;
   addFileToWorkspace: (
     file: FeatureCollectionWithFilename,
-    color: string
+    color: string,
   ) => void;
   setGeoJson: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilename | null>
@@ -47,15 +49,52 @@ export const AddLayerDialog = ({
 }: AddLayerProps) => {
   const [isOpenPreview, setIsOpenPreview] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [wktParsed, setWktParsed] = useState<WktParsed | null>(null);
+  const isCRS3857 = wktParsed
+    ? wktParsed.name === "WGS_1984_Web_Mercator_Auxiliary_Sphere"
+    : null;
+
   const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const file = event.target.files?.[0];
-    if (file) {
+    const files = event.target.files;
+    if (files && files.length > 5) {
+      setWorkspaceError("Your directory must have only the ESRI Shapefiles.")
+      setIsWorkspaceError(true)
+      return
+    }
+    if (files && files.length > 0) {
+      checkESRIShapefiles(files, setWorkspaceError, setIsWorkspaceError)
       setLoading(true);
       try {
-        const arrayBuffer = await file.arrayBuffer();
-        const geoJsonData = await shpjs(arrayBuffer);
+        const zip = new JSZip();
+
+        let prjContent: string | null = null;
+
+        for (const file of files) {
+          const filePath = file.webkitRelativePath || file.name;
+
+          // Get Coordinate Reference System from file
+          if (filePath.endsWith(".prj")) {
+            prjContent = await file.text(); // Read .prj content
+            try {
+              const parsedCRS = parseWKT(prjContent);
+              setWktParsed(parsedCRS);
+            } catch (err) {
+              console.error("Error parsing WKT:", err);
+            }
+          }
+
+          // Add file to zip
+          const arrayBuffer = await file.arrayBuffer();
+          zip.file(file.name, arrayBuffer);
+          console.log(zip);
+        }
+
+        // Zip all files and process as before
+        const zippedBuffer = await zip.generateAsync({ type: "arraybuffer" });
+        console.log(zippedBuffer);
+        const geoJsonData = await parseZip(zippedBuffer);
         setGeoJson(geoJsonData as FeatureCollectionWithFilename);
         setIsOpenPreview(true);
       } catch (error) {
@@ -71,25 +110,43 @@ export const AddLayerDialog = ({
       <DialogTrigger className="flex w-full">
         Add file to workspace
       </DialogTrigger>
-      <DialogContent className="z-[1400] w-[100vh] h-[80vh] p-4">
+      <DialogContent className="z-[1400] w-[100vh] h-[90vh] p-4">
         <DialogHeader>
           <DialogTitle>Add file to layers</DialogTitle>
           <DialogDescription>
-            the file must be a .zip of your shapefiles.
+            Please select a directory with all ESRI Shapefile files for that
+            specific shape.
           </DialogDescription>
-          <div className="flex justify-center">
+          <div className="flex flex-col space-y-1 justify-center">
             <div className="flex p-4 space-y-4 flex-col justify-center items-center mt-4">
               <Input
-                className="w-full"
+                className="w-2/3"
                 type="file"
+                onClick={() => {
+                  setWorkspaceError(null)
+                  setIsWorkspaceError(false)
+                  setGeoJson(null)
+                  setWktParsed(null)
+                  setIsOpenPreview(false)
+                }}
                 onChange={handleFileUpload}
-                accept=".zip"
+                ref={(input) => input?.setAttribute("webkitdirectory", "true")}
               />
             </div>
+
+            {isCRS3857 || wktParsed === null ? null : (
+              <Alert variant="destructive">
+                <AlertTitle className="font-bold flex items-center">
+                  <Map className="mr-1" />
+                  Bad Coordinate Reference System (CRS)
+                </AlertTitle>
+                <AlertDescription>
+                  The file isn't using the correct CRS (<b className="font-bold">EPSG: 3857</b>). Reproject
+                  your shapes if you want to use the same CRS as the map.
+                </AlertDescription>
+              </Alert>
+            )}
             {isWorkspaceError && workspaceError && (
-              // <Badge className="w-full h-full" variant="destructive">
-              //   {workspaceError}
-              // </Badge>
               <Alert
                 onClick={() => {
                   setIsWorkspaceError(false);
@@ -107,30 +164,47 @@ export const AddLayerDialog = ({
           </div>
         </DialogHeader>
         <DialogFooter>
-          <div className="bg-white flex h-full"></div>
-          {geoJson && (
-            <Button
-              onClick={() => {
-                const color = getRandomColor();
-                addFileToWorkspace(geoJson, color);
-                setIsOpenPreview(false);
-                setGeoJson(null);
-              }}
-            >
-              Add to workspace
-            </Button>
-          )}
-          {loading && <p>Loading...</p>}
-          {isOpenPreview && (
-            <ScrollArea className="h-[60vh] w-[70vh] rounded-md border p-4">
-              <div className="h-full w-full overflow-auto">
-                <pre className="h-full w-full overflow-auto whitespace-pre-wrap">
-                  {JSON.stringify(geoJson, null, 2)}
-                </pre>
+          <div className="flex items-center justify-center space-x-4">
+            {loading && <p>Loading...</p>}
+
+            {isOpenPreview && !isWorkspaceError && (
+              <div className="flex flex-col space-y-2">
+                <h4 className="font-bold text-sm">
+                  Coordinate Reference System (CRS)
+                </h4>
+                <ScrollArea className=" h-[20vh] w-[70vh] rounded-md border p-4 ">
+                  <div className="h-full w-full overflow-auto">
+                    <pre className="h-full w-full overflow-auto whitespace-pre-wrap text-sm">
+                      {JSON.stringify(wktParsed, null, 2)}
+                    </pre>
+                  </div>
+                </ScrollArea>
+                <h4 className="font-bold text-sm">GeoJSON</h4>
+                <ScrollArea className="h-[35vh] w-[70vh] rounded-md border p-4">
+                  <div className="h-full w-full overflow-auto">
+                    <pre className="h-full w-full overflow-auto whitespace-pre-wrap text-sm">
+                      {JSON.stringify(geoJson, null, 2)}
+                    </pre>
+                  </div>
+                  <ScrollBar className="bg-black" orientation="vertical" />
+                </ScrollArea>
               </div>
-              <ScrollBar className="bg-black" orientation="vertical" />
-            </ScrollArea>
-          )}
+            )}
+
+            {geoJson && !workspaceError && (
+              <Button
+                className="items-center justify-center"
+                onClick={() => {
+                  const color = getRandomColor();
+                  addFileToWorkspace(geoJson, color);
+                  setIsOpenPreview(false);
+                  setGeoJson(null);
+                }}
+              >
+                Add to workspace
+              </Button>
+            )}
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

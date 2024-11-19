@@ -63,3 +63,66 @@ export const loadWorkspace = async (
     console.error("Failed to load workspace:", error);
   }
 };
+
+export const checkESRIShapefiles = (
+  files: FileList,
+  setWorkspaceError: React.Dispatch<string | null>,
+  setIsWorkspaceError: React.Dispatch<boolean>,
+) => {
+  // Required ESRI file extensions
+  const requiredExtensions = [".shp", ".shx", ".dbf", ".prj"];
+  const optionalExtensions = [".cpg"];
+  const allValidExtensions = [...requiredExtensions, ...optionalExtensions];
+
+  const baseNames = new Set<string>();
+  const invalidFiles: string[] = [];
+
+  // Check if all files have the same base name and valid extensions
+  for (const file of files) {
+    const fileName = file.name;
+    const fileExtension = fileName
+      .slice(fileName.lastIndexOf("."))
+      .toLowerCase();
+    const baseName = fileName.slice(0, fileName.lastIndexOf("."));
+
+    // Validate extension
+    if (!allValidExtensions.includes(fileExtension)) {
+      invalidFiles.push(fileName);
+    }
+
+    baseNames.add(baseName); // Track unique base names
+  }
+
+  if (invalidFiles.length > 0) {
+    setWorkspaceError(
+      `Invalid file types found: ${invalidFiles.join(", ")}. Ensure all files are valid ESRI Shapefiles.`,
+    );
+    setIsWorkspaceError(true);
+    return;
+  }
+
+  if (baseNames.size > 1) {
+    setWorkspaceError(
+      "All files must have the same base name. Ensure your shapefile components match.",
+    );
+    setIsWorkspaceError(true);
+    return;
+  }
+
+  // Check if required extensions are present
+  const extensionsInFiles = Array.from(files).map((file) =>
+    file.name.slice(file.name.lastIndexOf(".")).toLowerCase(),
+  );
+
+  const missingExtensions = requiredExtensions.filter(
+    (ext) => !extensionsInFiles.includes(ext),
+  );
+
+  if (missingExtensions.length > 0) {
+    setWorkspaceError(
+      `Missing required shapefile components: ${missingExtensions.join(", ")}.`,
+    );
+    setIsWorkspaceError(true);
+    return;
+  }
+};
