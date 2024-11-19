@@ -9,27 +9,22 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { ColorPicker } from "./color-picker";
 import { Separator } from "./ui/separator";
-import { Input } from "./ui/input";
 import { getRandomColor } from "@/lib/utils";
 import {
   FeatureCollectionWithFilenameAndState,
+  FeatureWithState,
   PathOptionsWithPointAttributes,
 } from "@/index.types";
-import { Switch } from "./ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import { GeoJSON } from "react-leaflet";
 import FitLayer from "./fit-layer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FillStyleSection } from "./fill-style-section";
+import { StrokeStyleSection } from "./stroke-style-section";
+import { PointStyleSection } from "./point-style-section";
+import { LabelStyleSection } from "./label-style-section";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
@@ -75,7 +70,10 @@ export const StyleDialog = ({
     style.pointSize,
   );
   const [isLabel, setIsLabel] = useState<boolean>(style.label.isLabel);
-  const [labelName, setLabelName] = useState<string | undefined>(style.label.labelName);
+  const [labelName, setLabelName] = useState<string | undefined>(
+    style.label.labelName,
+  );
+  // const [styleTab, setStyleTab] = useState<"fill" | "stroke" | "label">("fill");
 
   return (
     <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
@@ -90,229 +88,48 @@ export const StyleDialog = ({
           </DialogHeader>
           <div className="flex justify-center items-center space-x-4">
             <main className="flex flex-col w-3/5">
-              {/* Fill Section */}
-              <section aria-labelledby="fill-section" className="mt-2 mb-2">
-                <h3 id="fill-section" className="text-sm font-semibold">
-                  Fill Style
-                </h3>
-
-                {/* Is Fill? */}
-                <div className="grid grid-cols-2 items-center p-2">
-                  <label className="text-sm" htmlFor="is-fill">
-                    Fill
-                  </label>
-                  <Switch
-                    className="justify-self-end"
-                    checked={isFill}
-                    onCheckedChange={setIsFill}
-                  />
-                </div>
-
-                {isFill && (
-                  <>
-                    {/* Color Property */}
-                    <div className="grid grid-cols-2 p-2 items-center">
-                      <label htmlFor="fill-color" className="text-sm">
-                        Color
-                      </label>
-                      {isFillColorPicker ? (
-                        <ColorPicker
-                          color={fillColor}
-                          setColor={setFillColor}
-                          setIsColorPicker={setIsFillColorPicker}
-                        />
-                      ) : (
-                        <Button
-                          onClick={() => setIsFillColorPicker(true)}
-                          className="rounded-none w-auto h-6"
-                          id="fill-color"
-                          style={{ backgroundColor: fillColor }}
-                        />
-                      )}
-                    </div>
-
-                    {/* Opacity Property */}
-                    <div className="grid grid-cols-2 items-center p-2">
-                      <label className="text-sm" htmlFor="fill-opacity">
-                        Opacity:
-                      </label>
-                      <Input
-                        id="fill-opacity"
-                        className="w-auto"
-                        type="number"
-                        max={1}
-                        min={0}
-                        step={0.1}
-                        defaultValue={fillOpacity}
-                        onChange={(event) =>
-                          setFillOpacity(Number(event.target.value))
-                        }
-                      />
-                    </div>
-                  </>
-                )}
-              </section>
+              <FillStyleSection
+                isFill={isFill}
+                setIsFill={setIsFill}
+                isFillColorPicker={isFillColorPicker}
+                setIsFillColorPicker={setIsFillColorPicker}
+                fillColor={fillColor}
+                setFillColor={setFillColor}
+                fillOpacity={fillOpacity}
+                setFillOpacity={setFillOpacity}
+              />
 
               <Separator />
-              <section aria-labelledby="stroke-section" className="mb-2 mt-2">
-                <h3 id="stroke-section" className="text-sm font-semibold">
-                  Stroke Style
-                </h3>
-                {/* Is Stroke? */}
-                <div className="grid grid-cols-2 items-center p-2">
-                  <label className="text-sm" htmlFor="is-stroke">
-                    Stroke
-                  </label>
-                  <Switch
-                    className="justify-self-end"
-                    checked={isStroke}
-                    onCheckedChange={setIsStroke}
-                  />
-                </div>
+              <StrokeStyleSection
+                isStroke={isStroke}
+                setIsStroke={setIsStroke}
+                strokeColor={strokeColor}
+                setStrokeColor={setStrokeColor}
+                isStrokeColorPicker={isStrokeColorPicker}
+                setIsStrokeColorPicker={setIsStrokeColorPicker}
+                strokeOpacity={strokeOpacity}
+                setStrokeOpacity={setStrokeOpacity}
+                strokeWeight={strokeWeight}
+                setStrokeWeight={setStrokeWeight}
+              />
 
-                {isStroke && (
-                  <>
-                    {/* Color Property */}
-                    <div className="grid grid-cols-2 p-2 items-center">
-                      <label htmlFor="fill-color" className="text-sm">
-                        Color
-                      </label>
-                      {isStrokeColorPicker ? (
-                        <ColorPicker
-                          color={strokeColor}
-                          setColor={setStrokeColor}
-                          setIsColorPicker={setIsStrokeColorPicker}
-                        />
-                      ) : (
-                        <Button
-                          onClick={() => setIsStrokeColorPicker(true)}
-                          className="rounded-none w-auto h-6"
-                          id="stroke-color"
-                          style={{ backgroundColor: strokeColor }}
-                        />
-                      )}
-                    </div>
-                    {/* Opacity Property */}
-                    <div className="grid grid-cols-2 items-center p-2">
-                      <label className="text-sm" htmlFor="stroke-opacity">
-                        Opacity:
-                      </label>
-                      <Input
-                        id="stroke-opacity"
-                        className="w-auto"
-                        type="number"
-                        max={1}
-                        min={0}
-                        step={0.1}
-                        defaultValue={strokeOpacity}
-                        onChange={(event) =>
-                          setStrokeOpacity(Number(event.target.value))
-                        }
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 items-center p-2">
-                      <label className="text-sm" htmlFor="stroke-weight">
-                        Weight:
-                      </label>
-                      <Input
-                        id="stroke-weight"
-                        className="w-auto"
-                        step={0.5}
-                        type="number"
-                        min={0}
-                        defaultValue={strokeWeight}
-                        onChange={(event) =>
-                          setStrokeWeight(Number(event.target.value))
-                        }
-                      />
-                    </div>
-                  </>
-                )}
-              </section>
-
+              <Separator />
               {featureCollection.features[0].geometry.type === "Point" && (
-                <>
-                  <Separator />
-
-                  <section
-                    aria-labelledby="point-section"
-                    className="mb-2 mt-2"
-                  >
-                    <h3 id="stroke-section" className="text-sm font-semibold">
-                      Point Style
-                    </h3>
-
-                    <div className="grid grid-cols-2 items-center p-2">
-                      <label className="text-sm" htmlFor="point-radius">
-                        Radius
-                      </label>
-                      <Input
-                        id="point-radius"
-                        className="w-auto"
-                        step={1}
-                        type="number"
-                        min={0}
-                        defaultValue={pointSize}
-                        onChange={(event) =>
-                          setPointSize(Number(event.target.value))
-                        }
-                      />
-                    </div>
-                  </section>
-                </>
+                <PointStyleSection
+                  pointSize={pointSize}
+                  setPointSize={setPointSize}
+                />
               )}
 
               <Separator />
-              <section aria-labelledby="label-section" className="mb-2 mt-2">
-                <h3 id="label-section" className="text-sm font-semibold">
-                  Label
-                </h3>
-                {/* Is Label? */}
-                <div className="grid grid-cols-2 items-center p-2">
-                  <label className="text-sm" htmlFor="is-label">
-                    Label
-                  </label>
-                  <Switch
-                    className="justify-self-end"
-                    checked={isLabel}
-                    onCheckedChange={setIsLabel}
-                  />
-                </div>
+              <LabelStyleSection
+                isLabel={isLabel}
+                setIsLabel={setIsLabel}
+                labelName={labelName}
+                setLabelName={setLabelName}
+                featureCollection={featureCollection}
+              />
 
-                {isLabel && (
-                  <>
-                    {/* Label Attribute */}
-                    <div className="grid grid-cols-2 items-center p-2">
-                      <label className="text-sm" htmlFor="label-attribute">
-                        Attribute
-                      </label>
-                      <Select
-                        defaultValue={labelName}
-                        onValueChange={(value) => setLabelName(value)}
-                      >
-                        <SelectTrigger className="w-auto">
-                          <SelectValue
-                            placeholder={
-                              labelName
-                                ? labelName
-                                : "Select attribute"
-                            }
-                          />
-                        </SelectTrigger>
-                        <SelectContent className="z-[1500]">
-                          {Object.keys(
-                            featureCollection.features[0].properties || {},
-                          ).map((key) => (
-                            <SelectItem key={key} value={key}>
-                              {key}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
-                )}
-              </section>
               <DialogFooter>
                 <Button
                   onClick={() => {
@@ -358,8 +175,8 @@ export const StyleDialog = ({
               <GeoJSON
                 key={
                   featureCollection.features[0].geometry.type === "Point"
-                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}`
-                    : `${featureCollection.fileName}_${featureCollection.updatedAt}`
+                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${labelName}`
+                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${labelName}`
                 }
                 style={{
                   stroke: isStroke,
@@ -376,6 +193,21 @@ export const StyleDialog = ({
                     radius: pointSize ?? 5,
                   });
                   return marker;
+                }}
+                onEachFeature={(feature, layer) => {
+                  const featureWithState = feature as FeatureWithState;
+                  console.log(featureWithState.style.label.attribute) // Add a state for that as well in order to be able to keep in track of it and render at preview...
+                  if (
+                   isLabel &&
+                    featureWithState.style.label.attribute
+                  ) {
+                    layer.bindTooltip(featureWithState.style.label.attribute, {
+                      permanent: true,
+                      direction: "top",
+                      className:
+                        "bg-black bg-opacity-50 text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
+                    });
+                  }
                 }}
               />
             </MapContainer>
