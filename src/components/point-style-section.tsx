@@ -8,13 +8,10 @@ type PointStyleSectionProps = {
 export const PointStyleSection = ({pointSize, setPointSize }: PointStyleSectionProps) => {
   return (
     <section aria-labelledby="point-section" className="mb-2 mt-2">
-      <h3 id="stroke-section" className="text-sm font-semibold">
-        Point Style
-      </h3>
 
       <div className="grid grid-cols-2 items-center p-2">
         <label className="text-sm" htmlFor="point-radius">
-          Radius
+          Point Radius
         </label>
         <Input
           id="point-radius"

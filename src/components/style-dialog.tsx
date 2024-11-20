@@ -25,6 +25,9 @@ import { FillStyleSection } from "./fill-style-section";
 import { StrokeStyleSection } from "./stroke-style-section";
 import { PointStyleSection } from "./point-style-section";
 import { LabelStyleSection } from "./label-style-section";
+import { StyleFeatureMenuBar } from "./style-features-menubar";
+
+export type StyleFeature = "fill" | "stroke" | "label";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
@@ -73,7 +76,9 @@ export const StyleDialog = ({
   const [labelName, setLabelName] = useState<string | undefined>(
     style.label.labelName,
   );
-  // const [styleTab, setStyleTab] = useState<"fill" | "stroke" | "label">("fill");
+
+  const [selectedStyleFeature, setSelectedStyleFeature] =
+    useState<StyleFeature>("fill");
 
   return (
     <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
@@ -86,49 +91,57 @@ export const StyleDialog = ({
               change the style of {filename}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex justify-center items-center space-x-4">
-            <main className="flex flex-col w-3/5">
-              <FillStyleSection
-                isFill={isFill}
-                setIsFill={setIsFill}
-                isFillColorPicker={isFillColorPicker}
-                setIsFillColorPicker={setIsFillColorPicker}
-                fillColor={fillColor}
-                setFillColor={setFillColor}
-                fillOpacity={fillOpacity}
-                setFillOpacity={setFillOpacity}
+          <div className="flex justify-center items-start space-x-4">
+            <main className="flex flex-col w-3/5 space-y-4 py-4">
+              <StyleFeatureMenuBar
+                selectedStyleFeature={selectedStyleFeature}
+                setSelectedStyleFeature={setSelectedStyleFeature}
               />
+              {selectedStyleFeature === "fill" && (
+                <>
+                  <FillStyleSection
+                    isFill={isFill}
+                    setIsFill={setIsFill}
+                    isFillColorPicker={isFillColorPicker}
+                    setIsFillColorPicker={setIsFillColorPicker}
+                    fillColor={fillColor}
+                    setFillColor={setFillColor}
+                    fillOpacity={fillOpacity}
+                    setFillOpacity={setFillOpacity}
+                  />
 
-              <Separator />
-              <StrokeStyleSection
-                isStroke={isStroke}
-                setIsStroke={setIsStroke}
-                strokeColor={strokeColor}
-                setStrokeColor={setStrokeColor}
-                isStrokeColorPicker={isStrokeColorPicker}
-                setIsStrokeColorPicker={setIsStrokeColorPicker}
-                strokeOpacity={strokeOpacity}
-                setStrokeOpacity={setStrokeOpacity}
-                strokeWeight={strokeWeight}
-                setStrokeWeight={setStrokeWeight}
-              />
-
-              <Separator />
-              {featureCollection.features[0].geometry.type === "Point" && (
-                <PointStyleSection
-                  pointSize={pointSize}
-                  setPointSize={setPointSize}
-                />
+                  {featureCollection.features[0].geometry.type === "Point" && (
+                    <PointStyleSection
+                      pointSize={pointSize}
+                      setPointSize={setPointSize}
+                    />
+                  )}
+                </>
               )}
 
-              <Separator />
-              <LabelStyleSection
-                isLabel={isLabel}
-                setIsLabel={setIsLabel}
-                labelName={labelName}
-                setLabelName={setLabelName}
-                featureCollection={featureCollection}
-              />
+              {selectedStyleFeature === "stroke" && (
+                <StrokeStyleSection
+                  isStroke={isStroke}
+                  setIsStroke={setIsStroke}
+                  strokeColor={strokeColor}
+                  setStrokeColor={setStrokeColor}
+                  isStrokeColorPicker={isStrokeColorPicker}
+                  setIsStrokeColorPicker={setIsStrokeColorPicker}
+                  strokeOpacity={strokeOpacity}
+                  setStrokeOpacity={setStrokeOpacity}
+                  strokeWeight={strokeWeight}
+                  setStrokeWeight={setStrokeWeight}
+                />
+              )}
+              {selectedStyleFeature === "label" && (
+                <LabelStyleSection
+                  isLabel={isLabel}
+                  setIsLabel={setIsLabel}
+                  labelName={labelName}
+                  setLabelName={setLabelName}
+                  featureCollection={featureCollection}
+                />
+              )}
 
               <DialogFooter>
                 <Button
@@ -175,8 +188,8 @@ export const StyleDialog = ({
               <GeoJSON
                 key={
                   featureCollection.features[0].geometry.type === "Point"
-                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${labelName}`
-                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${labelName}`
+                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${isLabel}_${labelName}`
+                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${isLabel}_${labelName}`
                 }
                 style={{
                   stroke: isStroke,
@@ -196,12 +209,10 @@ export const StyleDialog = ({
                 }}
                 onEachFeature={(feature, layer) => {
                   const featureWithState = feature as FeatureWithState;
-                  console.log(featureWithState.style.label.attribute) // Add a state for that as well in order to be able to keep in track of it and render at preview...
-                  if (
-                   isLabel &&
-                    featureWithState.style.label.attribute
-                  ) {
-                    layer.bindTooltip(featureWithState.style.label.attribute, {
+                  
+                  if (isLabel && labelName && featureWithState.properties) {
+                    const attribute = featureWithState.properties[labelName]
+                    layer.bindTooltip(String(attribute), {
                       permanent: true,
                       direction: "top",
                       className:
