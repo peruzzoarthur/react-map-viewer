@@ -63,6 +63,12 @@ export const useWorkspace = ({
             isLabel: false,
             labelName: undefined,
             attribute: null,
+            style: {
+              permanent: true,
+              direction: "top",
+              className:
+                "bg-black bg-opacity-50 text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
+            },
           },
         },
         selected: false,
@@ -141,6 +147,7 @@ export const useWorkspace = ({
               attribute: propertyKey
                 ? String(feature.properties?.[propertyKey])
                 : null,
+              style: style.label.style,
             },
           },
         };

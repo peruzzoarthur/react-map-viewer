@@ -1,17 +1,34 @@
 import { FeatureCollectionWithFilenameAndState } from "@/index.types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { Switch } from "./ui/switch";
+import { TooltipOptions } from "leaflet";
+import { Input } from "./ui/input";
 
 type LabelStyleSectionProps = {
   isLabel: boolean;
   setIsLabel: React.Dispatch<boolean>;
   labelName: string | undefined;
   setLabelName: React.Dispatch<string | undefined>;
-  featureCollection: FeatureCollectionWithFilenameAndState
-
+  labelStyle: TooltipOptions;
+  setLabelStyle: React.Dispatch<TooltipOptions>;
+  featureCollection: FeatureCollectionWithFilenameAndState;
 };
 
-export const LabelStyleSection = ({isLabel, setIsLabel, labelName, setLabelName, featureCollection }: LabelStyleSectionProps) => {
+export const LabelStyleSection = ({
+  isLabel,
+  setIsLabel,
+  labelName,
+  setLabelName,
+  labelStyle,
+  setLabelStyle,
+  featureCollection,
+}: LabelStyleSectionProps) => {
   return (
     <section aria-labelledby="label-section" className="mb-2 mt-2">
       <h3 id="label-section" className="text-sm font-semibold">
@@ -55,6 +72,17 @@ export const LabelStyleSection = ({isLabel, setIsLabel, labelName, setLabelName,
                 ))}
               </SelectContent>
             </Select>
+            <label>CSS</label>
+
+            <Input
+              id="label-css"
+              className="w-auto h-auto"
+              type="string"
+              defaultValue={labelStyle.className}
+              onChange={(event) =>
+                setLabelStyle({ ...labelStyle, className: event.target.value })
+              }
+            />
           </div>
         </>
       )}

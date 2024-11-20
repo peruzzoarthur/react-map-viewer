@@ -42,13 +42,12 @@ export const GeoJsonFeatures = ({ featureCollection }: GeoJsonFeatureProps) => {
           return marker;
         }}
         onEachFeature={(feature, layer) => {
-          const featureWithState = feature as FeatureWithState
-          if (featureWithState.style.label.isLabel && featureWithState.style.label.attribute) {
-            layer.bindTooltip(featureWithState.style.label.attribute, {
-              permanent: true,
-              direction: "top",
-              className: "bg-black bg-opacity-50 text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none"
-            })
+          const featureWithState = feature as FeatureWithState;
+          if (
+            featureWithState.style.label.isLabel &&
+            featureWithState.style.label.attribute
+          ) {
+            layer.bindTooltip(featureWithState.style.label.attribute, featureWithState.style.label.style);
           }
         }}
       />

@@ -1,16 +1,17 @@
 import { Feature, Geometry, GeoJsonProperties, BBox } from "geojson";
-import { PathOptions } from "leaflet";
+import { PathOptions, TooltipOptions } from "leaflet";
 
 export type Label = {
-  isLabel: boolean
-  labelName: string | undefined
-  attribute: string | null
-}
+  isLabel: boolean;
+  labelName: string | undefined;
+  attribute: string | null;
+  style: TooltipOptions ;
+};
 
 export type PathOptionsWithPointAttributes = PathOptions & {
-  pointSize: number | undefined
-  label: Label
-}
+  pointSize: number | undefined;
+  label: Label;
+};
 
 export type FeatureWithState = Feature<Geometry, GeoJsonProperties> & {
   style: PathOptionsWithPointAttributes;
@@ -31,5 +32,5 @@ export type FeatureCollectionWithFilenameAndState = {
 export type Workspace = {
   featureCollections: FeatureCollectionWithFilenameAndState[] | [];
   updatedAt: number;
-  name: string
+  name: string;
 };

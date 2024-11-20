@@ -18,7 +18,7 @@ import {
 } from "@/index.types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapContainer, TileLayer } from "react-leaflet";
-import L from "leaflet";
+import L, { TooltipOptions } from "leaflet";
 import { GeoJSON } from "react-leaflet";
 import FitLayer from "./fit-layer";
 import { FillStyleSection } from "./fill-style-section";
@@ -76,7 +76,9 @@ export const StyleDialog = ({
   const [labelName, setLabelName] = useState<string | undefined>(
     style.label.labelName,
   );
-
+  const [labelStyle, setLabelStyle] = useState<TooltipOptions>(
+    style.label.style,
+  );
   const [selectedStyleFeature, setSelectedStyleFeature] =
     useState<StyleFeature>("fill");
 
@@ -139,13 +141,17 @@ export const StyleDialog = ({
                   setIsLabel={setIsLabel}
                   labelName={labelName}
                   setLabelName={setLabelName}
+                  labelStyle={labelStyle}
+                  setLabelStyle={setLabelStyle}
                   featureCollection={featureCollection}
+
                 />
               )}
 
               <DialogFooter>
                 <Button
                   onClick={() => {
+                    console.log(labelStyle)
                     changeStyle(
                       featureCollection,
                       {
@@ -161,6 +167,11 @@ export const StyleDialog = ({
                           isLabel: isLabel,
                           labelName: labelName,
                           attribute: null,
+                          style: {
+                            permanent: labelStyle.permanent,
+                            direction: labelStyle.direction,
+                            className: labelStyle.className 
+                          },
                         },
                       },
                       labelName ?? null,
@@ -188,8 +199,8 @@ export const StyleDialog = ({
               <GeoJSON
                 key={
                   featureCollection.features[0].geometry.type === "Point"
-                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${isLabel}_${labelName}`
-                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${isLabel}_${labelName}`
+                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${isLabel}_${labelName}_${labelStyle.className}`
+                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${isLabel}_${labelName}_${labelStyle.className}`
                 }
                 style={{
                   stroke: isStroke,
@@ -209,15 +220,10 @@ export const StyleDialog = ({
                 }}
                 onEachFeature={(feature, layer) => {
                   const featureWithState = feature as FeatureWithState;
-                  
+
                   if (isLabel && labelName && featureWithState.properties) {
-                    const attribute = featureWithState.properties[labelName]
-                    layer.bindTooltip(String(attribute), {
-                      permanent: true,
-                      direction: "top",
-                      className:
-                        "bg-black bg-opacity-50 text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
-                    });
+                    const attribute = featureWithState.properties[labelName];
+                    layer.bindTooltip(String(attribute), labelStyle);
                   }
                 }}
               />
