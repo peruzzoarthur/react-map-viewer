@@ -175,6 +175,7 @@ export const LayerItem = ({
               if (zoomToLayerRef.current && featureCollection) {
                 zoomToLayerRef.current.fitLayerBounds(featureCollection);
               }
+              setMenuPosition({ x: 0, y: 0 });
             }}
           >
             Zoom to layer
@@ -184,6 +185,7 @@ export const LayerItem = ({
             onSelect={() => {
               setIsStyleDialogOpen(true);
               setSelectedLayer(featureCollection ?? null);
+              setMenuPosition({ x: 0, y: 0 });
             }}
           >
             Style
@@ -192,11 +194,17 @@ export const LayerItem = ({
             onSelect={() => {
               setIsTableOfContentOpen(true);
               setSelectedLayer(featureCollection ?? null);
+              setMenuPosition({ x: 0, y: 0 });
             }}
           >
             Table of Content
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => removeFileFromWorkspace(filename)}>
+          <ContextMenuItem
+            onClick={() => {
+              removeFileFromWorkspace(filename);
+              setMenuPosition({ x: 0, y: 0 });
+            }}
+          >
             Remove from workspace
           </ContextMenuItem>
         </ContextMenuContent>
