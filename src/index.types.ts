@@ -1,11 +1,13 @@
 import { Feature, Geometry, GeoJsonProperties, BBox } from "geojson";
 import { PathOptions, TooltipOptions } from "leaflet";
 
+export type CustomTooltipOptions = TooltipOptions & { backgroundColor: string };
+
 export type Label = {
   isLabel: boolean;
   labelName: string | undefined;
   attribute: string | null;
-  style: TooltipOptions ;
+  style: CustomTooltipOptions;
 };
 
 export type PathOptionsWithPointAttributes = PathOptions & {
@@ -36,6 +38,6 @@ export type Workspace = {
 };
 
 export type TileLayerOptions = {
-  attribution: string,
-  url: string
-}
+  attribution: string;
+  url: string;
+};

@@ -67,8 +67,9 @@ export const useWorkspace = ({
               permanent: true,
               direction: "auto",
               opacity: 0.9,
-              // className:
-              //   "text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
+              backgroundColor: "bg-transparent",
+              className:
+                "bg-transparent text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
             },
           },
         },

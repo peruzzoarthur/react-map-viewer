@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { getRandomColor } from "@/lib/utils";
 import {
+  CustomTooltipOptions,
   FeatureCollectionWithFilenameAndState,
   FeatureWithState,
   PathOptionsWithPointAttributes,
@@ -19,7 +20,7 @@ import {
 } from "@/index.types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapContainer, TileLayer } from "react-leaflet";
-import L, { TooltipOptions } from "leaflet";
+import L from "leaflet";
 import { GeoJSON } from "react-leaflet";
 import FitLayer from "./fit-layer";
 import { FillStyleSection } from "./fill-style-section";
@@ -79,7 +80,7 @@ export const StyleDialog = ({
   const [labelName, setLabelName] = useState<string | undefined>(
     style.label.labelName,
   );
-  const [labelStyle, setLabelStyle] = useState<TooltipOptions>(
+  const [labelStyle, setLabelStyle] = useState<CustomTooltipOptions>(
     style.label.style,
   );
   const [selectedStyleFeature, setSelectedStyleFeature] =
@@ -153,7 +154,6 @@ export const StyleDialog = ({
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    console.log(labelStyle);
                     changeStyle(
                       featureCollection,
                       {
@@ -173,7 +173,9 @@ export const StyleDialog = ({
                             permanent: labelStyle.permanent,
                             direction: labelStyle.direction,
                             opacity: labelStyle.opacity,
-                            className: labelStyle.className,
+                            // className: labelStyle.className,
+                            backgroundColor: labelStyle.backgroundColor,
+                            className: `${labelStyle.backgroundColor}`
                           },
                         },
                       },

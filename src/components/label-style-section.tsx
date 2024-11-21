@@ -1,4 +1,4 @@
-import { FeatureCollectionWithFilenameAndState } from "@/index.types";
+import { CustomTooltipOptions, FeatureCollectionWithFilenameAndState } from "@/index.types";
 import {
   Select,
   SelectContent,
@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Switch } from "./ui/switch";
-import { Direction, TooltipOptions } from "leaflet";
+import { Direction} from "leaflet";
 import { Input } from "./ui/input";
 
 type LabelStyleSectionProps = {
@@ -15,8 +15,8 @@ type LabelStyleSectionProps = {
   setIsLabel: React.Dispatch<boolean>;
   labelName: string | undefined;
   setLabelName: React.Dispatch<string | undefined>;
-  labelStyle: TooltipOptions;
-  setLabelStyle: React.Dispatch<TooltipOptions>;
+  labelStyle: CustomTooltipOptions;
+  setLabelStyle: React.Dispatch<CustomTooltipOptions>;
   featureCollection: FeatureCollectionWithFilenameAndState;
 };
 
@@ -29,11 +29,11 @@ const directions: Direction[] = [
   "auto",
 ];
 
-// const backgroundColors: { key: string; value: string }[] = [
-//   { key: "black", value: "bg-black" },
-//   { key: "white", value: "bg-white" },
-//   { key: "transparente", value: "bg-transparent" },
-// ];
+const backgroundColors: { key: string; value: string }[] = [
+  { key: "black", value: "bg-black" },
+  { key: "white", value: "bg-white" },
+  { key: "transparent", value: "bg-transparent" },
+];
 
 export const LabelStyleSection = ({
   isLabel,
@@ -44,6 +44,22 @@ export const LabelStyleSection = ({
   setLabelStyle,
   featureCollection,
 }: LabelStyleSectionProps) => {
+  let backGroundColorKey: "black" | "white" | "transparent" | undefined 
+  let backGroundColorValue:  "bg-black" | "bg-white" | "bg-transparent" | undefined
+  if (labelStyle.backgroundColor === "bg-transparent") {
+    backGroundColorKey = "transparent"
+    backGroundColorValue = "bg-transparent"
+  } else if (labelStyle.backgroundColor === "bg-black") {
+    backGroundColorKey = "black"
+    backGroundColorValue = "bg-black"
+  } else if (labelStyle.backgroundColor === "bg-white") {
+    backGroundColorKey = "white"
+    backGroundColorValue = "bg-white"
+  } else {
+    backGroundColorValue = undefined
+    backGroundColorValue = undefined
+  }
+
   return (
     <section aria-labelledby="label-section" className="mb-2 mt-2">
       <h3 id="label-section" className="text-sm font-semibold">
@@ -140,6 +156,30 @@ export const LabelStyleSection = ({
                 })
               }
             />
+
+            
+            <label className="text-sm" htmlFor="label-bg-color">
+              Background
+            </label>
+            <Select
+              defaultValue={backGroundColorValue}
+              onValueChange={(value) =>
+                setLabelStyle({ ...labelStyle, backgroundColor: value })
+              }
+            >
+              <SelectTrigger className="w-auto">
+                <SelectValue
+                  placeholder={backGroundColorKey ?? "Select background"}
+                />
+              </SelectTrigger>
+              <SelectContent className="z-[1500]">
+                {backgroundColors.map((object) => (
+                  <SelectItem key={object.key} value={object.value}>
+                    {object.key}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <div className="flex flex-col w-full col-span-2">
               <label>CSS</label>
