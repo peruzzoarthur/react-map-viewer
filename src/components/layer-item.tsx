@@ -163,7 +163,7 @@ export const LayerItem = ({
           </>
         </ContextMenuTrigger>
         <ContextMenuContent
-          className="z-[1000]"
+          className="z-[1000] flex flex-col w-[20vh]"
           style={{
             top: menuPosition.y,
             left: menuPosition.x,
