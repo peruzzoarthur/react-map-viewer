@@ -1,4 +1,4 @@
-import {  useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -15,14 +15,13 @@ import { NavBar } from "./components/navbar";
 import { LayersContainer } from "./components/layers-container";
 import {
   FeatureCollectionWithFilenameAndState,
+  TileLayerOptions,
   Workspace,
 } from "./index.types";
 import { GeoJsonWorkspace } from "./components/geojson-workspace";
 import { faker } from "@faker-js/faker";
 import { ProjectBar } from "./components/project-bar";
 import { ZoomToLayer, ZoomToLayerRef } from "./components/zoom-to-layer";
-
-
 
 function App() {
   const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`;
@@ -36,6 +35,12 @@ function App() {
   const [geoJson, setGeoJson] = useState<FeatureCollectionWithFilename | null>(
     null,
   );
+  const [tileLayerOptions, setTileLayerOptions] = useState<TileLayerOptions>({
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    url: " https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  });
+
   // const [onHoverCoord, setOnHoverCoord] = useState<{
   //   lat: number;
   //   lng: number;
@@ -58,7 +63,7 @@ function App() {
     setWorkspace,
   });
   const [isTileLayer, setIsTileLayer] = useState<boolean>(true);
-  const zoomToLayerRef = useRef<ZoomToLayerRef | null>(null)
+  const zoomToLayerRef = useRef<ZoomToLayerRef | null>(null);
   return (
     <div className="p-2 flex flex-col h-screen w-screen">
       <NavBar
@@ -93,13 +98,15 @@ function App() {
             selectedLayer={selectedLayer}
             setPosition={setPosition}
             zoomToLayerRef={zoomToLayerRef}
+            tileLayerOptions={tileLayerOptions}
+            setTileLayerOptions={setTileLayerOptions}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={70}>
           <div className="flex h-full w-full items-center justify-center p-6">
             <MapContainer
-              className="h-[85vh] w-full z-80"
+              className="h-[85vh] w-full"
               center={[-31.75955334256868, -52.34488136477589]}
               zoom={9}
               scrollWheelZoom={true}
@@ -108,12 +115,12 @@ function App() {
               {/* <MapController selectedLayer={selectedLayer} /> */}
               {isTileLayer && (
                 <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  url=" https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                  attribution={tileLayerOptions.attribution}
+                  url={tileLayerOptions.url}
                 />
               )}
 
-              <ZoomToLayer ref={zoomToLayerRef}/>
+              <ZoomToLayer ref={zoomToLayerRef} />
               {workspace && workspace.featureCollections.length !== 0 && (
                 <GeoJsonWorkspace workspace={workspace} />
               )}

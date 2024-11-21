@@ -11,6 +11,7 @@ import { StyleDialog } from "./style-dialog";
 import {
   FeatureCollectionWithFilenameAndState,
   PathOptionsWithPointAttributes,
+  TileLayerOptions,
 } from "@/index.types";
 import { ZoomToLayerRef } from "./zoom-to-layer";
 import { useRef, useState } from "react";
@@ -37,6 +38,7 @@ type LayerItemProps = {
   dragFeature: React.MutableRefObject<number>;
   draggedOverFeature: React.MutableRefObject<number>;
   handleSort: () => void;
+  tileLayerOptions: TileLayerOptions
 };
 
 export const LayerItem = ({
@@ -56,6 +58,7 @@ export const LayerItem = ({
   dragFeature,
   draggedOverFeature,
   handleSort,
+  tileLayerOptions
 }: LayerItemProps) => {
   const filename = featureCollection?.fileName;
   const features = featureCollection?.features;
@@ -215,6 +218,7 @@ export const LayerItem = ({
           changeStyle={changeStyle}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}
+          tileLayerOptions={tileLayerOptions}
         />
       )}
       {isTableOfContentOpen && selectedLayer && (

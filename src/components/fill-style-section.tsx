@@ -16,7 +16,7 @@ type FillStyleSectionProps = {
 
 export const FillStyleSection = ({isFill, setIsFill, isFillColorPicker, setIsFillColorPicker, fillColor, setFillColor, fillOpacity, setFillOpacity}: FillStyleSectionProps) => {
   return (
-    <section aria-labelledby="fill-section" className="mt-2 mb-2">
+    <section aria-labelledby="fill-section" className="w-full">
       <h3 id="fill-section" className="text-sm font-semibold">
         Fill Style
       </h3>

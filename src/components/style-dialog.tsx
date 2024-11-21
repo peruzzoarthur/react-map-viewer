@@ -15,6 +15,7 @@ import {
   FeatureCollectionWithFilenameAndState,
   FeatureWithState,
   PathOptionsWithPointAttributes,
+  TileLayerOptions,
 } from "@/index.types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapContainer, TileLayer } from "react-leaflet";
@@ -39,6 +40,7 @@ type StyleDialogProps = {
 
   isStyleDialogOpen: boolean;
   setIsStyleDialogOpen: React.Dispatch<boolean>;
+  tileLayerOptions: TileLayerOptions;
 };
 
 export const StyleDialog = ({
@@ -46,6 +48,7 @@ export const StyleDialog = ({
   changeStyle,
   isStyleDialogOpen,
   setIsStyleDialogOpen,
+  tileLayerOptions,
 }: StyleDialogProps) => {
   // later loop over features to have multiple styling (pallete for example)
   const style = featureCollection.features[0].style;
@@ -144,14 +147,13 @@ export const StyleDialog = ({
                   labelStyle={labelStyle}
                   setLabelStyle={setLabelStyle}
                   featureCollection={featureCollection}
-
                 />
               )}
 
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    console.log(labelStyle)
+                    console.log(labelStyle);
                     changeStyle(
                       featureCollection,
                       {
@@ -170,7 +172,8 @@ export const StyleDialog = ({
                           style: {
                             permanent: labelStyle.permanent,
                             direction: labelStyle.direction,
-                            className: labelStyle.className 
+                            opacity: labelStyle.opacity,
+                            className: labelStyle.className,
                           },
                         },
                       },
@@ -192,15 +195,15 @@ export const StyleDialog = ({
               scrollWheelZoom={false}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url=" https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                attribution={tileLayerOptions.attribution}
+                url={tileLayerOptions.url}
               />
               <FitLayer layerData={featureCollection} />
               <GeoJSON
                 key={
                   featureCollection.features[0].geometry.type === "Point"
-                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${isLabel}_${labelName}_${labelStyle.className}`
-                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${isLabel}_${labelName}_${labelStyle.className}`
+                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${isLabel}_${labelName}_${labelStyle.className}_${labelStyle.permanent}_${labelStyle.direction}_${labelStyle.opacity}`
+                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${isLabel}_${labelName}_${labelStyle.className}_${labelStyle.permanent}_${labelStyle.direction}_${labelStyle.opacity}`
                 }
                 style={{
                   stroke: isStroke,

@@ -1,6 +1,7 @@
 import {
   FeatureCollectionWithFilenameAndState,
   PathOptionsWithPointAttributes,
+  TileLayerOptions,
   Workspace,
 } from "@/index.types";
 import { LayerItem } from "./layer-item";
@@ -28,6 +29,8 @@ type LayersContainerProps = {
   toggleSelected: (filename: string | undefined) => void;
   setPosition: (fromIndex: number, toIndex: number) => void;
   zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null>;
+  tileLayerOptions: TileLayerOptions;
+  setTileLayerOptions: React.Dispatch<TileLayerOptions>;
 };
 
 export const LayersContainer = ({
@@ -42,6 +45,8 @@ export const LayersContainer = ({
   workspace,
   toggleSelected,
   zoomToLayerRef,
+  tileLayerOptions,
+  setTileLayerOptions,
 }: LayersContainerProps) => {
   const [isTableOfContentOpen, setIsTableOfContentOpen] =
     useState<boolean>(false);
@@ -83,37 +88,34 @@ export const LayersContainer = ({
           layersList
             .sort((a, b) => b.position - a.position)
             .map((featureCollection, index) => (
-               <LayerItem
-                  key={index}
-                  isVisible={featureCollection.visible}
-                  setIsVisible={() =>
-                    toggleVisibility(featureCollection.fileName)
-                  }
-                  featureCollection={featureCollection}
-                  removeFileFromWorkspace={removeFileFromWorkspace}
-                  changeStyle={changeStyle}
-                  setSelectedLayer={setSelectedLayer}
-                  isStyleDialogOpen={isStyleDialogOpen}
-                  setIsStyleDialogOpen={setIsStyleDialogOpen}
-                  isTableOfContentOpen={isTableOfContentOpen}
-                  setIsTableOfContentOpen={setIsTableOfContentOpen}
-                  toggleSelected={toggleSelected}
-                  selectedLayer={selectedLayer}
-                  zoomToLayerRef={zoomToLayerRef}
-                  dragFeature={dragFeature}
-                  draggedOverFeature={draggedOverFeature}
-                  handleSort={handleSort}
-                />
+              <LayerItem
+                key={index}
+                isVisible={featureCollection.visible}
+                setIsVisible={() =>
+                  toggleVisibility(featureCollection.fileName)
+                }
+                featureCollection={featureCollection}
+                removeFileFromWorkspace={removeFileFromWorkspace}
+                changeStyle={changeStyle}
+                setSelectedLayer={setSelectedLayer}
+                isStyleDialogOpen={isStyleDialogOpen}
+                setIsStyleDialogOpen={setIsStyleDialogOpen}
+                isTableOfContentOpen={isTableOfContentOpen}
+                setIsTableOfContentOpen={setIsTableOfContentOpen}
+                toggleSelected={toggleSelected}
+                selectedLayer={selectedLayer}
+                zoomToLayerRef={zoomToLayerRef}
+                dragFeature={dragFeature}
+                draggedOverFeature={draggedOverFeature}
+                handleSort={handleSort}
+                tileLayerOptions={tileLayerOptions}
+              />
             ))}
         <TileLayer
           isVisible={isTileLayer}
           setIsVisible={setIsTileLayer}
-          filename="OpenStreetMap TileLayer"
-          changeStyle={changeStyle}
-          setSelectedLayer={setSelectedLayer}
-          isStyleDialogOpen={isStyleDialogOpen}
-          setIsStyleDialogOpen={setIsStyleDialogOpen}
-          selectedLayer={selectedLayer}
+          filename="TileLayer"
+          setTileLayerOptions={setTileLayerOptions}
         />
       </div>
     </>

@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Switch } from "./ui/switch";
-import { TooltipOptions } from "leaflet";
+import { Direction, TooltipOptions } from "leaflet";
 import { Input } from "./ui/input";
 
 type LabelStyleSectionProps = {
@@ -19,6 +19,21 @@ type LabelStyleSectionProps = {
   setLabelStyle: React.Dispatch<TooltipOptions>;
   featureCollection: FeatureCollectionWithFilenameAndState;
 };
+
+const directions: Direction[] = [
+  "right",
+  "left",
+  "top",
+  "bottom",
+  "center",
+  "auto",
+];
+
+// const backgroundColors: { key: string; value: string }[] = [
+//   { key: "black", value: "bg-black" },
+//   { key: "white", value: "bg-white" },
+//   { key: "transparente", value: "bg-transparent" },
+// ];
 
 export const LabelStyleSection = ({
   isLabel,
@@ -49,7 +64,7 @@ export const LabelStyleSection = ({
       {isLabel && (
         <>
           {/* Label Attribute */}
-          <div className="grid grid-cols-2 items-center p-2">
+          <div className="grid grid-cols-2 items-center p-2 space-y-4">
             <label className="text-sm" htmlFor="label-attribute">
               Attribute
             </label>
@@ -72,17 +87,75 @@ export const LabelStyleSection = ({
                 ))}
               </SelectContent>
             </Select>
-            <label>CSS</label>
 
-            <Input
-              id="label-css"
-              className="w-auto h-auto"
-              type="string"
-              defaultValue={labelStyle.className}
-              onChange={(event) =>
-                setLabelStyle({ ...labelStyle, className: event.target.value })
+            <label className="text-sm" htmlFor="is-label-permanent">
+              Permanent
+            </label>
+            <Switch
+              className="justify-self-end"
+              checked={labelStyle.permanent}
+              onCheckedChange={(bool) =>
+                setLabelStyle({ ...labelStyle, permanent: bool })
               }
             />
+
+            <label className="text-sm" htmlFor="label-direction">
+              Direction
+            </label>
+            <Select
+              defaultValue={labelStyle.direction}
+              onValueChange={(value: Direction) =>
+                setLabelStyle({ ...labelStyle, direction: value })
+              }
+            >
+              <SelectTrigger className="w-auto">
+                <SelectValue
+                  placeholder={labelStyle.direction ?? "Select direction"}
+                />
+              </SelectTrigger>
+              <SelectContent className="z-[1500]">
+                {directions.map((key) => (
+                  <SelectItem key={key} value={key}>
+                    {key}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <label className="text-sm" htmlFor="fill-opacity">
+              Opacity:
+            </label>
+            <Input
+              id="fill-opacity"
+              className="w-auto"
+              type="number"
+              max={1}
+              min={0}
+              step={0.1}
+              defaultValue={labelStyle.opacity}
+              onChange={(event) =>
+                setLabelStyle({
+                  ...labelStyle,
+                  opacity: Number(event.target.value),
+                })
+              }
+            />
+
+            <div className="flex flex-col w-full col-span-2">
+              <label>CSS</label>
+              <Input
+                id="label-css"
+                className="w-auto min-w-[10ch] h-[120px] max-w-full border rounded px-2 focus:outline-none overflow-x-auto"
+                type="string"
+                defaultValue={labelStyle.className}
+                onChange={(event) =>
+                  setLabelStyle({
+                    ...labelStyle,
+                    className: event.target.value,
+                  })
+                }
+              />
+            </div>
           </div>
         </>
       )}

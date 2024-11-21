@@ -6,25 +6,17 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { StyleDialog } from "./style-dialog";
-import { FeatureCollectionWithFilenameAndState, PathOptionsWithPointAttributes } from "@/index.types";
+import {
+  FeatureCollectionWithFilenameAndState,
+  TileLayerOptions,
+} from "@/index.types";
 
 type TileLayerProps = {
   isVisible: boolean;
   setIsVisible: React.Dispatch<boolean>;
   featureCollection?: FeatureCollectionWithFilenameAndState;
   filename?: string;
-  changeStyle: (
-    file: FeatureCollectionWithFilenameAndState,
-    style: PathOptionsWithPointAttributes,
-  ) => void;
-
-  selectedLayer: FeatureCollectionWithFilenameAndState | null;
-  setSelectedLayer: React.Dispatch<
-    React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
-  >;
-  isStyleDialogOpen: boolean;
-  setIsStyleDialogOpen: React.Dispatch<boolean>;
+  setTileLayerOptions: React.Dispatch<TileLayerOptions>;
 };
 
 export const TileLayer = ({
@@ -32,11 +24,7 @@ export const TileLayer = ({
   setIsVisible,
   featureCollection,
   filename,
-  changeStyle,
-  selectedLayer,
-  setSelectedLayer,
-  isStyleDialogOpen,
-  setIsStyleDialogOpen,
+  setTileLayerOptions,
 }: TileLayerProps) => {
   if (!filename) {
     filename = featureCollection?.fileName;
@@ -57,33 +45,35 @@ export const TileLayer = ({
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="flex space-x-1 hover:bg-white hover:bg-opacity-0">
-            <p
-              className={filename === selectedLayer?.fileName ? "text-sm font-bold" : "text-sm"}
-            >
-              {filename}
-            </p>
+            <p className="text-sm">{filename}</p>
             <Map />
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="z-[1000]">
           <ContextMenuItem
             onSelect={() => {
-              setIsStyleDialogOpen(true);
-              setSelectedLayer(featureCollection ?? null);
+              setTileLayerOptions({
+                attribution:
+                  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                url: " https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+              });
             }}
           >
-            Style
+            Dark
+          </ContextMenuItem>
+          <ContextMenuItem
+            onSelect={() => {
+              setTileLayerOptions({
+                attribution:
+                  "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+                url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+              });
+            }}
+          >
+            Satellite
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
-      {isStyleDialogOpen && selectedLayer && (
-        <StyleDialog
-          featureCollection={selectedLayer}
-          changeStyle={changeStyle}
-          isStyleDialogOpen={isStyleDialogOpen}
-          setIsStyleDialogOpen={setIsStyleDialogOpen}
-        />
-      )}
     </div>
   );
 };

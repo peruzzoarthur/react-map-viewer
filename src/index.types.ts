@@ -34,3 +34,8 @@ export type Workspace = {
   updatedAt: number;
   name: string;
 };
+
+export type TileLayerOptions = {
+  attribution: string,
+  url: string
+}

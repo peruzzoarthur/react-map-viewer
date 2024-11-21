@@ -65,9 +65,10 @@ export const useWorkspace = ({
             attribute: null,
             style: {
               permanent: true,
-              direction: "top",
-              className:
-                "bg-black bg-opacity-50 text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
+              direction: "auto",
+              opacity: 0.9,
+              // className:
+              //   "text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
             },
           },
         },

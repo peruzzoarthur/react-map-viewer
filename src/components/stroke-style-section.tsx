@@ -29,7 +29,7 @@ export const StrokeStyleSection = ({
   setStrokeWeight,
 }: StrokeStyleSectionProps) => {
   return (
-    <section aria-labelledby="stroke-section" className="mb-2 mt-2">
+    <section aria-labelledby="stroke-section" className="w-full">
       <h3 id="stroke-section" className="text-sm font-semibold">
         Stroke Style
       </h3>
