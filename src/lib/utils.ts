@@ -5,6 +5,8 @@ import { LatLngTuple } from "leaflet";
 import { twMerge } from "tailwind-merge";
 import { saveAs } from "file-saver";
 
+type KeyValuePair = { key: string; value: string }
+
 enum Color {
   Purple = "#370665",
   Blue = "#35589A",
@@ -125,4 +127,72 @@ export const checkESRIShapefiles = (
     setIsWorkspaceError(true);
     return;
   }
+};
+
+export const updateClass = (classString: string, newClass: string, classPrefix: string): string => {
+  return [newClass, ...classString
+    .replace(new RegExp(`\\b${classPrefix}-\\S+`, 'g'), '') // Remove existing `classPrefix-(any)` class
+    .trim()                                                 // Remove extra spaces
+    .split(/\s+/)                                           // Split classes into an array
+  ].join(' ')                                               // Rejoin the classes with the new one at the start
+    .trim();
+};
+
+export const updateSizedClass = (classString: string, newClass: string, classPrefix: string): string => {
+  const sizePattern = new RegExp(`\\b${classPrefix}-(xs|sm|base|lg)\\b`, 'g'); // Match only size-specific classes
+  return [newClass, ...classString
+    .replace(sizePattern, '') // Remove only size-specific classes
+    .trim()                   // Remove extra spaces
+    .split(/\s+/)             // Split classes into an array
+  ].join(' ')                 // Rejoin the classes with the new one at the start
+    .trim();
+};
+
+
+export const backgroundColors: KeyValuePair[] = [
+  { key: "black", value: "bg-black" },
+  { key: "white", value: "bg-white" },
+  { key: "transparent", value: "bg-transparent" },
+];
+
+export const getBackgroundColor = (
+  backgroundColor: string
+): { key: string; value: string } | undefined => {
+  return backgroundColors.find((color) => color.value === backgroundColor);
+}
+
+export const updateBackgroundClass = (classString: string, newBackground: string): string => {
+  return updateClass(classString, newBackground, 'bg');
+};
+
+export const borderSizes: KeyValuePair[] = [
+  { key: "none", value: "border-none" },
+  { key: "thin", value: "border-1" },
+  { key: "thick", value: "border-2" }
+]
+
+export const getBorderSize = (
+borderSize: string
+): {key: string; value: string} | undefined => {
+  return borderSizes.find((size) => size.value === borderSize)
+}
+
+export const updateBorderClass = (classString: string, newBorder: string): string => {
+  return updateClass(classString, newBorder, 'border');
+};
+
+export const textSizes: KeyValuePair[] = [
+  {key: "extra small", value: "text-xs"},
+  {key: "small", value: "text-sm"},
+  {key: "medium", value: "text-base"},
+  {key: "large", value: "text-lg"}
+] 
+
+export const getTextSize = (
+textSize: string
+): {key: string; value: string} | undefined => {
+  return textSizes.find((size) => size.value === textSize)
+}
+export const updateTextSizeClass = (classString: string, newTextSize: string): string => {
+  return updateSizedClass(classString, newTextSize, 'text');
 };

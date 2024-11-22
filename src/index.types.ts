@@ -1,7 +1,7 @@
 import { Feature, Geometry, GeoJsonProperties, BBox } from "geojson";
 import { PathOptions, TooltipOptions } from "leaflet";
 
-export type CustomTooltipOptions = TooltipOptions & { backgroundColor: string };
+export type CustomTooltipOptions = TooltipOptions & { backgroundColor: string, border: string, textColor: string, textSize: string, shadow: string };
 
 export type Label = {
   isLabel: boolean;

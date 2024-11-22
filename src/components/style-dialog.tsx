@@ -173,9 +173,12 @@ export const StyleDialog = ({
                             permanent: labelStyle.permanent,
                             direction: labelStyle.direction,
                             opacity: labelStyle.opacity,
-                            // className: labelStyle.className,
                             backgroundColor: labelStyle.backgroundColor,
-                            className: `${labelStyle.backgroundColor}`
+                            border: labelStyle.border,
+                            textSize: labelStyle.textSize,
+                            shadow: labelStyle.shadow,
+                            textColor: labelStyle.textColor,
+                            className: labelStyle.className
                           },
                         },
                       },

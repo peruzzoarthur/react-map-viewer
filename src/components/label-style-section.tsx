@@ -7,8 +7,9 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Switch } from "./ui/switch";
-import { Direction} from "leaflet";
+import { Direction } from "leaflet";
 import { Input } from "./ui/input";
+import { backgroundColors, borderSizes, getBackgroundColor, getBorderSize, getTextSize, textSizes, updateBackgroundClass, updateBorderClass, updateTextSizeClass } from "@/lib/utils";
 
 type LabelStyleSectionProps = {
   isLabel: boolean;
@@ -29,11 +30,6 @@ const directions: Direction[] = [
   "auto",
 ];
 
-const backgroundColors: { key: string; value: string }[] = [
-  { key: "black", value: "bg-black" },
-  { key: "white", value: "bg-white" },
-  { key: "transparent", value: "bg-transparent" },
-];
 
 export const LabelStyleSection = ({
   isLabel,
@@ -44,21 +40,10 @@ export const LabelStyleSection = ({
   setLabelStyle,
   featureCollection,
 }: LabelStyleSectionProps) => {
-  let backGroundColorKey: "black" | "white" | "transparent" | undefined 
-  let backGroundColorValue:  "bg-black" | "bg-white" | "bg-transparent" | undefined
-  if (labelStyle.backgroundColor === "bg-transparent") {
-    backGroundColorKey = "transparent"
-    backGroundColorValue = "bg-transparent"
-  } else if (labelStyle.backgroundColor === "bg-black") {
-    backGroundColorKey = "black"
-    backGroundColorValue = "bg-black"
-  } else if (labelStyle.backgroundColor === "bg-white") {
-    backGroundColorKey = "white"
-    backGroundColorValue = "bg-white"
-  } else {
-    backGroundColorValue = undefined
-    backGroundColorValue = undefined
-  }
+
+  const backgroundColor = getBackgroundColor(labelStyle.backgroundColor)
+  const borderSize = getBorderSize(labelStyle.border)
+  const textSize = getTextSize(labelStyle.textSize)
 
   return (
     <section aria-labelledby="label-section" className="mb-2 mt-2">
@@ -157,23 +142,81 @@ export const LabelStyleSection = ({
               }
             />
 
-            
+
             <label className="text-sm" htmlFor="label-bg-color">
               Background
             </label>
             <Select
-              defaultValue={backGroundColorValue}
-              onValueChange={(value) =>
-                setLabelStyle({ ...labelStyle, backgroundColor: value })
+              defaultValue={backgroundColor?.value}
+              onValueChange={(value) => {
+                if (labelStyle.className) {
+                  const newClassName = updateBackgroundClass(labelStyle.className, value)
+                  setLabelStyle({ ...labelStyle, backgroundColor: value, className: newClassName })
+                }
+              }
               }
             >
               <SelectTrigger className="w-auto">
                 <SelectValue
-                  placeholder={backGroundColorKey ?? "Select background"}
+                  placeholder={backgroundColor?.key ?? "Select background"}
                 />
               </SelectTrigger>
               <SelectContent className="z-[1500]">
                 {backgroundColors.map((object) => (
+                  <SelectItem key={object.key} value={object.value}>
+                    {object.key}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <label className="text-sm" htmlFor="label-border-size">
+              Border
+            </label>
+            <Select
+              defaultValue={borderSize?.value}
+              onValueChange={(value) => {
+                if (labelStyle.className) {
+                  const newClassName = updateBorderClass(labelStyle.className, value)
+                  setLabelStyle({ ...labelStyle, border: value, className: newClassName })
+                }
+              }
+              }
+            >
+              <SelectTrigger className="w-auto">
+                <SelectValue
+                  placeholder={borderSize?.key ?? "Select border size"}
+                />
+              </SelectTrigger>
+              <SelectContent className="z-[1500]">
+                {borderSizes.map((object) => (
+                  <SelectItem key={object.key} value={object.value}>
+                    {object.key}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <label className="text-sm" htmlFor="label-text-size">
+              Text
+            </label>
+            <Select
+              defaultValue={textSize?.value}
+              onValueChange={(value) => {
+                if (labelStyle.className) {
+                  const newClassName = updateTextSizeClass(labelStyle.className, value)
+                  setLabelStyle({ ...labelStyle, textSize: value, className: newClassName })
+                }
+              }
+              }
+            >
+              <SelectTrigger className="w-auto">
+                <SelectValue
+                  placeholder={textSize?.key ?? "Select text size"}
+                />
+              </SelectTrigger>
+              <SelectContent className="z-[1500]">
+                {textSizes.map((object) => (
                   <SelectItem key={object.key} value={object.value}>
                     {object.key}
                   </SelectItem>

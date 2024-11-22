@@ -68,8 +68,12 @@ export const useWorkspace = ({
               direction: "auto",
               opacity: 0.9,
               backgroundColor: "bg-transparent",
+              border: "border-none",
+              textColor: "text-white",
+              textSize: "text-base",
+              shadow: "shadow-none",
               className:
-                "bg-transparent text-white text-base border-none px-1.5 py-0.5 text-center whitespace-nowrap shadow-none",
+                "bg-transparent text-white text-base border-none px-1.5 py-0.5 text-center shadow-none",
             },
           },
         },
