@@ -7,6 +7,7 @@ import { AddLayerDialog } from "./add-layer-dialog";
 import { VectorDropdown } from "./vector-dropdown";
 import { Workspace } from "@/index.types";
 import { LoadWorkspaceDialog } from "./load-worskpace-dialog";
+import { MapDropdown } from "./map-dropdown";
 
 type NavBarProps = {
   workspace: Workspace;
@@ -24,6 +25,8 @@ type NavBarProps = {
   setWorkspaceError: React.Dispatch<string | null>;
   isWorkspaceError: boolean;
   setIsWorkspaceError: React.Dispatch<boolean>;
+
+mapContainerRef: React.RefObject<HTMLDivElement> 
 };
 
 export const NavBar = ({
@@ -36,6 +39,7 @@ export const NavBar = ({
   setWorkspaceError,
   isWorkspaceError,
   setIsWorkspaceError,
+  mapContainerRef
 }: NavBarProps) => {
   const [isAddLayerDialogOpen, setIsAddLayerDialogOpen] =
     useState<boolean>(false);
@@ -59,6 +63,7 @@ export const NavBar = ({
               setIsAddLayerDialogOpen={setIsAddLayerDialogOpen}
               setGeoJson={setGeoJson}
             />
+            <MapDropdown mapContainerRef={mapContainerRef} />
           </div>
           <ModeToggle />
         </Card>

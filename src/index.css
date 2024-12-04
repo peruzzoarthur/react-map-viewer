@@ -80,3 +80,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.leaflet-control-scale-line {
+  text-shadow: none !important;
+}
+
+

@@ -72,6 +72,18 @@ export const TileLayer = ({
           >
             Satellite
           </ContextMenuItem>
+
+          <ContextMenuItem
+            onSelect={() => {
+              setTileLayerOptions({
+                attribution:
+                  "Tiles &copy; Esri &mdash; Source: USGS, NOAA",
+                url: "https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+              });
+            }}
+          >
+           Terrain 
+          </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
     </div>

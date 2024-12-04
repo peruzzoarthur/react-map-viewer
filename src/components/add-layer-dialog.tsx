@@ -153,8 +153,8 @@ export const AddLayerDialog = ({
           </div>
         </DialogHeader>
         <DialogFooter>
+          {loading && <p>Loading...</p>}
           <div className="flex items-center justify-center space-x-4">
-            {loading && <p>Loading...</p>}
 
             {isOpenPreview && !isWorkspaceError && (
               <div className="flex flex-col space-y-2">

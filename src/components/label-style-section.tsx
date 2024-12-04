@@ -9,7 +9,7 @@ import {
 import { Switch } from "./ui/switch";
 import { Direction } from "leaflet";
 import { Input } from "./ui/input";
-import { backgroundColors, borderSizes, getBackgroundColor, getBorderSize, getTextSize, textSizes, updateBackgroundClass, updateBorderClass, updateTextSizeClass } from "@/lib/utils";
+import { backgroundColors, borderSizes, getBackgroundColor, getBorderSize, getShadowValue, getTextColor, getTextSize, shadowValues, textColors, textSizes, updateBackgroundClass, updateBorderClass, updateShadowValue, updateTextColorClass, updateTextSizeClass } from "@/lib/utils";
 
 type LabelStyleSectionProps = {
   isLabel: boolean;
@@ -44,7 +44,8 @@ export const LabelStyleSection = ({
   const backgroundColor = getBackgroundColor(labelStyle.backgroundColor)
   const borderSize = getBorderSize(labelStyle.border)
   const textSize = getTextSize(labelStyle.textSize)
-
+  const textColor = getTextColor(labelStyle.textColor)
+  const shadowValue = getShadowValue(labelStyle.shadow)
   return (
     <section aria-labelledby="label-section" className="mb-2 mt-2">
       <h3 id="label-section" className="text-sm font-semibold">
@@ -198,7 +199,7 @@ export const LabelStyleSection = ({
             </Select>
 
             <label className="text-sm" htmlFor="label-text-size">
-              Text
+              Text size
             </label>
             <Select
               defaultValue={textSize?.value}
@@ -224,24 +225,73 @@ export const LabelStyleSection = ({
               </SelectContent>
             </Select>
 
-            <div className="flex flex-col w-full col-span-2">
-              <label>CSS</label>
-              <Input
-                id="label-css"
-                className="w-auto min-w-[10ch] h-[120px] max-w-full border rounded px-2 focus:outline-none overflow-x-auto"
-                type="string"
-                defaultValue={labelStyle.className}
-                onChange={(event) =>
-                  setLabelStyle({
-                    ...labelStyle,
-                    className: event.target.value,
-                  })
+
+            <label className="text-sm" htmlFor="label-text-color">
+              Text color
+            </label>
+            <Select
+              defaultValue={textColor?.value}
+              onValueChange={(value) => {
+                if (labelStyle.className) {
+                  const newClassName = updateTextColorClass(labelStyle.className, value)
+                  setLabelStyle({ ...labelStyle, textColor: value, className: newClassName })
                 }
-              />
-            </div>
+              }
+              }
+            >
+              <SelectTrigger className="w-auto">
+                <SelectValue
+                  placeholder={textColor?.key ?? "Select text color"}
+                />
+              </SelectTrigger>
+              <SelectContent className="z-[1500]">
+                {textColors.map((object) => (
+                  <SelectItem key={object.key} value={object.value}>
+                    {object.key}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <label className="text-sm" htmlFor="label-shadow">
+              Shadow
+            </label>
+            <Select
+              defaultValue={shadowValue?.value}
+              onValueChange={(value) => {
+                if (labelStyle.className) {
+                  const newClassName = updateShadowValue(labelStyle.className, value)
+                  setLabelStyle({ ...labelStyle, shadow: value, className: newClassName })
+                }
+              }
+              }
+            >
+              <SelectTrigger className="w-auto">
+                <SelectValue
+                  placeholder={shadowValue?.key ?? "Select text color"}
+                />
+              </SelectTrigger>
+              <SelectContent className="z-[1500]">
+                {shadowValues.map((object) => (
+                  <SelectItem key={object.key} value={object.value}>
+                    {object.key}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
           </div>
         </>
       )}
     </section>
   );
 };
+// <div className="flex flex-col w-full col-span-2"> <label>CSS</label> <Input id="label-css" className="w-auto min-w-[10ch] h-[120px] max-w-full border rounded px-2 focus:outline-none overflow-x-auto" type="string" defaultValue={labelStyle.className}
+//   onChange={(event) =>
+//     setLabelStyle({
+//       ...labelStyle,
+//       className: event.target.value,
+//     })
+//   }
+// />
+// </div>

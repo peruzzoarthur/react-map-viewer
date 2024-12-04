@@ -22,6 +22,7 @@ import { GeoJsonWorkspace } from "./components/geojson-workspace";
 import { faker } from "@faker-js/faker";
 import { ProjectBar } from "./components/project-bar";
 import { ZoomToLayer, ZoomToLayerRef } from "./components/zoom-to-layer";
+import { ScaleControl } from "./components/scale-control";
 
 function App() {
   const randomProjectName = `${faker.color.human()}-${faker.animal.type()}`;
@@ -64,6 +65,7 @@ function App() {
   });
   const [isTileLayer, setIsTileLayer] = useState<boolean>(true);
   const zoomToLayerRef = useRef<ZoomToLayerRef | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   return (
     <div className="p-2 flex flex-col h-screen w-screen">
       <NavBar
@@ -76,6 +78,7 @@ function App() {
         setIsWorkspaceError={setIsWorkspaceError}
         workspace={workspace}
         setWorkspace={setWorkspace}
+        mapContainerRef={mapContainerRef}
       />
       <ProjectBar
         workspace={workspace}
@@ -104,9 +107,12 @@ function App() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={70}>
-          <div className="flex h-full w-full items-center justify-center p-6">
+          <div
+            className="flex h-full w-full items-center justify-center"
+            ref={mapContainerRef}
+          >
             <MapContainer
-              className="h-[85vh] w-full"
+              className="h-full w-full"
               center={[-31.75955334256868, -52.34488136477589]}
               zoom={9}
               scrollWheelZoom={true}
@@ -119,7 +125,11 @@ function App() {
                   url={tileLayerOptions.url}
                 />
               )}
-
+              <div className="grid grid-cols-2 space-x-4">
+                <ScaleControl maxWidth={200} bg="bg-black" textColor="text-white"/>
+                <ScaleControl maxWidth={100} bg="bg-white" textColor="text-black"/>
+                <ScaleControl maxWidth={50} bg="bg-black" textColor="text-white" />
+              </div>
               <ZoomToLayer ref={zoomToLayerRef} />
               {workspace && workspace.featureCollections.length !== 0 && (
                 <GeoJsonWorkspace workspace={workspace} />

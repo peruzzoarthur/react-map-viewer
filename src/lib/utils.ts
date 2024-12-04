@@ -129,25 +129,30 @@ export const checkESRIShapefiles = (
   }
 };
 
+// Label Styling Utils
 export const updateClass = (classString: string, newClass: string, classPrefix: string): string => {
   return [newClass, ...classString
-    .replace(new RegExp(`\\b${classPrefix}-\\S+`, 'g'), '') // Remove existing `classPrefix-(any)` class
-    .trim()                                                 // Remove extra spaces
-    .split(/\s+/)                                           // Split classes into an array
-  ].join(' ')                                               // Rejoin the classes with the new one at the start
-    .trim();
+    .replace(new RegExp(`\\b${classPrefix}-\\S+`, 'g'), '').trim().split(/\s+/)].join(' ').trim();
 };
 
 export const updateSizedClass = (classString: string, newClass: string, classPrefix: string): string => {
-  const sizePattern = new RegExp(`\\b${classPrefix}-(xs|sm|base|lg)\\b`, 'g'); // Match only size-specific classes
+  const sizePattern = new RegExp(`\\b${classPrefix}-(xs|sm|base|lg)\\b`, 'g');
   return [newClass, ...classString
-    .replace(sizePattern, '') // Remove only size-specific classes
-    .trim()                   // Remove extra spaces
-    .split(/\s+/)             // Split classes into an array
-  ].join(' ')                 // Rejoin the classes with the new one at the start
+    .replace(sizePattern, '')
+    .trim()
+    .split(/\s+/)
+  ].join(' ')
     .trim();
 };
-
+export const updateColoredClass = (classString: string, newClass: string, classPrefix: string): string => {
+  const sizePattern = new RegExp(`\\b${classPrefix}-(white|black)\\b`, 'g');
+  return [newClass, ...classString
+    .replace(sizePattern, '')
+    .trim()
+    .split(/\s+/)
+  ].join(' ')
+    .trim();
+};
 
 export const backgroundColors: KeyValuePair[] = [
   { key: "black", value: "bg-black" },
@@ -172,8 +177,8 @@ export const borderSizes: KeyValuePair[] = [
 ]
 
 export const getBorderSize = (
-borderSize: string
-): {key: string; value: string} | undefined => {
+  borderSize: string
+): { key: string; value: string } | undefined => {
   return borderSizes.find((size) => size.value === borderSize)
 }
 
@@ -182,17 +187,50 @@ export const updateBorderClass = (classString: string, newBorder: string): strin
 };
 
 export const textSizes: KeyValuePair[] = [
-  {key: "extra small", value: "text-xs"},
-  {key: "small", value: "text-sm"},
-  {key: "medium", value: "text-base"},
-  {key: "large", value: "text-lg"}
-] 
+  { key: "extra small", value: "text-xs" },
+  { key: "small", value: "text-sm" },
+  { key: "medium", value: "text-base" },
+  { key: "large", value: "text-lg" }
+]
 
 export const getTextSize = (
-textSize: string
-): {key: string; value: string} | undefined => {
+  textSize: string
+): { key: string; value: string } | undefined => {
   return textSizes.find((size) => size.value === textSize)
 }
+
 export const updateTextSizeClass = (classString: string, newTextSize: string): string => {
   return updateSizedClass(classString, newTextSize, 'text');
 };
+
+export const textColors: KeyValuePair[] = [
+  { key: "white", value: "text-white" },
+  { key: "black", value: "text-black" }
+]
+
+export const getTextColor = (
+  textColor: string
+): { key: string; value: string } | undefined => {
+  return textColors.find((size) => size.value === textColor)
+}
+
+export const updateTextColorClass = (classString: string, newTextSize: string): string => {
+  return updateColoredClass(classString, newTextSize, 'text');
+};
+
+export const shadowValues: KeyValuePair[] = [
+  {key: "none", value: "shadow-none"},
+  {key: "shadow", value: "shadow-1"}
+] 
+
+export const getShadowValue = (
+  shadowValue: string
+): { key: string; value: string } | undefined => {
+  return shadowValues.find((size) => size.value === shadowValue)
+}
+
+export const updateShadowValue = (classString: string, newShadow: string): string => {
+  return updateClass(classString, newShadow, 'shadow');
+};
+
+
