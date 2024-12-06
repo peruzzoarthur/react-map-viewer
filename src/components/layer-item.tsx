@@ -15,6 +15,11 @@ import {
 } from "@/index.types";
 import { ZoomToLayerRef } from "./zoom-to-layer";
 import { useRef, useState } from "react";
+import { axiosInstance } from "@/api";
+import { prepareGeoJSONForUpload } from "@/lib/utils";
+import { FeatureCollection } from "geojson";
+import { createBuffers } from "@/lib/gis-tools";
+import { FeatureCollectionWithFilename } from "shpjs";
 
 type LayerItemProps = {
   isVisible: boolean;
@@ -38,7 +43,11 @@ type LayerItemProps = {
   dragFeature: React.MutableRefObject<number>;
   draggedOverFeature: React.MutableRefObject<number>;
   handleSort: () => void;
-  tileLayerOptions: TileLayerOptions
+  tileLayerOptions: TileLayerOptions;
+  addFileToWorkspace: (
+    file: FeatureCollectionWithFilename,
+    color: string,
+  ) => void;
 };
 
 export const LayerItem = ({
@@ -58,7 +67,8 @@ export const LayerItem = ({
   dragFeature,
   draggedOverFeature,
   handleSort,
-  tileLayerOptions
+  tileLayerOptions,
+  addFileToWorkspace,
 }: LayerItemProps) => {
   const filename = featureCollection?.fileName;
   const features = featureCollection?.features;
@@ -74,7 +84,7 @@ export const LayerItem = ({
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const contextTriggerRef = useRef<HTMLDivElement | null>(null);
 
-  function handleContextMenuTrigger(event: React.KeyboardEvent) {
+  const handleContextMenuTrigger = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && contextTriggerRef.current) {
       const rect = contextTriggerRef.current.getBoundingClientRect();
       setMenuPosition({ x: rect.left, y: rect.top });
@@ -87,7 +97,29 @@ export const LayerItem = ({
       });
       contextTriggerRef.current.dispatchEvent(contextMenuEvent);
     }
-  }
+  };
+
+  const handleAddToDb = async (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+  ) => {
+    try {
+      const plainFeatureCollection: FeatureCollection =
+        prepareGeoJSONForUpload(featureCollection);
+
+      const requestBody = {
+        geoJSON: plainFeatureCollection,
+        srid: 3857,
+      };
+
+      const { data } = await axiosInstance.post("/shapes/upload", requestBody);
+
+      return data;
+    } catch (error) {
+      console.error("Error:", error);
+      throw error;
+    }
+  };
+
   return (
     <div className="flex w-full">
       {isVisible ? (
@@ -193,6 +225,7 @@ export const LayerItem = ({
           >
             Style
           </ContextMenuItem>
+
           <ContextMenuItem
             onSelect={() => {
               setIsTableOfContentOpen(true);
@@ -202,6 +235,25 @@ export const LayerItem = ({
           >
             Table of Content
           </ContextMenuItem>
+
+          <ContextMenuItem
+            onClick={() => {
+              handleAddToDb(featureCollection);
+              setMenuPosition({ x: 0, y: 0 });
+            }}
+          >
+            Add to db
+          </ContextMenuItem>
+
+          <ContextMenuItem
+            onClick={async () => {
+              await createBuffers(featureCollection, addFileToWorkspace);
+              setMenuPosition({ x: 0, y: 0 });
+            }}
+          >
+            Testing buffer
+          </ContextMenuItem>
+
           <ContextMenuItem
             onClick={() => {
               removeFileFromWorkspace(filename);

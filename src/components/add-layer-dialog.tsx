@@ -9,15 +9,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { checkESRIShapefiles, getRandomColor } from "@/lib/utils";
+import {
+  getRandomColor,
+  handleGeoJsonFileUpload,
+  handleShapefileFileUpload,
+} from "@/lib/utils";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ScrollBar } from "./ui/scroll-area";
-import { FeatureCollectionWithFilename, parseZip } from "shpjs";
+import { FeatureCollectionWithFilename } from "shpjs";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Map, XCircle } from "lucide-react";
-import JSZip from "jszip";
-import parseWKT, { WktParsed } from "wkt-parser";
+import  { WktParsed } from "wkt-parser";
 
 type AddLayerProps = {
   geoJson: FeatureCollectionWithFilename | null;
@@ -54,46 +57,6 @@ export const AddLayerDialog = ({
     ? wktParsed.name === "WGS_1984_Web_Mercator_Auxiliary_Sphere"
     : null;
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const files = event.target.files;
-    
-    if (files && files.length > 0) {
-      checkESRIShapefiles(files, setWorkspaceError, setIsWorkspaceError)
-      setLoading(true);
-      try {
-        const zip = new JSZip();
-
-        for (const file of files) {
-          const filePath = file.webkitRelativePath || file.name;
-
-          if (filePath.endsWith(".prj")) {
-           const prjContent = await file.text(); 
-            try {
-              const parsedCRS = parseWKT(prjContent);
-              setWktParsed(parsedCRS);
-            } catch (err) {
-              console.error("Error parsing WKT:", err);
-            }
-          }
-
-          const arrayBuffer = await file.arrayBuffer();
-          zip.file(file.name, arrayBuffer);
-        }
-
-        const zippedBuffer = await zip.generateAsync({ type: "arraybuffer" });
-        const geoJsonData = await parseZip(zippedBuffer);
-        setGeoJson(geoJsonData as FeatureCollectionWithFilename);
-        setIsOpenPreview(true);
-      } catch (error) {
-        console.error("Error parsing shapefile:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger className="flex w-full">
@@ -112,14 +75,38 @@ export const AddLayerDialog = ({
                 className="w-2/3"
                 type="file"
                 onClick={() => {
-                  setWorkspaceError(null)
-                  setIsWorkspaceError(false)
-                  setGeoJson(null)
-                  setWktParsed(null)
-                  setIsOpenPreview(false)
+                  setWorkspaceError(null);
+                  setIsWorkspaceError(false);
+                  setGeoJson(null);
+                  setWktParsed(null);
+                  setIsOpenPreview(false);
                 }}
-                onChange={handleFileUpload}
+                onChange={(event) =>
+                  handleShapefileFileUpload({
+                    event: event,
+                    setGeoJson: setGeoJson,
+                    setLoading: setLoading,
+                    setIsOpenPreview: setIsOpenPreview,
+                    setIsWorkspaceError: setIsWorkspaceError,
+                    setWorkspaceError: setWorkspaceError,
+                    setWktParsed: setWktParsed,
+                  })
+                }
                 ref={(input) => input?.setAttribute("webkitdirectory", "true")}
+              />
+              <Input
+                className="w-2/3"
+                type="file"
+                onClick={() => {
+                  setWorkspaceError(null);
+                  setIsWorkspaceError(false);
+                  setGeoJson(null);
+                  setWktParsed(null);
+                  setIsOpenPreview(false);
+                }}
+                onChange={(event) =>
+                  handleGeoJsonFileUpload(event, setLoading, setGeoJson)
+                }
               />
             </div>
 
@@ -130,8 +117,9 @@ export const AddLayerDialog = ({
                   Bad Coordinate Reference System (CRS)
                 </AlertTitle>
                 <AlertDescription>
-                  The file isn't using the correct CRS (<b className="font-bold">EPSG: 3857</b>). Reproject
-                  your shapes if you want to use the same CRS as the map.
+                  The file isn't using the correct CRS (
+                  <b className="font-bold">EPSG: 3857</b>). Reproject your
+                  shapes if you want to use the same CRS as the map.
                 </AlertDescription>
               </Alert>
             )}
@@ -155,7 +143,6 @@ export const AddLayerDialog = ({
         <DialogFooter>
           {loading && <p>Loading...</p>}
           <div className="flex items-center justify-center space-x-4">
-
             {isOpenPreview && !isWorkspaceError && (
               <div className="flex flex-col space-y-2">
                 <h4 className="font-bold text-sm">

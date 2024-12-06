@@ -66,6 +66,7 @@ function App() {
   const [isTileLayer, setIsTileLayer] = useState<boolean>(true);
   const zoomToLayerRef = useRef<ZoomToLayerRef | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className="p-2 flex flex-col h-screen w-screen">
       <NavBar
@@ -103,6 +104,7 @@ function App() {
             zoomToLayerRef={zoomToLayerRef}
             tileLayerOptions={tileLayerOptions}
             setTileLayerOptions={setTileLayerOptions}
+            addFileToWorkspace={addFileToWorkspace}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />

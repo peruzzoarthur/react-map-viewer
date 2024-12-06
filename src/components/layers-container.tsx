@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { TileLayer } from "./tile-layer";
 import { Separator } from "./ui/separator";
 import { ZoomToLayerRef } from "./zoom-to-layer";
+import { FeatureCollectionWithFilename } from "shpjs";
 type LayersContainerProps = {
   isTileLayer: boolean;
   setIsTileLayer: React.Dispatch<boolean>;
@@ -31,6 +32,10 @@ type LayersContainerProps = {
   zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null>;
   tileLayerOptions: TileLayerOptions;
   setTileLayerOptions: React.Dispatch<TileLayerOptions>;
+  addFileToWorkspace: (
+    file: FeatureCollectionWithFilename,
+    color: string,
+  ) => void;
 };
 
 export const LayersContainer = ({
@@ -47,6 +52,7 @@ export const LayersContainer = ({
   zoomToLayerRef,
   tileLayerOptions,
   setTileLayerOptions,
+  addFileToWorkspace,
 }: LayersContainerProps) => {
   const [isTableOfContentOpen, setIsTableOfContentOpen] =
     useState<boolean>(false);
@@ -109,6 +115,7 @@ export const LayersContainer = ({
                 draggedOverFeature={draggedOverFeature}
                 handleSort={handleSort}
                 tileLayerOptions={tileLayerOptions}
+                addFileToWorkspace={addFileToWorkspace}
               />
             ))}
         <TileLayer

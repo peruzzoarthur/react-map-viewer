@@ -16,6 +16,7 @@ export type PathOptionsWithPointAttributes = PathOptions & {
 };
 
 export type FeatureWithState = Feature<Geometry, GeoJsonProperties> & {
+  colorsSchema: "single" | "palette"
   style: PathOptionsWithPointAttributes;
   selected: boolean;
 };

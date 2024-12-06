@@ -78,6 +78,7 @@ export const useWorkspace = ({
           },
         },
         selected: false,
+        colorsSchema: 'single'
       };
     });
 
