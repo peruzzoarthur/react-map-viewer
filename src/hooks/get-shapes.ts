@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/api";
+import { axiosInstance } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "geojson";
 

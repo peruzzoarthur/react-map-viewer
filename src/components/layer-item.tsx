@@ -15,11 +15,11 @@ import {
 } from "@/index.types";
 import { ZoomToLayerRef } from "./zoom-to-layer";
 import { useRef, useState } from "react";
-import { axiosInstance } from "@/api";
-import { prepareGeoJSONForUpload } from "@/lib/utils";
 import { FeatureCollection } from "geojson";
 import { createBuffers } from "@/lib/gis-tools";
 import { FeatureCollectionWithFilename } from "shpjs";
+import { prepareGeoJSONForUpload } from "@/lib/upload-files";
+import { axiosInstance } from "@/lib/api";
 
 type LayerItemProps = {
   isVisible: boolean;

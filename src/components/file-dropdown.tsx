@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { Workspace } from "@/index.types";
-import { saveWorkspace } from "@/lib/utils";
+import { saveWorkspace } from "@/lib/save-and-upload-workspace";
 
 type FileDropdownProps = {
   workspace: Workspace;

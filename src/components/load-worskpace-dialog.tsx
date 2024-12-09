@@ -8,11 +8,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
-import {  loadWorkspace } from "@/lib/utils";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { XCircle } from "lucide-react";
 import { Workspace } from "@/index.types";
+import { loadWorkspace } from "@/lib/save-and-upload-workspace";
 
 type LoadWorkspaceProps = {
   setWorkspace: React.Dispatch<Workspace>;

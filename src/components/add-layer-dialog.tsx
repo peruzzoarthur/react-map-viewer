@@ -9,18 +9,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import {
-  getRandomColor,
-  handleGeoJsonFileUpload,
-  handleShapefileFileUpload,
-} from "@/lib/utils";
+import { getRandomColor } from "@/lib/utils";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ScrollBar } from "./ui/scroll-area";
 import { FeatureCollectionWithFilename } from "shpjs";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Map, XCircle } from "lucide-react";
-import  { WktParsed } from "wkt-parser";
+import { XCircle } from "lucide-react";
+import {
+  handleGeoJsonFileUpload,
+  handleShapefileFileUpload,
+} from "@/lib/upload-files";
+import { UploadFileTypeMenuBar } from "./upload-file-type-menubar";
 
 type AddLayerProps = {
   geoJson: FeatureCollectionWithFilename | null;
@@ -39,6 +39,8 @@ type AddLayerProps = {
   setIsWorkspaceError: React.Dispatch<boolean>;
 };
 
+export type UploadFileType = "shp" | "geojson";
+
 export const AddLayerDialog = ({
   geoJson,
   setGeoJson,
@@ -52,10 +54,7 @@ export const AddLayerDialog = ({
 }: AddLayerProps) => {
   const [isOpenPreview, setIsOpenPreview] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [wktParsed, setWktParsed] = useState<WktParsed | null>(null);
-  const isCRS3857 = wktParsed
-    ? wktParsed.name === "WGS_1984_Web_Mercator_Auxiliary_Sphere"
-    : null;
+  const [fileType, setFileType] = useState<UploadFileType>("shp");
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -67,62 +66,63 @@ export const AddLayerDialog = ({
           <DialogTitle>Add file to layers</DialogTitle>
           <DialogDescription>
             Please select a directory with all ESRI Shapefile files for that
-            specific shape.
+            specific shape or simply add a GeoJSON.
           </DialogDescription>
           <div className="flex flex-col space-y-1 justify-center">
             <div className="flex p-4 space-y-4 flex-col justify-center items-center mt-4">
-              <Input
-                className="w-2/3"
-                type="file"
-                onClick={() => {
-                  setWorkspaceError(null);
-                  setIsWorkspaceError(false);
-                  setGeoJson(null);
-                  setWktParsed(null);
-                  setIsOpenPreview(false);
-                }}
-                onChange={(event) =>
-                  handleShapefileFileUpload({
-                    event: event,
-                    setGeoJson: setGeoJson,
-                    setLoading: setLoading,
-                    setIsOpenPreview: setIsOpenPreview,
-                    setIsWorkspaceError: setIsWorkspaceError,
-                    setWorkspaceError: setWorkspaceError,
-                    setWktParsed: setWktParsed,
-                  })
-                }
-                ref={(input) => input?.setAttribute("webkitdirectory", "true")}
+              <UploadFileTypeMenuBar
+                setFileType={setFileType}
+                fileType={fileType}
               />
-              <Input
-                className="w-2/3"
-                type="file"
-                onClick={() => {
-                  setWorkspaceError(null);
-                  setIsWorkspaceError(false);
-                  setGeoJson(null);
-                  setWktParsed(null);
-                  setIsOpenPreview(false);
-                }}
-                onChange={(event) =>
-                  handleGeoJsonFileUpload(event, setLoading, setGeoJson)
-                }
-              />
+              {fileType === "shp" && (
+                <Input
+                  className="w-2/3"
+                  type="file"
+                  onClick={() => {
+                    setWorkspaceError(null);
+                    setIsWorkspaceError(false);
+                    setGeoJson(null);
+                    setIsOpenPreview(false);
+                  }}
+                  onChange={(event) =>
+                    handleShapefileFileUpload({
+                      event: event,
+                      setGeoJson: setGeoJson,
+                      setLoading: setLoading,
+                      setIsOpenPreview: setIsOpenPreview,
+                      setIsWorkspaceError: setIsWorkspaceError,
+                      setWorkspaceError: setWorkspaceError,
+                    })
+                  }
+                  ref={(input) =>
+                    input?.setAttribute("webkitdirectory", "true")
+                  }
+                />
+              )}
+              {fileType === "geojson" && (
+                <Input
+                  className="w-2/3"
+                  type="file"
+                  onClick={() => {
+                    setWorkspaceError(null);
+                    setIsWorkspaceError(false);
+                    setGeoJson(null);
+                    setIsOpenPreview(false);
+                  }}
+                  onChange={(event) =>
+                    handleGeoJsonFileUpload({
+                      event,
+                      setLoading,
+                      setGeoJson,
+                      setIsOpenPreview,
+                      setIsWorkspaceError,
+                      setWorkspaceError,
+                    })
+                  }
+                />
+              )}
             </div>
 
-            {isCRS3857 || wktParsed === null ? null : (
-              <Alert variant="destructive">
-                <AlertTitle className="font-bold flex items-center">
-                  <Map className="mr-1" />
-                  Bad Coordinate Reference System (CRS)
-                </AlertTitle>
-                <AlertDescription>
-                  The file isn't using the correct CRS (
-                  <b className="font-bold">EPSG: 3857</b>). Reproject your
-                  shapes if you want to use the same CRS as the map.
-                </AlertDescription>
-              </Alert>
-            )}
             {isWorkspaceError && workspaceError && (
               <Alert
                 onClick={() => {
@@ -145,18 +145,8 @@ export const AddLayerDialog = ({
           <div className="flex items-center justify-center space-x-4">
             {isOpenPreview && !isWorkspaceError && (
               <div className="flex flex-col space-y-2">
-                <h4 className="font-bold text-sm">
-                  Coordinate Reference System (CRS)
-                </h4>
-                <ScrollArea className=" h-[20vh] w-[70vh] rounded-md border p-4 ">
-                  <div className="h-full w-full overflow-auto">
-                    <pre className="h-full w-full overflow-auto whitespace-pre-wrap text-sm">
-                      {JSON.stringify(wktParsed, null, 2)}
-                    </pre>
-                  </div>
-                </ScrollArea>
                 <h4 className="font-bold text-sm">GeoJSON</h4>
-                <ScrollArea className="h-[35vh] w-[70vh] rounded-md border p-4">
+                <ScrollArea className="h-[50vh] w-[70vh] rounded-md border p-4">
                   <div className="h-full w-full overflow-auto">
                     <pre className="h-full w-full overflow-auto whitespace-pre-wrap text-sm">
                       {JSON.stringify(geoJson, null, 2)}
