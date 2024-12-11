@@ -7,12 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import { getRandomColor } from "@/lib/utils";
 import {
-  CustomTooltipOptions,
+  ColorSchema,
   FeatureCollectionWithFilenameAndState,
   FeatureWithState,
   PathOptionsWithPointAttributes,
@@ -28,17 +26,23 @@ import { StrokeStyleSection } from "./stroke-style-section";
 import { PointStyleSection } from "./point-style-section";
 import { LabelStyleSection } from "./label-style-section";
 import { StyleFeatureMenuBar } from "./style-features-menubar";
+import { useStyleState } from "@/hooks/useStyleState";
+import { ColorSchemaMenuBar } from "./colorschema-menubar";
 
 export type StyleFeature = "fill" | "stroke" | "label";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
   changeStyle: (
-    file: FeatureCollectionWithFilenameAndState,
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
-    propertyKey: string | null,
+    propertyValue?: string,
   ) => void;
-
+  changeColorSchema: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
+  ) => void;
   isStyleDialogOpen: boolean;
   setIsStyleDialogOpen: React.Dispatch<boolean>;
   tileLayerOptions: TileLayerOptions;
@@ -47,6 +51,7 @@ type StyleDialogProps = {
 export const StyleDialog = ({
   featureCollection,
   changeStyle,
+  changeColorSchema,
   isStyleDialogOpen,
   setIsStyleDialogOpen,
   tileLayerOptions,
@@ -55,36 +60,39 @@ export const StyleDialog = ({
   const style = featureCollection.features[0].style;
   const filename = featureCollection.fileName;
 
-  const [isFill, setIsFill] = useState<boolean>(style.fill ?? true);
-  const [isFillColorPicker, setIsFillColorPicker] = useState<boolean>(false);
-  const [fillColor, setFillColor] = useState<string>(
-    style.fillColor ?? getRandomColor(),
-  );
-  const [fillOpacity, setFillOpacity] = useState<number>(
-    style.fillOpacity ?? 100,
-  );
-  const [isStroke, setIsStroke] = useState<boolean>(true);
-  const [isStrokeColorPicker, setIsStrokeColorPicker] =
-    useState<boolean>(false);
-  const [strokeColor, setStrokeColor] = useState<string>(
-    style.color ?? getRandomColor(),
-  );
-  const [strokeWeight, setStrokeWeight] = useState<number>(style.weight ?? 2);
-  const [strokeOpacity, setStrokeOpacity] = useState<number>(
-    style.opacity ?? 1,
-  );
-  const [pointSize, setPointSize] = useState<number | undefined>(
-    style.pointSize,
-  );
-  const [isLabel, setIsLabel] = useState<boolean>(style.label.isLabel);
-  const [labelName, setLabelName] = useState<string | undefined>(
-    style.label.labelName,
-  );
-  const [labelStyle, setLabelStyle] = useState<CustomTooltipOptions>(
-    style.label.style,
-  );
-  const [selectedStyleFeature, setSelectedStyleFeature] =
-    useState<StyleFeature>("fill");
+  const {
+    isFill,
+    setIsFill,
+    isLabel,
+    setIsLabel,
+    // stroke,
+    isStroke,
+    fillColor,
+    setFillColor,
+    labelName,
+    setLabelName,
+    pointSize,
+    setPointSize,
+    fillOpacity,
+    setFillOpacity,
+    labelStyle,
+    setLabelStyle,
+    setIsStroke,
+    strokeColor,
+    setStrokeColor,
+    strokeWeight,
+    setStrokeWeight,
+    strokeOpacity,
+    setStrokeOpacity,
+    isFillColorPicker,
+    setIsFillColorPicker,
+    selectedStyleFeature,
+    setSelectedStyleFeature,
+    isStrokeColorPicker,
+    setIsStrokeColorPicker,
+    colorSchemaType,
+    setColorSchemaType,
+  } = useStyleState(style, featureCollection.colorSchema);
 
   return (
     <Dialog open={isStyleDialogOpen} onOpenChange={setIsStyleDialogOpen}>
@@ -99,6 +107,12 @@ export const StyleDialog = ({
           </DialogHeader>
           <div className="flex justify-center items-start space-x-4">
             <main className="flex flex-col w-3/5 space-y-4 py-4">
+              <ColorSchemaMenuBar
+                colorSchemaType={colorSchemaType}
+                setColorSchemaType={setColorSchemaType}
+                featureCollection={featureCollection}
+                changeColorSchema={changeColorSchema}
+              />
               <StyleFeatureMenuBar
                 selectedStyleFeature={selectedStyleFeature}
                 setSelectedStyleFeature={setSelectedStyleFeature}
@@ -156,6 +170,7 @@ export const StyleDialog = ({
                   onClick={() => {
                     changeStyle(
                       featureCollection,
+                      colorSchemaType,
                       {
                         stroke: isStroke,
                         color: strokeColor,
@@ -178,11 +193,11 @@ export const StyleDialog = ({
                             textSize: labelStyle.textSize,
                             shadow: labelStyle.shadow,
                             textColor: labelStyle.textColor,
-                            className: labelStyle.className
+                            className: labelStyle.className,
                           },
                         },
                       },
-                      labelName ?? null,
+                      labelName,
                     );
                     setIsStyleDialogOpen(false);
                   }}

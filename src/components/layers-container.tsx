@@ -1,4 +1,5 @@
 import {
+  ColorSchema,
   FeatureCollectionWithFilenameAndState,
   PathOptionsWithPointAttributes,
   TileLayerOptions,
@@ -18,10 +19,15 @@ type LayersContainerProps = {
   setSelectedLayer: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
-
   changeStyle: (
-    file: FeatureCollectionWithFilenameAndState,
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
+    propertyValue?: string,
+  ) => void;
+  changeColorSchema: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
   ) => void;
 
   toggleVisibility: (filename: string | undefined) => void;
@@ -44,6 +50,7 @@ export const LayersContainer = ({
   selectedLayer,
   setSelectedLayer,
   changeStyle,
+  changeColorSchema,
   toggleVisibility,
   removeFileFromWorkspace,
   setPosition,
@@ -103,6 +110,7 @@ export const LayersContainer = ({
                 featureCollection={featureCollection}
                 removeFileFromWorkspace={removeFileFromWorkspace}
                 changeStyle={changeStyle}
+                changeColorSchema={changeColorSchema}
                 setSelectedLayer={setSelectedLayer}
                 isStyleDialogOpen={isStyleDialogOpen}
                 setIsStyleDialogOpen={setIsStyleDialogOpen}

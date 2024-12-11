@@ -52,6 +52,7 @@ function App() {
     toggleVisibility,
     toggleSelectedFile,
     changeStyle,
+    changeColorSchema,
     removeFileFromWorkspace,
     setPosition,
     error: workspaceError,
@@ -95,6 +96,7 @@ function App() {
             setIsTileLayer={setIsTileLayer}
             setSelectedLayer={setSelectedLayer}
             changeStyle={changeStyle}
+            changeColorSchema={changeColorSchema}
             removeFileFromWorkspace={removeFileFromWorkspace}
             toggleVisibility={toggleVisibility}
             workspace={workspace}

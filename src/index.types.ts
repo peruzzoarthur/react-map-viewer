@@ -16,13 +16,13 @@ export type PathOptionsWithPointAttributes = PathOptions & {
 };
 
 export type FeatureWithState = Feature<Geometry, GeoJsonProperties> & {
-  colorsSchema: "single" | "palette"
   style: PathOptionsWithPointAttributes;
   selected: boolean;
 };
 
 export type FeatureCollectionWithFilenameAndState = {
   fileName: string | undefined;
+  colorSchema: ColorSchema; 
   type: "FeatureCollection";
   features: FeatureWithState[];
   bbox?: BBox | undefined;
@@ -42,3 +42,9 @@ export type TileLayerOptions = {
   attribution: string;
   url: string;
 };
+
+export enum ColorSchema  {
+   SINGLE = 'single',
+   RANDOM = 'random',
+   PALETTE = 'palette'
+}

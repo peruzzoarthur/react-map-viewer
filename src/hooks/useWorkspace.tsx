@@ -1,9 +1,11 @@
 import {
+  ColorSchema,
   FeatureCollectionWithFilenameAndState,
   FeatureWithState,
   PathOptionsWithPointAttributes,
   Workspace,
 } from "@/index.types";
+import { getRandomColor } from "@/lib/utils";
 import { useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 
@@ -45,7 +47,7 @@ export const useWorkspace = ({
     const newFeatures: FeatureWithState[] = file.features.map((feature) => {
       const fill =
         feature.geometry.type === "LineString" ||
-          feature.geometry.type === "MultiLineString"
+        feature.geometry.type === "MultiLineString"
           ? false
           : true;
       return {
@@ -78,12 +80,12 @@ export const useWorkspace = ({
           },
         },
         selected: false,
-        colorsSchema: 'single'
       };
     });
 
     const newFile: FeatureCollectionWithFilenameAndState = {
       ...file,
+      colorSchema: ColorSchema.SINGLE,
       fileName: file.fileName,
       features: newFeatures,
       visible: true,
@@ -129,54 +131,105 @@ export const useWorkspace = ({
     }));
   };
 
-  const changeStyle = (
-    fileCollection: FeatureCollectionWithFilenameAndState,
-    style: PathOptionsWithPointAttributes,
-    propertyKey?: string,
+  const changeColorSchema = (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
   ) => {
-    if (!fileCollection) {
+    if (featureCollection.colorSchema === colorSchema) {
       return;
     }
 
-    const newFeatures: FeatureWithState[] = fileCollection.features.map(
-      (feature) => {
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: prevWorkspace.featureCollections.map(
+        (workspaceFile) =>
+          workspaceFile.fileName === featureCollection.fileName
+            ? { ...workspaceFile, colorSchema: colorSchema }
+            : workspaceFile,
+      ),
+      updatedAt: Date.now(),
+    }));
+  };
+
+  const changeStyle = (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
+    style: PathOptionsWithPointAttributes,
+    propertyValue?: string,
+  ) => {
+    if (featureCollection.features.length === 0) {
+      return;
+    }
+
+    console.log(colorSchema);
+    let newFeatures: FeatureWithState[] = [];
+
+    if (colorSchema === ColorSchema.SINGLE) {
+      newFeatures = featureCollection.features.map((feature) => {
         return {
           ...feature,
           style: {
             ...style,
             label: {
               isLabel: style.label.isLabel
-                ? propertyKey
+                ? propertyValue
                   ? true
                   : false
                 : false,
-              labelName: propertyKey,
-              attribute: propertyKey
-                ? String(feature.properties?.[propertyKey])
+              labelName: propertyValue,
+              attribute: propertyValue
+                ? String(feature.properties?.[propertyValue])
                 : null,
               style: style.label.style,
             },
           },
         };
-      },
-    );
+      });
+    } else if (colorSchema === ColorSchema.RANDOM) {
+      console.log("palettada");
+      newFeatures = featureCollection.features.map((feature) => {
+        const randomColor = getRandomColor()
+        return {
+          ...feature,
+          style: {
+            ...style, fillColor: randomColor, color: randomColor ,
+            label: {
+              isLabel: style.label.isLabel
+                ? propertyValue
+                  ? true
+                  : false
+                : false,
+              labelName: propertyValue,
+              attribute: propertyValue
+                ? String(feature.properties?.[propertyValue])
+                : null,
+              style: style.label.style,
+            },
+          },
+        };
+      });
+      
+    }
 
-    const updatedFile: FeatureCollectionWithFilenameAndState = {
-      ...fileCollection,
-      features: newFeatures,
-      updatedAt: Date.now(),
-    };
+    if (newFeatures) {
+      const updatedFile: FeatureCollectionWithFilenameAndState = {
+        ...featureCollection,
+        colorSchema: colorSchema,
+        features: newFeatures,
+        updatedAt: Date.now(),
+      };
 
-    setWorkspace((prevWorkspace) => ({
-      ...prevWorkspace,
-      featureCollections: prevWorkspace.featureCollections.map(
-        (workspaceFile) =>
-          workspaceFile.fileName === fileCollection.fileName
-            ? updatedFile
-            : workspaceFile,
-      ),
-      updatedAt: Date.now(),
-    }));
+      setWorkspace((prevWorkspace) => ({
+        ...prevWorkspace,
+        featureCollections: prevWorkspace.featureCollections.map(
+          (workspaceFile) =>
+            workspaceFile.fileName === featureCollection.fileName
+              ? updatedFile
+              : workspaceFile,
+        ),
+        updatedAt: Date.now(),
+      }));
+    }
   };
 
   const removeFileFromWorkspace = (filename: string | undefined) => {
@@ -235,5 +288,6 @@ export const useWorkspace = ({
     isError,
     setIsError,
     changeWorkspaceName,
+    changeColorSchema,
   };
 };

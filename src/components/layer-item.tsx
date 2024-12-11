@@ -9,6 +9,7 @@ import {
 import { TableOfContent } from "./table-of-content";
 import { StyleDialog } from "./style-dialog";
 import {
+  ColorSchema,
   FeatureCollectionWithFilenameAndState,
   PathOptionsWithPointAttributes,
   TileLayerOptions,
@@ -27,8 +28,14 @@ type LayerItemProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
   removeFileFromWorkspace: (filename: string | undefined) => void;
   changeStyle: (
-    file: FeatureCollectionWithFilenameAndState,
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
+    propertyValue?: string,
+  ) => void;
+  changeColorSchema: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
   ) => void;
   selectedLayer: FeatureCollectionWithFilenameAndState | null;
   setSelectedLayer: React.Dispatch<
@@ -56,6 +63,7 @@ export const LayerItem = ({
   featureCollection,
   removeFileFromWorkspace,
   changeStyle,
+  changeColorSchema,
   selectedLayer,
   setSelectedLayer,
   isStyleDialogOpen,
@@ -268,6 +276,7 @@ export const LayerItem = ({
         <StyleDialog
           featureCollection={selectedLayer}
           changeStyle={changeStyle}
+          changeColorSchema={changeColorSchema}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}
           tileLayerOptions={tileLayerOptions}
