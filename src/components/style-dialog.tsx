@@ -21,13 +21,10 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import { GeoJSON } from "react-leaflet";
 import FitLayer from "./fit-layer";
-import { FillStyleSection } from "./fill-style-section";
-import { StrokeStyleSection } from "./stroke-style-section";
-import { PointStyleSection } from "./point-style-section";
-import { LabelStyleSection } from "./label-style-section";
-import { StyleFeatureMenuBar } from "./style-features-menubar";
 import { useStyleState } from "@/hooks/useStyleState";
 import { ColorSchemaMenuBar } from "./colorschema-menubar";
+import { SingleColorSchemaStyleOptions } from "./single-color-schema-style-options";
+import { CategorizedColorSchemaStyleOptions } from "./categorized-color-schema-style-options";
 
 export type StyleFeature = "fill" | "stroke" | "label";
 
@@ -38,6 +35,7 @@ type StyleDialogProps = {
     colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
     propertyValue?: string,
+    propertyKey?: string,
   ) => void;
   changeColorSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,
@@ -83,15 +81,17 @@ export const StyleDialog = ({
     strokeWeight,
     setStrokeWeight,
     strokeOpacity,
-    setStrokeOpacity,
+    colorSchemaType,
     isFillColorPicker,
     setIsFillColorPicker,
+    setColorSchemaType,
     selectedStyleFeature,
     setSelectedStyleFeature,
     isStrokeColorPicker,
     setIsStrokeColorPicker,
-    colorSchemaType,
-    setColorSchemaType,
+    setStrokeOpacity,
+    propertyKey,
+    setPropertyKey,
   } = useStyleState(style, featureCollection.colorSchema);
 
   return (
@@ -113,34 +113,22 @@ export const StyleDialog = ({
                 featureCollection={featureCollection}
                 changeColorSchema={changeColorSchema}
               />
-              <StyleFeatureMenuBar
-                selectedStyleFeature={selectedStyleFeature}
-                setSelectedStyleFeature={setSelectedStyleFeature}
-              />
-              {selectedStyleFeature === "fill" && (
-                <>
-                  <FillStyleSection
-                    isFill={isFill}
-                    setIsFill={setIsFill}
-                    isFillColorPicker={isFillColorPicker}
-                    setIsFillColorPicker={setIsFillColorPicker}
-                    fillColor={fillColor}
-                    setFillColor={setFillColor}
-                    fillOpacity={fillOpacity}
-                    setFillOpacity={setFillOpacity}
-                  />
 
-                  {featureCollection.features[0].geometry.type === "Point" && (
-                    <PointStyleSection
-                      pointSize={pointSize}
-                      setPointSize={setPointSize}
-                    />
-                  )}
-                </>
-              )}
-
-              {selectedStyleFeature === "stroke" && (
-                <StrokeStyleSection
+              {colorSchemaType === ColorSchema.SINGLE && (
+                <SingleColorSchemaStyleOptions
+                  featureCollection={featureCollection}
+                  selectedStyleFeature={selectedStyleFeature}
+                  setSelectedStyleFeature={setSelectedStyleFeature}
+                  isFill={isFill}
+                  setIsFill={setIsFill}
+                  isFillColorPicker={isFillColorPicker}
+                  setIsFillColorPicker={setIsFillColorPicker}
+                  fillColor={fillColor}
+                  setFillColor={setFillColor}
+                  fillOpacity={fillOpacity}
+                  setFillOpacity={setFillOpacity}
+                  pointSize={pointSize}
+                  setPointSize={setPointSize}
                   isStroke={isStroke}
                   setIsStroke={setIsStroke}
                   strokeColor={strokeColor}
@@ -151,20 +139,24 @@ export const StyleDialog = ({
                   setStrokeOpacity={setStrokeOpacity}
                   strokeWeight={strokeWeight}
                   setStrokeWeight={setStrokeWeight}
-                />
-              )}
-              {selectedStyleFeature === "label" && (
-                <LabelStyleSection
                   isLabel={isLabel}
                   setIsLabel={setIsLabel}
                   labelName={labelName}
                   setLabelName={setLabelName}
                   labelStyle={labelStyle}
                   setLabelStyle={setLabelStyle}
-                  featureCollection={featureCollection}
+                  colorSchemaType={colorSchemaType}
+                  setColorSchemaType={setColorSchemaType}
                 />
               )}
 
+              {colorSchemaType === ColorSchema.CATEGORIZED && (
+                <CategorizedColorSchemaStyleOptions
+                  featureCollection={featureCollection}
+                  propertyKey={propertyKey}
+                  setPropertyKey={setPropertyKey}
+                />
+              )}
               <DialogFooter>
                 <Button
                   onClick={() => {
@@ -198,6 +190,7 @@ export const StyleDialog = ({
                         },
                       },
                       labelName,
+                      propertyKey,
                     );
                     setIsStyleDialogOpen(false);
                   }}

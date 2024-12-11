@@ -23,8 +23,7 @@ export const ColorSchemaMenuBar = ({
 }: ColorSchemaMenubarProps) => {
   const features = [
     { name: "Single", value: ColorSchema.SINGLE },
-    { name: "Random", value: ColorSchema.RANDOM },
-    { name: "Palette", value: ColorSchema.PALETTE },
+    { name: "Categorized", value: ColorSchema.CATEGORIZED },
   ];
 
   const handleKeyDown = useCallback(

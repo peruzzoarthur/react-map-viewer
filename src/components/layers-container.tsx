@@ -24,6 +24,7 @@ type LayersContainerProps = {
     colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
     propertyValue?: string,
+    propertyKey?: string,
   ) => void;
   changeColorSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,

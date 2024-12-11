@@ -44,6 +44,7 @@ export const useStyleState = (
   const [colorSchemaType, setColorSchemaType] = useState<ColorSchema>(
     colorSchema,
   );
+  const [propertyKey, setPropertyKey] = useState<string | undefined>(undefined)
 
   return {
     isFill,
@@ -75,6 +76,8 @@ export const useStyleState = (
     selectedStyleFeature,
     setSelectedStyleFeature,
     colorSchemaType,
-    setColorSchemaType
+    setColorSchemaType,
+    propertyKey,
+    setPropertyKey
   };
 };

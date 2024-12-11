@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { BBox } from "geojson";
 import { LatLngTuple } from "leaflet";
 import { twMerge } from "tailwind-merge";
+import chroma from "chroma-js"
 
 type KeyValuePair = { key: string; value: string };
 
@@ -25,6 +26,23 @@ export const getRandomColor = (): string => {
   const colors = Object.values(Color);
   const randomIndex = Math.floor(Math.random() * colors.length);
   return colors[randomIndex];
+};
+
+export const getRandomColorsChroma = (totalColors: number): string[] => {
+  const brewer = chroma.brewer.Blues; // Array of colors from chroma
+  const colorsArray: string[] = [];
+
+  let currentIndex = 0;
+  for (let i = 0; i < totalColors; i++) {
+    colorsArray.push(brewer[currentIndex]);
+    currentIndex++;
+
+    if (currentIndex >= brewer.length) {
+      currentIndex = 0;
+    }
+  }
+
+  return colorsArray;
 };
 
 export const getBoundingBoxCenter = (

@@ -45,6 +45,5 @@ export type TileLayerOptions = {
 
 export enum ColorSchema  {
    SINGLE = 'single',
-   RANDOM = 'random',
-   PALETTE = 'palette'
+   CATEGORIZED = 'categorized',
 }

@@ -5,7 +5,7 @@ import {
   PathOptionsWithPointAttributes,
   Workspace,
 } from "@/index.types";
-import { getRandomColor } from "@/lib/utils";
+import { getRandomColorsChroma } from "@/lib/utils";
 import { useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 
@@ -131,14 +131,19 @@ export const useWorkspace = ({
     }));
   };
 
-  const changeFeatureCollectionName = (featureCollection: FeatureCollectionWithFilenameAndState, name: string) => {
+  const changeFeatureCollectionName = (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    name: string,
+  ) => {
     setWorkspace((prevWorkspace) => ({
       ...prevWorkspace,
-      featureCollections: prevWorkspace.featureCollections.map((fc) => fc.fileName === featureCollection.fileName ?
-      {...fc, fileName: name } : fc
-      )
-    }))
-  }
+      featureCollections: prevWorkspace.featureCollections.map((fc) =>
+        fc.fileName === featureCollection.fileName
+          ? { ...fc, fileName: name }
+          : fc,
+      ),
+    }));
+  };
 
   const changeColorSchema = (
     featureCollection: FeatureCollectionWithFilenameAndState,
@@ -150,11 +155,10 @@ export const useWorkspace = ({
 
     setWorkspace((prevWorkspace) => ({
       ...prevWorkspace,
-      featureCollections: prevWorkspace.featureCollections.map(
-        (fc) =>
-          fc.fileName === featureCollection.fileName
-            ? { ...fc, colorSchema: colorSchema }
-            : fc,
+      featureCollections: prevWorkspace.featureCollections.map((fc) =>
+        fc.fileName === featureCollection.fileName
+          ? { ...fc, colorSchema: colorSchema }
+          : fc,
       ),
       updatedAt: Date.now(),
     }));
@@ -165,12 +169,12 @@ export const useWorkspace = ({
     colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
     propertyValue?: string,
+    propertyKey?: string,
   ) => {
     if (featureCollection.features.length === 0) {
       return;
     }
 
-    console.log(colorSchema);
     let newFeatures: FeatureWithState[] = [];
 
     if (colorSchema === ColorSchema.SINGLE) {
@@ -194,13 +198,29 @@ export const useWorkspace = ({
           },
         };
       });
-    } else if (colorSchema === ColorSchema.RANDOM) {
-      newFeatures = featureCollection.features.map((feature) => {
-        const randomColor = getRandomColor()
+    } else if (colorSchema === ColorSchema.CATEGORIZED) {
+      if (!propertyKey) {
+        console.error("need a property key in order to be able to classify.");
+      } else {
+        const properties = featureCollection.features.map((f) => f.properties);
+        const filteredArray = properties.filter((property) =>
+          property?.hasOwnProperty("fid"),
+        );
+        console.log(filteredArray.length);
+      }
+
+      const arrayOfColors = getRandomColorsChroma(
+        featureCollection.features.length,
+      );
+      console.log(arrayOfColors);
+      newFeatures = featureCollection.features.map((feature, index) => {
+        const color = arrayOfColors[index];
         return {
           ...feature,
           style: {
-            ...style, fillColor: randomColor, color: randomColor ,
+            ...style,
+            fillColor: color,
+            color: color,
             label: {
               isLabel: style.label.isLabel
                 ? propertyValue
@@ -216,8 +236,6 @@ export const useWorkspace = ({
           },
         };
       });
-    } else if (colorSchema === ColorSchema.PALETTE) {
-      // implement logic here
     }
 
     if (newFeatures) {
@@ -230,11 +248,8 @@ export const useWorkspace = ({
 
       setWorkspace((prevWorkspace) => ({
         ...prevWorkspace,
-        featureCollections: prevWorkspace.featureCollections.map(
-          (fc) =>
-            fc.fileName === featureCollection.fileName
-              ? updatedFile
-              : fc,
+        featureCollections: prevWorkspace.featureCollections.map((fc) =>
+          fc.fileName === featureCollection.fileName ? updatedFile : fc,
         ),
         updatedAt: Date.now(),
       }));
@@ -298,6 +313,6 @@ export const useWorkspace = ({
     setIsError,
     changeWorkspaceName,
     changeColorSchema,
-    changeFeatureCollectionName
+    changeFeatureCollectionName,
   };
 };

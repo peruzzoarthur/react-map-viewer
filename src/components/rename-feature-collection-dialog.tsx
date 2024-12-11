@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -38,13 +37,13 @@ export const RenameFeatureCollectionDialog = ({
       onOpenChange={setIsRenameFeatureCollectionDialogOpen}
     >
       <DialogTrigger className="flex w-full">
-        Add file to workspace
+       Rename 
       </DialogTrigger>
-      <DialogContent className="z-[1400] w-[100vh] h-[80vh] p-4">
+      <DialogContent className="z-[1400] w-[100vh] h-auto p-4">
         <DialogHeader>
-          <DialogTitle>Load workspace</DialogTitle>
+          <DialogTitle>Rename file</DialogTitle>
           <DialogDescription>
-            the workspace has a .json format.
+            this is a collection of features, rename it here.
           </DialogDescription>
           <div className="flex justify-center">
             <div className="flex p-4 space-y-4 flex-col justify-center items-center mt-4">
@@ -53,21 +52,20 @@ export const RenameFeatureCollectionDialog = ({
                 type="text"
                 onChange={(e) => setNewName(e.target.value)}
               />
+              {newName && (
+                <Button
+                  className="w-1/3"
+                  onClick={() => {
+                    changeFeatureCollectionName(featureCollection, newName);
+                    setIsRenameFeatureCollectionDialogOpen(false);
+                  }}
+                >
+                  Apply
+                </Button>
+              )}
             </div>
           </div>
         </DialogHeader>
-        <DialogFooter>
-          {newName && (
-            <Button
-              onClick={() => {
-                changeFeatureCollectionName(featureCollection, newName);
-                setIsRenameFeatureCollectionDialogOpen(false);
-              }}
-            >
-              Apply
-            </Button>
-          )}
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
