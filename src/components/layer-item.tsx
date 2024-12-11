@@ -21,6 +21,7 @@ import { createBuffers } from "@/lib/gis-tools";
 import { FeatureCollectionWithFilename } from "shpjs";
 import { prepareGeoJSONForUpload } from "@/lib/upload-files";
 import { axiosInstance } from "@/lib/api";
+import { RenameFeatureCollectionDialog } from "./rename-feature-collection-dialog";
 
 type LayerItemProps = {
   isVisible: boolean;
@@ -37,6 +38,11 @@ type LayerItemProps = {
     featureCollection: FeatureCollectionWithFilenameAndState,
     colorSchema: ColorSchema,
   ) => void;
+  changeFeatureCollectionName: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    name: string,
+  ) => void;
+
   selectedLayer: FeatureCollectionWithFilenameAndState | null;
   setSelectedLayer: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
@@ -45,6 +51,8 @@ type LayerItemProps = {
   setIsStyleDialogOpen: React.Dispatch<boolean>;
   isTableOfContentOpen: boolean;
   setIsTableOfContentOpen: React.Dispatch<boolean>;
+  isRenameFeatureCollectionDialogOpen: boolean;
+  setIsRenameFeatureCollectionDialogOpen: React.Dispatch<boolean>;
   toggleSelected: (filename: string | undefined) => void;
   zoomToLayerRef: React.MutableRefObject<ZoomToLayerRef | null>;
   dragFeature: React.MutableRefObject<number>;
@@ -70,6 +78,8 @@ export const LayerItem = ({
   setIsStyleDialogOpen,
   isTableOfContentOpen,
   setIsTableOfContentOpen,
+  isRenameFeatureCollectionDialogOpen,
+  setIsRenameFeatureCollectionDialogOpen,
   toggleSelected,
   zoomToLayerRef,
   dragFeature,
@@ -77,6 +87,7 @@ export const LayerItem = ({
   handleSort,
   tileLayerOptions,
   addFileToWorkspace,
+  changeFeatureCollectionName,
 }: LayerItemProps) => {
   const filename = featureCollection?.fileName;
   const features = featureCollection?.features;
@@ -236,6 +247,16 @@ export const LayerItem = ({
 
           <ContextMenuItem
             onSelect={() => {
+              setIsRenameFeatureCollectionDialogOpen(true);
+              setSelectedLayer(featureCollection ?? null);
+              setMenuPosition({ x: 0, y: 0 });
+            }}
+          >
+            Rename
+          </ContextMenuItem>
+
+          <ContextMenuItem
+            onSelect={() => {
               setIsTableOfContentOpen(true);
               setSelectedLayer(featureCollection ?? null);
               setMenuPosition({ x: 0, y: 0 });
@@ -288,6 +309,19 @@ export const LayerItem = ({
           isTableOfContentOpen={isTableOfContentOpen}
           setIsTableOfContentOpen={setIsTableOfContentOpen}
           toggleSelected={toggleSelected}
+        />
+      )}
+
+      {isRenameFeatureCollectionDialogOpen && selectedLayer && (
+        <RenameFeatureCollectionDialog
+          featureCollection={selectedLayer}
+          isRenameFeatureCollectionDialogOpen={
+            isRenameFeatureCollectionDialogOpen
+          }
+          setIsRenameFeatureCollectionDialogOpen={
+            setIsRenameFeatureCollectionDialogOpen
+          }
+          changeFeatureCollectionName={changeFeatureCollectionName}
         />
       )}
     </div>

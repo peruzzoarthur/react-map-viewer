@@ -60,6 +60,7 @@ function App() {
     isError: isWorkspaceError,
     setIsError: setIsWorkspaceError,
     changeWorkspaceName,
+    changeFeatureCollectionName
   } = useWorkspace({
     workspace,
     setWorkspace,
@@ -97,6 +98,7 @@ function App() {
             setSelectedLayer={setSelectedLayer}
             changeStyle={changeStyle}
             changeColorSchema={changeColorSchema}
+            changeFeatureCollectionName={changeFeatureCollectionName}
             removeFileFromWorkspace={removeFileFromWorkspace}
             toggleVisibility={toggleVisibility}
             workspace={workspace}

@@ -37,7 +37,6 @@ export const ColorSchemaMenuBar = ({
     [setColorSchemaType],
   );
 
-  console.log(colorSchemaType)
   return (
     <Menubar className="w-auto">
       {features.map((feature) => (

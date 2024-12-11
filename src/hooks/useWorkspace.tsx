@@ -26,7 +26,7 @@ export const useWorkspace = ({
     color: string,
   ) => {
     const fileExists = workspace.featureCollections.some(
-      (workspaceFile) => workspaceFile.fileName === file.fileName,
+      (fc) => fc.fileName === file.fileName,
     );
 
     if (fileExists) {
@@ -131,6 +131,15 @@ export const useWorkspace = ({
     }));
   };
 
+  const changeFeatureCollectionName = (featureCollection: FeatureCollectionWithFilenameAndState, name: string) => {
+    setWorkspace((prevWorkspace) => ({
+      ...prevWorkspace,
+      featureCollections: prevWorkspace.featureCollections.map((fc) => fc.fileName === featureCollection.fileName ?
+      {...fc, fileName: name } : fc
+      )
+    }))
+  }
+
   const changeColorSchema = (
     featureCollection: FeatureCollectionWithFilenameAndState,
     colorSchema: ColorSchema,
@@ -142,10 +151,10 @@ export const useWorkspace = ({
     setWorkspace((prevWorkspace) => ({
       ...prevWorkspace,
       featureCollections: prevWorkspace.featureCollections.map(
-        (workspaceFile) =>
-          workspaceFile.fileName === featureCollection.fileName
-            ? { ...workspaceFile, colorSchema: colorSchema }
-            : workspaceFile,
+        (fc) =>
+          fc.fileName === featureCollection.fileName
+            ? { ...fc, colorSchema: colorSchema }
+            : fc,
       ),
       updatedAt: Date.now(),
     }));
@@ -186,7 +195,6 @@ export const useWorkspace = ({
         };
       });
     } else if (colorSchema === ColorSchema.RANDOM) {
-      console.log("palettada");
       newFeatures = featureCollection.features.map((feature) => {
         const randomColor = getRandomColor()
         return {
@@ -208,7 +216,8 @@ export const useWorkspace = ({
           },
         };
       });
-      
+    } else if (colorSchema === ColorSchema.PALETTE) {
+      // implement logic here
     }
 
     if (newFeatures) {
@@ -222,10 +231,10 @@ export const useWorkspace = ({
       setWorkspace((prevWorkspace) => ({
         ...prevWorkspace,
         featureCollections: prevWorkspace.featureCollections.map(
-          (workspaceFile) =>
-            workspaceFile.fileName === featureCollection.fileName
+          (fc) =>
+            fc.fileName === featureCollection.fileName
               ? updatedFile
-              : workspaceFile,
+              : fc,
         ),
         updatedAt: Date.now(),
       }));
@@ -289,5 +298,6 @@ export const useWorkspace = ({
     setIsError,
     changeWorkspaceName,
     changeColorSchema,
+    changeFeatureCollectionName
   };
 };

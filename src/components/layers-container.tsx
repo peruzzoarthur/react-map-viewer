@@ -29,7 +29,10 @@ type LayersContainerProps = {
     featureCollection: FeatureCollectionWithFilenameAndState,
     colorSchema: ColorSchema,
   ) => void;
-
+  changeFeatureCollectionName: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    name: string,
+  ) => void;
   toggleVisibility: (filename: string | undefined) => void;
   removeFileFromWorkspace: (filename: string | undefined) => void;
   workspace: Workspace;
@@ -51,6 +54,7 @@ export const LayersContainer = ({
   setSelectedLayer,
   changeStyle,
   changeColorSchema,
+  changeFeatureCollectionName,
   toggleVisibility,
   removeFileFromWorkspace,
   setPosition,
@@ -64,6 +68,10 @@ export const LayersContainer = ({
   const [isTableOfContentOpen, setIsTableOfContentOpen] =
     useState<boolean>(false);
   const [isStyleDialogOpen, setIsStyleDialogOpen] = useState<boolean>(false);
+  const [
+    isRenameFeatureCollectionDialogOpen,
+    setIsRenameFeatureCollectionDialogOpen,
+  ] = useState<boolean>(false);
 
   const [layersList, setLayersList] = useState<
     FeatureCollectionWithFilenameAndState[] | null
@@ -111,6 +119,7 @@ export const LayersContainer = ({
                 removeFileFromWorkspace={removeFileFromWorkspace}
                 changeStyle={changeStyle}
                 changeColorSchema={changeColorSchema}
+                changeFeatureCollectionName={changeFeatureCollectionName}
                 setSelectedLayer={setSelectedLayer}
                 isStyleDialogOpen={isStyleDialogOpen}
                 setIsStyleDialogOpen={setIsStyleDialogOpen}
@@ -124,6 +133,8 @@ export const LayersContainer = ({
                 handleSort={handleSort}
                 tileLayerOptions={tileLayerOptions}
                 addFileToWorkspace={addFileToWorkspace}
+                isRenameFeatureCollectionDialogOpen={isRenameFeatureCollectionDialogOpen}
+                setIsRenameFeatureCollectionDialogOpen={setIsRenameFeatureCollectionDialogOpen}
               />
             ))}
         <TileLayer
