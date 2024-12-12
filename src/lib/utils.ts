@@ -2,8 +2,6 @@ import { clsx, type ClassValue } from "clsx";
 import { BBox } from "geojson";
 import { LatLngTuple } from "leaflet";
 import { twMerge } from "tailwind-merge";
-import chroma from "chroma-js"
-
 type KeyValuePair = { key: string; value: string };
 
 enum Color {
@@ -28,16 +26,15 @@ export const getRandomColor = (): string => {
   return colors[randomIndex];
 };
 
-export const getRandomColorsChroma = (totalColors: number): string[] => {
-  const brewer = chroma.brewer.Blues; // Array of colors from chroma
+export const getRandomColorsChroma = (totalColors: number, brewerColors: string[]): string[] => {
   const colorsArray: string[] = [];
 
   let currentIndex = 0;
   for (let i = 0; i < totalColors; i++) {
-    colorsArray.push(brewer[currentIndex]);
+    colorsArray.push(brewerColors[currentIndex]);
     currentIndex++;
 
-    if (currentIndex >= brewer.length) {
+    if (currentIndex >= brewerColors.length) {
       currentIndex = 0;
     }
   }

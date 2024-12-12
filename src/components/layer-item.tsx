@@ -7,8 +7,8 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { TableOfContent } from "./table-of-content";
-import { StyleDialog } from "./style-dialog";
 import {
+    BrewerPalette,
   ColorSchema,
   FeatureCollectionWithFilenameAndState,
   PathOptionsWithPointAttributes,
@@ -22,18 +22,26 @@ import { FeatureCollectionWithFilename } from "shpjs";
 import { prepareGeoJSONForUpload } from "@/lib/upload-files";
 import { axiosInstance } from "@/lib/api";
 import { RenameFeatureCollectionDialog } from "./rename-feature-collection-dialog";
+import { StyleDialog } from "./style-dialog";
 
 type LayerItemProps = {
   isVisible: boolean;
   setIsVisible: React.Dispatch<boolean>;
   featureCollection: FeatureCollectionWithFilenameAndState;
   removeFileFromWorkspace: (filename: string | undefined) => void;
-  changeStyle: (
+  changeStyleSingleSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,
     colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
     propertyValue?: string,
-    propertyKey?: string,
+  ) => void;
+  changeStyleCategorizedSchema: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
+    style: PathOptionsWithPointAttributes,
+    propertyKey: string,
+    brewerPalette: BrewerPalette,
+    propertyValue?: string,
   ) => void;
   changeColorSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,
@@ -71,7 +79,8 @@ export const LayerItem = ({
   setIsVisible,
   featureCollection,
   removeFileFromWorkspace,
-  changeStyle,
+  changeStyleSingleSchema,
+  changeStyleCategorizedSchema,
   changeColorSchema,
   selectedLayer,
   setSelectedLayer,
@@ -297,7 +306,8 @@ export const LayerItem = ({
       {isStyleDialogOpen && selectedLayer && (
         <StyleDialog
           featureCollection={selectedLayer}
-          changeStyle={changeStyle}
+          changeStyleSingleSchema={changeStyleSingleSchema}
+          changeStyleCategorizedSchema={changeStyleCategorizedSchema}
           changeColorSchema={changeColorSchema}
           isStyleDialogOpen={isStyleDialogOpen}
           setIsStyleDialogOpen={setIsStyleDialogOpen}

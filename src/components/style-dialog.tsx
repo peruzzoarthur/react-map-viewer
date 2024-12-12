@@ -10,6 +10,7 @@ import {
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import {
+  BrewerPalette,
   ColorSchema,
   FeatureCollectionWithFilenameAndState,
   FeatureWithState,
@@ -30,12 +31,19 @@ export type StyleFeature = "fill" | "stroke" | "label";
 
 type StyleDialogProps = {
   featureCollection: FeatureCollectionWithFilenameAndState;
-  changeStyle: (
+  changeStyleSingleSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,
     colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
     propertyValue?: string,
-    propertyKey?: string,
+  ) => void;
+  changeStyleCategorizedSchema: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
+    style: PathOptionsWithPointAttributes,
+    propertyKey: string,
+    brewerPalette: BrewerPalette,
+    propertyValue?: string,
   ) => void;
   changeColorSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,
@@ -48,7 +56,8 @@ type StyleDialogProps = {
 
 export const StyleDialog = ({
   featureCollection,
-  changeStyle,
+  changeStyleSingleSchema,
+  changeStyleCategorizedSchema,
   changeColorSchema,
   isStyleDialogOpen,
   setIsStyleDialogOpen,
@@ -92,6 +101,8 @@ export const StyleDialog = ({
     setStrokeOpacity,
     propertyKey,
     setPropertyKey,
+    brewerPalette,
+    setBrewerPalette,
   } = useStyleState(style, featureCollection.colorSchema);
 
   return (
@@ -155,43 +166,60 @@ export const StyleDialog = ({
                   featureCollection={featureCollection}
                   propertyKey={propertyKey}
                   setPropertyKey={setPropertyKey}
+                  brewerPalette={brewerPalette}
+                  setBrewerPalette={setBrewerPalette}
                 />
               )}
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    changeStyle(
-                      featureCollection,
-                      colorSchemaType,
-                      {
-                        stroke: isStroke,
-                        color: strokeColor,
-                        opacity: strokeOpacity,
-                        weight: strokeWeight,
-                        fillColor: fillColor,
-                        fill: isFill,
-                        fillOpacity: fillOpacity,
-                        pointSize: pointSize,
-                        label: {
-                          isLabel: isLabel,
-                          labelName: labelName,
-                          attribute: null,
-                          style: {
-                            permanent: labelStyle.permanent,
-                            direction: labelStyle.direction,
-                            opacity: labelStyle.opacity,
-                            backgroundColor: labelStyle.backgroundColor,
-                            border: labelStyle.border,
-                            textSize: labelStyle.textSize,
-                            shadow: labelStyle.shadow,
-                            textColor: labelStyle.textColor,
-                            className: labelStyle.className,
-                          },
+                    const style = {
+                      stroke: isStroke,
+                      color: strokeColor,
+                      opacity: strokeOpacity,
+                      weight: strokeWeight,
+                      fillColor: fillColor,
+                      fill: isFill,
+                      fillOpacity: fillOpacity,
+                      pointSize: pointSize,
+                      label: {
+                        isLabel: isLabel,
+                        labelName: labelName,
+                        attribute: null,
+                        style: {
+                          permanent: labelStyle.permanent,
+                          direction: labelStyle.direction,
+                          opacity: labelStyle.opacity,
+                          backgroundColor: labelStyle.backgroundColor,
+                          border: labelStyle.border,
+                          textSize: labelStyle.textSize,
+                          shadow: labelStyle.shadow,
+                          textColor: labelStyle.textColor,
+                          className: labelStyle.className,
                         },
                       },
-                      labelName,
-                      propertyKey,
-                    );
+                    };
+                    if (colorSchemaType === ColorSchema.SINGLE) {
+                      changeStyleSingleSchema(
+                        featureCollection,
+                        colorSchemaType,
+                        style,
+                        labelName,
+                      );
+                    } else if (
+                      colorSchemaType === ColorSchema.CATEGORIZED &&
+                      propertyKey &&
+                      brewerPalette
+                    ) {
+                      changeStyleCategorizedSchema(
+                        featureCollection,
+                        colorSchemaType,
+                        style,
+                        propertyKey,
+                        brewerPalette,
+                        labelName,
+                      );
+                    }
                     setIsStyleDialogOpen(false);
                   }}
                 >
@@ -200,50 +228,54 @@ export const StyleDialog = ({
               </DialogFooter>
             </main>
 
-            <Separator orientation="vertical" className="h-[60vh]" />
-
             {/* Preview layer */}
-            <MapContainer
-              className="h-[60vh] w-full z-80"
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                attribution={tileLayerOptions.attribution}
-                url={tileLayerOptions.url}
-              />
-              <FitLayer layerData={featureCollection} />
-              <GeoJSON
-                key={
-                  featureCollection.features[0].geometry.type === "Point"
-                    ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${isLabel}_${labelName}_${labelStyle.className}_${labelStyle.permanent}_${labelStyle.direction}_${labelStyle.opacity}`
-                    : `${featureCollection.fileName}_${featureCollection.updatedAt}_${isLabel}_${labelName}_${labelStyle.className}_${labelStyle.permanent}_${labelStyle.direction}_${labelStyle.opacity}`
-                }
-                style={{
-                  stroke: isStroke,
-                  color: strokeColor,
-                  opacity: strokeOpacity,
-                  weight: strokeWeight ?? 2,
-                  fillColor: fillColor,
-                  fill: isFill,
-                  fillOpacity: fillOpacity ?? 1,
-                }}
-                data={featureCollection}
-                pointToLayer={(_geoJsonPoint, latlng) => {
-                  const marker = L.circleMarker(latlng, {
-                    radius: pointSize ?? 5,
-                  });
-                  return marker;
-                }}
-                onEachFeature={(feature, layer) => {
-                  const featureWithState = feature as FeatureWithState;
+            {colorSchemaType === ColorSchema.SINGLE && (
+              <>
+                <Separator orientation="vertical" className="h-[60vh]" />
+                <MapContainer
+                  className="h-[60vh] w-full z-80"
+                  scrollWheelZoom={false}
+                >
+                  <TileLayer
+                    attribution={tileLayerOptions.attribution}
+                    url={tileLayerOptions.url}
+                  />
+                  <FitLayer layerData={featureCollection} />
+                  <GeoJSON
+                    key={
+                      featureCollection.features[0].geometry.type === "Point"
+                        ? `${featureCollection.fileName}_${featureCollection.updatedAt}_${pointSize}_${isLabel}_${labelName}_${labelStyle.className}_${labelStyle.permanent}_${labelStyle.direction}_${labelStyle.opacity}`
+                        : `${featureCollection.fileName}_${featureCollection.updatedAt}_${isLabel}_${labelName}_${labelStyle.className}_${labelStyle.permanent}_${labelStyle.direction}_${labelStyle.opacity}`
+                    }
+                    style={{
+                      stroke: isStroke,
+                      color: strokeColor,
+                      opacity: strokeOpacity,
+                      weight: strokeWeight ?? 2,
+                      fillColor: fillColor,
+                      fill: isFill,
+                      fillOpacity: fillOpacity ?? 1,
+                    }}
+                    data={featureCollection}
+                    pointToLayer={(_geoJsonPoint, latlng) => {
+                      const marker = L.circleMarker(latlng, {
+                        radius: pointSize ?? 5,
+                      });
+                      return marker;
+                    }}
+                    onEachFeature={(feature, layer) => {
+                      const featureWithState = feature as FeatureWithState;
 
-                  if (isLabel && labelName && featureWithState.properties) {
-                    const attribute = featureWithState.properties[labelName];
-                    layer.bindTooltip(String(attribute), labelStyle);
-                  }
-                }}
-              />
-            </MapContainer>
+                      if (isLabel && labelName && featureWithState.properties) {
+                        const attribute =
+                          featureWithState.properties[labelName];
+                        layer.bindTooltip(String(attribute), labelStyle);
+                      }
+                    }}
+                  />
+                </MapContainer>
+              </>
+            )}
           </div>
         </ScrollArea>
       </DialogContent>

@@ -1,4 +1,5 @@
 import {
+  BrewerPalette,
   ColorSchema,
   FeatureCollectionWithFilenameAndState,
   FeatureWithState,
@@ -6,6 +7,7 @@ import {
   Workspace,
 } from "@/index.types";
 import { getRandomColorsChroma } from "@/lib/utils";
+import { brewer } from "chroma-js";
 import { useState } from "react";
 import { FeatureCollectionWithFilename } from "shpjs";
 
@@ -47,7 +49,7 @@ export const useWorkspace = ({
     const newFeatures: FeatureWithState[] = file.features.map((feature) => {
       const fill =
         feature.geometry.type === "LineString" ||
-        feature.geometry.type === "MultiLineString"
+          feature.geometry.type === "MultiLineString"
           ? false
           : true;
       return {
@@ -164,12 +166,11 @@ export const useWorkspace = ({
     }));
   };
 
-  const changeStyle = (
+  const changeStyleSingleSchema = (
     featureCollection: FeatureCollectionWithFilenameAndState,
     colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
     propertyValue?: string,
-    propertyKey?: string,
   ) => {
     if (featureCollection.features.length === 0) {
       return;
@@ -198,21 +199,48 @@ export const useWorkspace = ({
           },
         };
       });
-    } else if (colorSchema === ColorSchema.CATEGORIZED) {
-      if (!propertyKey) {
-        console.error("need a property key in order to be able to classify.");
-      } else {
-        const properties = featureCollection.features.map((f) => f.properties);
-        const filteredArray = properties.filter((property) =>
-          property?.hasOwnProperty("fid"),
-        );
-        console.log(filteredArray.length);
-      }
+    }
+
+    if (newFeatures) {
+      const updatedFile: FeatureCollectionWithFilenameAndState = {
+        ...featureCollection,
+        colorSchema: colorSchema,
+        features: newFeatures,
+        updatedAt: Date.now(),
+      };
+
+      setWorkspace((prevWorkspace) => ({
+        ...prevWorkspace,
+        featureCollections: prevWorkspace.featureCollections.map((fc) =>
+          fc.fileName === featureCollection.fileName ? updatedFile : fc,
+        ),
+        updatedAt: Date.now(),
+      }));
+    }
+  };
+
+  const changeStyleCategorizedSchema = (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
+    style: PathOptionsWithPointAttributes,
+    propertyKey: string,
+    brewerPalette: BrewerPalette,
+    propertyValue?: string,
+  ) => {
+    if (featureCollection.features.length === 0) {
+      return;
+    }
+
+    let newFeatures: FeatureWithState[] = [];
+
+    if (colorSchema === ColorSchema.CATEGORIZED) {
+      console.log(propertyKey); // propertyKey will be used for showing colors for different features bases and use key as index
 
       const arrayOfColors = getRandomColorsChroma(
         featureCollection.features.length,
+        brewer[brewerPalette],
       );
-      console.log(arrayOfColors);
+
       newFeatures = featureCollection.features.map((feature, index) => {
         const color = arrayOfColors[index];
         return {
@@ -255,7 +283,6 @@ export const useWorkspace = ({
       }));
     }
   };
-
   const removeFileFromWorkspace = (filename: string | undefined) => {
     if (!filename) {
       return;
@@ -296,15 +323,18 @@ export const useWorkspace = ({
       updatedAt: Date.now(),
     }));
   };
+
   const changeWorkspaceName = (name: string) => {
     setWorkspace((prevWorkspace) => ({ ...prevWorkspace, name: name }));
   };
+
   return {
     workspace,
     addFileToWorkspace,
     toggleVisibility,
     toggleSelectedFile,
-    changeStyle,
+    changeStyleSingleSchema,
+    changeStyleCategorizedSchema,
     removeFileFromWorkspace,
     setPosition,
     error,

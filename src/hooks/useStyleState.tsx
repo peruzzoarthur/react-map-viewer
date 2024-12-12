@@ -1,5 +1,6 @@
 import { StyleFeature } from "@/components/style-dialog";
 import {
+    BrewerPalette,
   ColorSchema,
   CustomTooltipOptions,
   PathOptionsWithPointAttributes,
@@ -45,6 +46,7 @@ export const useStyleState = (
     colorSchema,
   );
   const [propertyKey, setPropertyKey] = useState<string | undefined>(undefined)
+  const [brewerPalette, setBrewerPalette] = useState<BrewerPalette | undefined>(undefined)
 
   return {
     isFill,
@@ -78,6 +80,8 @@ export const useStyleState = (
     colorSchemaType,
     setColorSchemaType,
     propertyKey,
-    setPropertyKey
+    setPropertyKey,
+    brewerPalette,
+    setBrewerPalette
   };
 };

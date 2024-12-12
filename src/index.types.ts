@@ -1,3 +1,4 @@
+import { brewer } from "chroma-js";
 import { Feature, Geometry, GeoJsonProperties, BBox } from "geojson";
 import { PathOptions, TooltipOptions } from "leaflet";
 
@@ -47,3 +48,5 @@ export enum ColorSchema  {
    SINGLE = 'single',
    CATEGORIZED = 'categorized',
 }
+
+export type BrewerPalette = keyof typeof brewer;

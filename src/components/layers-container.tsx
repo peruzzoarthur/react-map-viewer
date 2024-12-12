@@ -1,4 +1,5 @@
 import {
+    BrewerPalette,
   ColorSchema,
   FeatureCollectionWithFilenameAndState,
   PathOptionsWithPointAttributes,
@@ -19,12 +20,19 @@ type LayersContainerProps = {
   setSelectedLayer: React.Dispatch<
     React.SetStateAction<FeatureCollectionWithFilenameAndState | null>
   >;
-  changeStyle: (
+  changeStyleSingleSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,
     colorSchema: ColorSchema,
     style: PathOptionsWithPointAttributes,
     propertyValue?: string,
-    propertyKey?: string,
+  ) => void;
+  changeStyleCategorizedSchema: (
+    featureCollection: FeatureCollectionWithFilenameAndState,
+    colorSchema: ColorSchema,
+    style: PathOptionsWithPointAttributes,
+    propertyKey: string,
+    brewerPalette: BrewerPalette,
+    propertyValue?: string,
   ) => void;
   changeColorSchema: (
     featureCollection: FeatureCollectionWithFilenameAndState,
@@ -53,7 +61,8 @@ export const LayersContainer = ({
   setIsTileLayer,
   selectedLayer,
   setSelectedLayer,
-  changeStyle,
+  changeStyleSingleSchema,
+  changeStyleCategorizedSchema,
   changeColorSchema,
   changeFeatureCollectionName,
   toggleVisibility,
@@ -118,7 +127,8 @@ export const LayersContainer = ({
                 }
                 featureCollection={featureCollection}
                 removeFileFromWorkspace={removeFileFromWorkspace}
-                changeStyle={changeStyle}
+                changeStyleSingleSchema={changeStyleSingleSchema}
+                changeStyleCategorizedSchema={changeStyleCategorizedSchema}
                 changeColorSchema={changeColorSchema}
                 changeFeatureCollectionName={changeFeatureCollectionName}
                 setSelectedLayer={setSelectedLayer}
@@ -134,8 +144,12 @@ export const LayersContainer = ({
                 handleSort={handleSort}
                 tileLayerOptions={tileLayerOptions}
                 addFileToWorkspace={addFileToWorkspace}
-                isRenameFeatureCollectionDialogOpen={isRenameFeatureCollectionDialogOpen}
-                setIsRenameFeatureCollectionDialogOpen={setIsRenameFeatureCollectionDialogOpen}
+                isRenameFeatureCollectionDialogOpen={
+                  isRenameFeatureCollectionDialogOpen
+                }
+                setIsRenameFeatureCollectionDialogOpen={
+                  setIsRenameFeatureCollectionDialogOpen
+                }
               />
             ))}
         <TileLayer

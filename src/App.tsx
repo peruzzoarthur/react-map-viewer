@@ -51,7 +51,8 @@ function App() {
     addFileToWorkspace,
     toggleVisibility,
     toggleSelectedFile,
-    changeStyle,
+    changeStyleSingleSchema,
+    changeStyleCategorizedSchema,
     changeColorSchema,
     removeFileFromWorkspace,
     setPosition,
@@ -60,7 +61,7 @@ function App() {
     isError: isWorkspaceError,
     setIsError: setIsWorkspaceError,
     changeWorkspaceName,
-    changeFeatureCollectionName
+    changeFeatureCollectionName,
   } = useWorkspace({
     workspace,
     setWorkspace,
@@ -96,7 +97,8 @@ function App() {
             isTileLayer={isTileLayer}
             setIsTileLayer={setIsTileLayer}
             setSelectedLayer={setSelectedLayer}
-            changeStyle={changeStyle}
+            changeStyleSingleSchema={changeStyleSingleSchema}
+            changeStyleCategorizedSchema={changeStyleCategorizedSchema}
             changeColorSchema={changeColorSchema}
             changeFeatureCollectionName={changeFeatureCollectionName}
             removeFileFromWorkspace={removeFileFromWorkspace}
@@ -132,9 +134,21 @@ function App() {
                 />
               )}
               <div className="grid grid-cols-2 space-x-4">
-                <ScaleControl maxWidth={200} bg="bg-black" textColor="text-white"/>
-                <ScaleControl maxWidth={100} bg="bg-white" textColor="text-black"/>
-                <ScaleControl maxWidth={50} bg="bg-black" textColor="text-white" />
+                <ScaleControl
+                  maxWidth={200}
+                  bg="bg-black"
+                  textColor="text-white"
+                />
+                <ScaleControl
+                  maxWidth={100}
+                  bg="bg-white"
+                  textColor="text-black"
+                />
+                <ScaleControl
+                  maxWidth={50}
+                  bg="bg-black"
+                  textColor="text-white"
+                />
               </div>
               <ZoomToLayer ref={zoomToLayerRef} />
               {workspace && workspace.featureCollections.length !== 0 && (
